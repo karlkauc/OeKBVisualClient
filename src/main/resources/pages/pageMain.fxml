@@ -51,17 +51,17 @@
                 <JFXButton id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
                            prefHeight="60.0" prefWidth="200.0" styleClass="changeToDataUpload" text="Data Upload">
                 </JFXButton>
-                <HBox prefHeight="60.0" style="-fy-background-color: yellow">
-                    <Label labelFor="$dataSupplier" text="DDS: " styleClass="dataSupplierText"
-                           style="-fx-background-color: red"/>
+                <HBox prefHeight="60.0" prefWidth="200.0">
+                    <Label labelFor="$dataSupplier" text="DDS: " styleClass="dataSupplier"
+                           prefHeight="60.0" prefWidth="90.0"/>
                     <TextField text="Datasupplier" fx:id="dataSupplier" styleClass="dataSupplier"
                                onKeyPressed="#changeDDS"
-                               prefWidth="80.0">
+                               prefHeight="60.0" prefWidth="110.0">
                     </TextField>
                 </HBox>
-                <HBox>
-                    <Label fx:id="server" text="Prod Server" styleClass="prodServer" style="-fx-background-color: red"/>
-                    <JFXToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer"/>
+                <HBox prefHeight="60.0" prefWidth="200.0" styleClass="left">
+                    <Label fx:id="server" text="Prod Server" styleClass="prodServer" prefHeight="60.0" prefWidth="90.0" />
+                    <JFXToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer" prefHeight="60.0" prefWidth="110.0"/>
                 </HBox>
                 <CheckBox fx:id="fileSystem" mnemonicParsing="false" text="file System"
                           BorderPane.alignment="CENTER" onAction="#changeFileSystem" visible="false"/>

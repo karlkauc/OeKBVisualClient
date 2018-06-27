@@ -30,8 +30,7 @@ class OeKBHTTP {
             System.setProperty("java.net.useSystemProxies", "true")
 
             useCustomProxy = false
-        }
-        else {
+        } else {
             if (applicationSettings.connectionProxyHost.size() != 0) {
                 proxyHost = applicationSettings.connectionProxyHost as String
                 proxyPort = applicationSettings.connectionProxyPort as Integer
@@ -41,8 +40,7 @@ class OeKBHTTP {
         if (proxyHost.size() > 1 && proxyPort > 1) {
             useCustomProxy = true
             log.debug "proxy settings: " + proxyHost + ":" + proxyPort
-        }
-        else {
+        } else {
             log.info "no valid proxy settings found!"
         }
 
@@ -105,6 +103,8 @@ class OeKBHTTP {
     static String downloadAccessRules() {
         applicationSettings.readSettingsFromFile()
         String outputString = ""
+        log.debug "OeKB Username: " + applicationSettings.oekbUserName
+        log.debug "OeKB DDS: " + applicationSettings.dataSupplierList
 
         oekbConnection.post {
             request.body = [

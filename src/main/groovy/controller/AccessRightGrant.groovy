@@ -272,8 +272,6 @@ class AccessRightGrant implements Initializable {
                 void handle(ActionEvent t) {
                     TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow()
                     if (rule.item.rootRow) {
-
-
                         log.debug "Rule zum Löschen: " + rule.item
                         // ar.deleteRule(rule.item)
                     } else {
@@ -289,7 +287,7 @@ class AccessRightGrant implements Initializable {
         protected void updateItem(Boolean t, boolean empty) {
             this.getTreeTableRow()
             RuleRow current = (RuleRow) this.getTreeTableRow().item
-            println "current: " + current
+            log.debug "current: " + current
             if (current == null) {
                 cellButton.setText("NULL")
             } else {
