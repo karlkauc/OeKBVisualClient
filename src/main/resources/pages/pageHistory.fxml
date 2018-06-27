@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXButton?>
+
+<AnchorPane AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+            AnchorPane.rightAnchor="5.0"
+            stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.History">
+    <HBox>
+        <JFXTextField fx:id="searchField" text=" search ... "/>
+        <JFXButton fx:id="dump" text="DUMP" onAction="#dumpValues"/>
+    </HBox>
+    <JFXTreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+                      AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
+                      fx:id="table">
+        <columns>
+            <JFXTreeTableColumn fx:id="department"
+                                text="Department" minWidth="133" resizable="false"/>
+            <JFXTreeTableColumn fx:id="age"
+                                text="Age" minWidth="133" resizable="false"/>
+            <JFXTreeTableColumn fx:id="userName"
+                                text="User Name 22" minWidth="133" resizable="false"/>
+        </columns>
+    </JFXTreeTableView>
+</AnchorPane>
+

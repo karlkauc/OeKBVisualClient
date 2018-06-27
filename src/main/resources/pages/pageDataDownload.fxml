@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane stylesheets="@../css/client.css"
+            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+            AnchorPane.rightAnchor="5.0"
+            xmlns="http://javafx.com/javafx/8">
+   <Label text="Page Data Download" styleClass="Data Download"/>
+</AnchorPane>

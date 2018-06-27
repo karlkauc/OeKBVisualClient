@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<AnchorPane AnchorPane.topAnchor="40.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+            AnchorPane.rightAnchor="5.0"
+            stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DataUpload">
+    <HBox>
+        <Label styleClass="ueberschrift1" text="Page Data Upload"/>
+    </HBox>
+    <JFXTextArea fx:id="dataUploadMessage" AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="390.0"
+                 AnchorPane.leftAnchor="5.0"
+                 AnchorPane.rightAnchor="5.0" styleClass="dataUploadTextBox"/>
+
+    <StackPane fx:id="dataUpload" styleClass="dataUploadPane"
+               onDragDropped="#dataUploadDropped" onDragOver="#onDataUpload"
+               AnchorPane.topAnchor="405.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+               AnchorPane.rightAnchor="5.0">
+        <Label text="DROP XML FILES HERE"/>
+    </StackPane>
+
+</AnchorPane>

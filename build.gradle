@@ -1,0 +1,135 @@
+plugins {
+    id "edu.sc.seis.launch4j" version "2.4.4"
+}
+
+apply plugin: 'edu.sc.seis.launch4j'
+apply plugin: 'groovy'
+apply plugin: 'java-library'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+mainClassName = 'StartApp'
+version = '0.3'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+project.extensions.poiVersion = '3.+'
+project.extensions.log4jVersion = '2.+'
+
+configurations {
+    compile.exclude module: 'stax'
+    compile.exclude module: 'stax-api'
+    compile.exclude module: 'xpp3'
+}
+
+dependencies {
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.+'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.extensions.log4jVersion
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.extensions.log4jVersion
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: project.extensions.log4jVersion
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.+'
+
+    compile group: 'org.apache.poi', name: 'poi', version: project.extensions.poiVersion
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: project.extensions.poiVersion
+    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: project.extensions.poiVersion
+    compile group: 'org.apache.poi', name: 'ooxml-schemas', version: '1.3'
+
+    compile 'io.github.http-builder-ng:http-builder-ng-apache:1.0.+'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.+'
+
+    compile group: 'com.jfoenix', name: 'jfoenix', version: '8.0.+'
+
+    // für Java 9/10/11
+    // compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.+'
+    // compile group: 'com.jfoenix', name: 'jfoenix', version: '9.0.+'
+
+    // compile files('lib/OeKB-FDP-Client-2.3.0.jar')
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName,
+                'Implementation-Title': project.name,
+                'Implementation-Version': version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version')
+    }
+    exclude('**/*.txt')
+    exclude('**/*.xlsx')
+    exclude('sass')
+    exclude('**/isinlei.csv')
+}
+
+launch4j {
+    dontWrapJar = true
+    mainClassName = 'StartApp'
+    headerType = "gui"
+    icon = "${projectDir}/img/icons8-connectdevelop.ico"
+    copyright = System.getProperty('user.name')
+    jvmOptions = ["-Dlog4j.configurationFile=resources/log4j2.properties"]
+    bundledJre64Bit = true
+    bundledJrePath = 'jre'
+    outputDir = project.name
+}
+
+/*
+task sourceSetProperties() {
+    sourceSets {
+        main {
+            println "java.srcDirs = ${java.srcDirs}"
+            println "resources.srcDirs = ${resources.srcDirs}"
+            println "java.files = ${java.files.name}"
+            println "allJava.files = ${allJava.files.name}"
+            println "resources.files = ${resources.files.name}"
+            println "allSource.files = ${allSource.files.name}"
+            println "output.classesDir = ${output.classesDir}"
+            println "output.resourcesDir = ${output.resourcesDir}"
+            println "output.files = ${output.files}"
+        }
+    }
+}
+*/
+
+task copyFiles() {
+    doLast {
+        copy {
+            from(zipTree('jre.zip'))
+            into "$buildDir/$project.name"
+        }
+        copy {
+            from "LICENSE", "README.md"
+            into "$buildDir/$project.name/"
+        }
+        copy {
+            from "${sourceSets.main.resources.srcDirs[0]}" + File.separator + "isinlei.csv", "${sourceSets.main.resources.srcDirs[0]}" + File.separator + "log4j2.properties"
+            into "$buildDir/$project.name/resources"
+        }
+
+        new File("$buildDir/$project.name/logs").mkdir()
+    }
+}
+
+tasks.createExe.dependsOn(copyFiles)
+
+task zipWinExe(type: Zip) {
+    from "$buildDir"
+    include "$project.name/**"
+    exclude '*launch4j*'
+    archiveName project.name + "-" + version + ".zip"
+    destinationDir file("$buildDir")
+}
+
+task doAll() {
+}
+
+tasks.doAll.dependsOn clean
+tasks.doAll.dependsOn createExe
+tasks.doAll.dependsOn zipWinExe
