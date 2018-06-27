@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Log4j2
-@CompileStatic
+//@CompileStatic
 class WriteXLS {
 
     def static writeAccessRights(String filename, List<AccessRule> accessRules) {

@@ -43,7 +43,7 @@ class AccessRightsReceived implements Initializable {
     @FXML
     void exportToExcel() {
         def
-        final fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "accessRulesReceived.xslx"
+        final fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "accessRulesReceived.xlsx"
         log.debug "speichere alles nach Excel [" + fileName + "]."
 
         WriteXLS.writeAccessRights(fileName, accessRule)
