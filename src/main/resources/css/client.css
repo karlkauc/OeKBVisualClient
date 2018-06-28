@@ -26,16 +26,15 @@
   -fx-background-color: #FEFEFF;
 }
 
-/* line 45, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 44, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .ueberschrift1 {
-  /* -fx-font-family         : "Arial"; */
   -fx-font-weight: normal;
   -fx-font-size: 35px;
   -fx-text-fill: #2c5e7e;
   -fx-padding: 10 5 10 10;
 }
 
-/* line 53, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 51, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .saveSetttings {
   -jfx-button-type: RAISED;
   -fx-background-color: #28a745;
@@ -43,7 +42,7 @@
 }
 
 /* nav buttons */
-/* line 62, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 60, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .jfx-button {
   -fx-background-radius: 0;
   -jfx-button-type: FLAT;
@@ -59,45 +58,45 @@
   -fx-font-family: "Consolas";
 }
 
-/* line 78, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 76, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .jfx-button:hover {
   -fx-background-color: #2c5e7e;
   -fx-text-fill: white;
   -fx-padding: 10 10 10 20;
 }
 
-/* line 84, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 82, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .accessRightsReceived {
   -fx-background-image: url("../img/user_credentials_40_40.png");
 }
 
-/* line 88, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 86, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .settings {
   -fx-background-image: url("../img/settings_40_40.png");
 }
 
-/* line 92, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 90, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .changeToDataUpload {
   -fx-background-image: url("../img/data_upload_40_40.png");
 }
 
-/* line 96, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 94, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .fundsXMLDataDownload {
   -fx-background-image: url("../img/data_upload_40_40.png");
 }
 
-/* line 100, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 98, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .history {
   -fx-background-image: url("../img/history_40_40.png");
 }
 
-/* line 104, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 102, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .accessRightsGrant {
   -fx-background-image: url("../img/user_credentials_40_40.png");
 }
 
 /* Data Upload */
-/* line 110, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 108, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .dataUploadPane {
   -fx-background-color: lightgray;
   -fx-background-radius: 5.0;
@@ -108,7 +107,7 @@
   -fx-border-style: dashed;
 }
 
-/* line 120, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 118, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .dataUploadPaneAccepted {
   -fx-background-color: lightgray;
   -fx-background-radius: 5.0;
@@ -119,27 +118,50 @@
   -fx-border-style: dashed;
 }
 
-/* line 130, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 128, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .dataUploadTextBox {
   -fx-background-color: lightgray;
 }
 
-/* line 135, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 133, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .prodServer, .dataSupplier {
   -fx-font-family: "Consolas";
   -fx-text-fill: white;
 }
 
-/* line 141, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
-.dataSupplier {
+/* line 139, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+.left .dataSupplier {
   -fx-background-color: #29B6F6;
   -fx-background-insets: 0, 0 0 1 0;
   -fx-background-radius: 0;
+  -fx-background-radius: 0;
+  -jfx-button-type: FLAT;
+  -fx-background-color: #29B6F6;
+  -fx-text-fill: #E1F5FE;
+  -fx-min-height: 40px;
+  -fx-min-width: 40px;
+  -fx-font-weight: 900;
+  -fx-background-size: 40px 40px;
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: left center;
+  -fx-font-size: 16px;
+  -fx-font-family: "Consolas";
 }
 
-/* line 146, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+/* line 157, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .dataSupplier:focused {
   -fx-background-color: lightgray;
+}
+
+/* line 161, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+.meneuText, .prodServer {
+  -fx-font-size: 16px;
+  -fx-font-family: "Consolas";
+  -fx-background-color: #29B6F6;
+  -fx-background-position: left center;
+  -fx-text-fill: white;
+  -fx-padding: 0 0 0 5;
+  /* (top/right/bottom/left) */
 }
 
 /*# sourceMappingURL=../css/client.map */

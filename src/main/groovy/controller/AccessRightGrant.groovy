@@ -53,7 +53,7 @@ class AccessRightGrant implements Initializable {
     @FXML
     void exportToExcel() {
         def
-        final fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_accessRulesGranted.xlsx"
+        final fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_accessRulesGranted.xslx"
         log.debug "speichere alle ab [" + fileName + "]."
         WriteXLS.writeAccessRights(fileName, accessRule)
         statusMessage.setText("Alles gespeichert!")
@@ -266,12 +266,12 @@ class AccessRightGrant implements Initializable {
         final Button cellButton = new Button("Remove")
 
         ButtonCell() {
-            // println "drinnen!"
             cellButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 void handle(ActionEvent t) {
                     TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow()
                     if (rule.item.rootRow) {
+
                         log.debug "Rule zum Löschen: " + rule.item
                         // ar.deleteRule(rule.item)
                     } else {

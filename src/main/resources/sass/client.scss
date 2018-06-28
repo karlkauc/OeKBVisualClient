@@ -41,9 +41,7 @@ $top: #2c5e7e;
     -fx-background-color: $mainColor;
 }
 
-
 .ueberschrift1 {
-    /* -fx-font-family         : "Arial"; */
     -fx-font-weight         : normal;
     -fx-font-size           : 35px;
     -fx-text-fill           : #2c5e7e;
@@ -138,12 +136,33 @@ $menueBackground:   #29B6F6;
 }
 
 
-.dataSupplier {
+.left .dataSupplier  {
     -fx-background-color: $menueBackground;
     -fx-background-insets: 0, 0 0 1 0 ;
     -fx-background-radius: 0 ;
+
+       -fx-background-radius   : 0;
+        -jfx-button-type        : FLAT;
+        -fx-background-color    : $menueBackground;
+        -fx-text-fill           : #E1F5FE;
+        -fx-min-height          : 40px;
+        -fx-min-width           : 40px;
+        -fx-font-weight         : 900;
+        -fx-background-size     : 40px 40px;
+        -fx-background-repeat   : no-repeat;
+        -fx-background-position : left center;
+        -fx-font-size           : 16px;
+        -fx-font-family         : "Consolas";
 }
 .dataSupplier:focused {
     -fx-background-color: lightgray;
 }
 
+.meneuText, .prodServer {
+    -fx-font-size:              16px;
+    -fx-font-family:            "Consolas";
+    -fx-background-color:       $menueBackground;
+    -fx-background-position:    left center;
+    -fx-text-fill:              white;
+    -fx-padding:                0 0 0 5; /* (top/right/bottom/left) */
+}

@@ -15,7 +15,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Log4j2
-//@CompileStatic
 class WriteXLS {
 
     def static writeAccessRights(String filename, List<AccessRule> accessRules) {
@@ -23,12 +22,13 @@ class WriteXLS {
         def fe = FundEnhancer.getInstance()
         fe.readData()
 
-        new WorkbookBuilder().workbook {
+        def builder = new WorkbookBuilder()
+        builder.workbook {
             sheet("Access Rights") {
                 row(["Rule ID", "Profile", "Content Type", "Creator From", "Creator To", "LEI", "OENB_ID", "ISIN",
                      "Fund Name", "Date from", "Date to", "frequency", "Costs by data supplier"])
-                accessRules.each { rule ->
 
+                accessRules.each { rule ->
                     rule.LEI.each { lei ->
                         row([rule.id, rule.profile, rule.contentType, rule.dataSupplierCreatorShort,
                              rule.dataSuppliersGivenShort?.join(';'), lei, null, null, fe.getFundNameByID(lei.toString()),
@@ -62,7 +62,7 @@ class WriteXLS {
 @CompileStatic
 @Log4j2
 class WorkbookBuilder {
-    XSSFWorkbook workbook = new XSSFWorkbook()
+    XSSFWorkbook workbook
     Sheet sheet
     int rows
     int col
@@ -70,8 +70,9 @@ class WorkbookBuilder {
 
     String filename
 
-    Workbook workbook(@DelegatesTo(WorkbookBuilder.class) Closure closure) {
+    Workbook workbook(@DelegatesTo  (WorkbookBuilder.class) Closure closure) {
         log.debug "erstelle workbook"
+        workbook = new XSSFWorkbook()
 
         closure.delegate = this
         closure.call()
