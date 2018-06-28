@@ -169,6 +169,13 @@ class MainController implements Initializable {
         dataSupplier.editable = true
         dataSupplier.text = settingsData.dataSupplierList
         setLabelTextForServer()
+
+        if (settingsData.fileSystem) {
+            fileSystem.visible = true
+        }
+        else {
+            fileSystem.visible = false
+        }
     }
 
 }

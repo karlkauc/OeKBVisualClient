@@ -2,7 +2,6 @@ package controller
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
-import controller.AccessRightGrant.ButtonCell
 import dao.AccesRights
 import dao.WriteXLS
 import groovy.transform.CompileStatic
@@ -259,50 +258,76 @@ class AccessRightGrant implements Initializable {
         accessRightTable.tableMenuButtonVisible = true
         accessRightTable.columns.addAll(ruleId, removeButton, profile, contentType, dds, ids, fundName, dateFrom, dateTo, frequency)
     }
+}
 
-    @CompileStatic
-    @Log4j2
-    private class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
-        final Button cellButton = new Button("Remove")
 
-        ButtonCell() {
-            cellButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                void handle(ActionEvent t) {
-                    TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow()
-                    if (rule.item.rootRow) {
 
-                        log.debug "Rule zum Löschen: " + rule.item
-                        // ar.deleteRule(rule.item)
+@CompileStatic
+@Log4j2(value = "logButton")
+class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
+    final Button cellButton = new Button("Remove")
+
+    ButtonCell() {
+        cellButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            void handle(ActionEvent t) {
+                TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow()
+                if (rule.item.rootRow) {
+
+                    logButton.debug "Rule zum Löschen: " + rule.item
+                    // ar.deleteRule(rule.item)
+
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
+                    alert.setTitle("Information Dialog")
+                    alert.setHeaderText("Look, an Information Dialog")
+                    alert.setContentText("I have a great message for you!")
+
+                    Optional<ButtonType> result = alert.showAndWait()
+                    if (result.get() == ButtonType.OK){
+                        logButton.debug "ALLES OK"
                     } else {
-                        log.debug "lösche ISIN aus rule: " + rule.item.LEI + "/" + rule.item.OENB_ID + "/" + rule.item.SHARECLASS_ISIN + "/" + rule.item.SEGMENT_ISIN
-                        ar.deleteFundFromRule(rule.item)
+                        logButton.debug "WOLLTE DOCH NICHT"
+                    }
+
+                } else {
+                    logButton.debug "lösche ISIN aus rule: " + rule.item.LEI + "/" + rule.item.OENB_ID + "/" + rule.item.SHARECLASS_ISIN + "/" + rule.item.SEGMENT_ISIN
+                    // ar.deleteFundFromRule(rule.item)
+
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
+                    alert.title = "Lösche was raus"
+                    alert.headerText = "Look, an Information Dialog"
+                    alert.contentText = "lösche ISIN aus rule: " + rule.item.LEI + "/" + rule.item.OENB_ID + "/" + rule.item.SHARECLASS_ISIN + "/" + rule.item.SEGMENT_ISIN
+
+                    Optional<ButtonType> result = alert.showAndWait()
+                    if (result.get() == ButtonType.OK){
+                        logButton.debug "ALLES OK"
+                    } else {
+                        logButton.debug "WOLLTE DOCH NICHT"
                     }
                 }
-            })
-        }
-
-        //Display button if the row is not empty
-        @Override
-        protected void updateItem(Boolean t, boolean empty) {
-            this.getTreeTableRow()
-            RuleRow current = (RuleRow) this.getTreeTableRow().item
-            log.debug "current: " + current
-            if (current == null) {
-                cellButton.setText("NULL")
-            } else {
-                if (current?.rootRow) {
-                    cellButton.setText("EDIT")
-                } else {
-                    cellButton.setText("REMOVE")
-                }
             }
-
-            super.updateItem(t, empty)
-            if (!empty) {
-                setGraphic(cellButton)
-            }
-        }
+        })
     }
 
+    //Display button if the row is not empty
+    @Override
+    protected void updateItem(Boolean t, boolean empty) {
+        this.getTreeTableRow()
+        RuleRow current = (RuleRow) this.getTreeTableRow().item
+        logButton.debug "current: " + current
+        if (current == null) {
+            cellButton.setText("NULL")
+        } else {
+            if (current?.rootRow) {
+                cellButton.setText("EDIT")
+            } else {
+                cellButton.setText("REMOVE")
+            }
+        }
+
+        super.updateItem(t, empty)
+        if (!empty) {
+            setGraphic(cellButton)
+        }
+    }
 }
