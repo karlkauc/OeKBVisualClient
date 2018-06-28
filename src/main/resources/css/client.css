@@ -132,7 +132,7 @@
 /* line 139, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .dataSupplier {
   -fx-background-color: #29B6F6;
-  -fx-background-insets: 0, 0 0 1 0;
+  /* -fx-background-insets: 0, 0 0 1 0 ; */
   -fx-background-radius: 0;
   -fx-background-radius: 0;
   -jfx-button-type: FLAT;
@@ -162,6 +162,16 @@
   -fx-text-fill: white;
   -fx-padding: 0 0 0 5;
   /* (top/right/bottom/left) */
+}
+
+/* line 170, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
+.jfx-toggle-button {
+  -jfx-toggle-color: #e0210f;
+  -jfx-untoggle-color: #FAFAFA;
+  -jfx-toggle-line-color: #d35b23;
+  -jfx-untoggle-line-color: #999999;
+  -jfx-size: 10.0;
+  -jfx-disable-visual-focus: false;
 }
 
 /*# sourceMappingURL=../css/client.map */
