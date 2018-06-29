@@ -284,6 +284,9 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     Optional<ButtonType> result = alert.showAndWait()
                     if (result.get() == ButtonType.OK){
                         logButton.debug "ALLES OK"
+
+                        // AccesRights ar = new AccesRights()
+                        //ar.deleteRule(rule.item)
                     } else {
                         logButton.debug "WOLLTE DOCH NICHT"
                     }
@@ -293,13 +296,17 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     // ar.deleteFundFromRule(rule.item)
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
-                    alert.title = "Lösche was raus"
-                    alert.headerText = "Look, an Information Dialog"
+                    alert.title = "Delete fund from rule"
+                    alert.headerText = "Do you really want to delete the Fund?"
                     alert.contentText = "lösche ISIN aus rule: " + rule.item.LEI + "/" + rule.item.OENB_ID + "/" + rule.item.SHARECLASS_ISIN + "/" + rule.item.SEGMENT_ISIN
 
                     Optional<ButtonType> result = alert.showAndWait()
                     if (result.get() == ButtonType.OK){
                         logButton.debug "ALLES OK"
+
+                        AccesRights ar = new AccesRights()
+                        ar.deleteFundFromRule(rule.item)
+
                     } else {
                         logButton.debug "WOLLTE DOCH NICHT"
                     }
