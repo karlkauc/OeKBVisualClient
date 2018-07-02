@@ -9,8 +9,10 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
+import javafx.scene.layout.GridPane
 import javafx.util.Callback
 import model.AccessRule
 import model.ApplicationSettings
@@ -280,6 +282,26 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     alert.setTitle("Information Dialog")
                     alert.setHeaderText("Look, an Information Dialog")
                     alert.setContentText("I have a great message for you!")
+
+                    GridPane grid = new GridPane()
+                    grid.setHgap(10)
+                    grid.setVgap(10)
+                    grid.setPadding(new Insets(20, 150, 10, 10))
+
+                    TextField username = new TextField()
+                    username.setPromptText("Username")
+                    PasswordField password = new PasswordField()
+                    password.setPromptText("Password")
+
+                    grid.add(new Label("Username:"), 0, 0)
+                    grid.add(username, 1, 0)
+                    grid.add(new Label("Password:"), 0, 1)
+                    grid.add(password, 1, 1)
+
+                    alert.dialogPane.content = grid
+
+
+
 
                     Optional<ButtonType> result = alert.showAndWait()
                     if (result.get() == ButtonType.OK){
