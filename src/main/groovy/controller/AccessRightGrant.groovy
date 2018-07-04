@@ -279,33 +279,82 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     // ar.deleteRule(rule.item)
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
-                    alert.setTitle("Information Dialog")
-                    alert.setHeaderText("Look, an Information Dialog")
-                    alert.setContentText("I have a great message for you!")
+                    alert.setTitle("Modify Access Rights")
+                    alert.setHeaderText("Access Rights from: " + rule.item.dataSupplierCreatorShort)
 
                     GridPane grid = new GridPane()
                     grid.setHgap(10)
                     grid.setVgap(10)
-                    grid.setPadding(new Insets(20, 150, 10, 10))
+                    grid.setPadding(new Insets(20, 30, 10, 20))
 
-                    TextField username = new TextField()
-                    username.setPromptText("Username")
-                    PasswordField password = new PasswordField()
-                    password.setPromptText("Password")
+                    TextField ruleId = new TextField()
+                    ruleId.text = rule.item.id
 
-                    grid.add(new Label("Username:"), 0, 0)
-                    grid.add(username, 1, 0)
-                    grid.add(new Label("Password:"), 0, 1)
-                    grid.add(password, 1, 1)
+                    TextField profile = new TextField()
+                    profile.text = rule.item.profile
+
+                    TextField toDDS = new TextField()
+                    toDDS.text = rule.item.dataSuppliersGivenShort
+
+                    TextField dateFrom = new TextField()
+                    dateFrom.text = rule.item.dateFrom
+
+                    TextField dateTo = new TextField()
+                    dateTo.text = rule.item.dateTo
+
+                    CheckBox costsByDDS = new CheckBox()
+                    costsByDDS.selected = rule.item.costsByDataSupplier
+
+                    TextField comment = new TextField()
+                    comment.text = "TBD"
+
+                    TextField contentType = new TextField()
+                    contentType.text = rule.item.contentType
+
+                    TextField addLEI = new TextField()
+                    TextField addOENB_ID = new TextField()
+                    TextField addSHARECLASS_ISIN = new TextField()
+                    TextField addSEGMENT_ISIN = new TextField()
+
+                    grid.add(new Label("Rule ID:"), 0, 0)
+                    grid.add(ruleId, 1, 0)
+                    grid.add(new Label("Profile:"), 2, 0)
+                    grid.add(profile, 3, 0)
+
+                    grid.add(new Label("Datasupplier: "), 0, 1)
+                    grid.add(toDDS, 1,1)
+                    grid.add(new Label("Costs by DDS: "), 2, 1)
+                    grid.add(costsByDDS, 3,1)
+
+                    grid.add(new Label("From Date: "), 0, 2)
+                    grid.add(dateFrom, 1,2)
+                    grid.add(new Label("To Date: "), 2, 2)
+                    grid.add(dateTo, 3,2)
+
+                    grid.add(new Label("Description: "), 0,3)
+                    grid.add(comment, 1,3)
+                    grid.add(new Label("Content Type: "), 2,3)
+                    grid.add(contentType, 3,3)
+
+
+                    grid.add(new Label("Add LEI: "), 0, 4)
+                    grid.add(addLEI, 1,4)
+                    grid.add(new Label("Add OeNB ID: "), 2, 4)
+                    grid.add(addOENB_ID, 3,4)
+
+                    grid.add(new Label("Add ShareClass ISIN: "), 0, 5)
+                    grid.add(addSHARECLASS_ISIN, 1,5)
+                    grid.add(new Label("Add Segement ISIN: "), 2, 5)
+                    grid.add(addSEGMENT_ISIN, 3,5)
 
                     alert.dialogPane.content = grid
-
-
-
 
                     Optional<ButtonType> result = alert.showAndWait()
                     if (result.get() == ButtonType.OK){
                         logButton.debug "ALLES OK"
+
+                        logButton.debug "RULE ID: " + ruleId.text
+                        logButton.debug "Profile: " + profile.text
 
                         // AccesRights ar = new AccesRights()
                         //ar.deleteRule(rule.item)
