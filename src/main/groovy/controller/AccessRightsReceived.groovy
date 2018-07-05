@@ -13,6 +13,7 @@ import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.BorderPane
 import model.AccessRule
 import model.ApplicationSettings
 import model.RuleRow
@@ -32,7 +33,7 @@ class AccessRightsReceived implements Initializable {
     private JFXButton exportToExcel
 
     @FXML
-    private AnchorPane accessRightPane
+    private BorderPane accessRightPane
 
     @FXML
     private TreeTableView<RuleRow> accessRightTable

@@ -5,27 +5,47 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="accessRightPane"
+<BorderPane fx:id="accessRightPane"
             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
             AnchorPane.rightAnchor="5.0"
             stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.AccessRightsReceived">
-    <HBox>
-        <Label text="Access Rights Received" styleClass="ueberschrift1"/>
-        <JFXButton fx:id="exportToExcel" onAction="#exportToExcel"
-                   text="Export to Excel">
-            <graphic>
-                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/ms_excel.png"/>
-                </ImageView>
-            </graphic>
-        </JFXButton>
-        <Label fx:id="statusMessage"/>
-    </HBox>
-    <TreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-                   AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
-                   fx:id="accessRightTable"/>
-</AnchorPane>
+    <top>
+        <BorderPane>
+            <left>
+                <Label text="Access Rights Received" styleClass="ueberschrift1"/>
+            </left>
+            <right>
+                <HBox>
+                    <JFXButton fx:id="exportToExcel" onAction="#exportToExcel">
+                        <graphic>
+                            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@../img/ms_excel.png"/>
+                            </ImageView>
+                        </graphic>
+                    </JFXButton>
+                </HBox>
+            </right>
+            <center>
+                <Label fx:id="statusMessage"/>
+            </center>
+        </BorderPane>
+    </top>
+    <bottom>
+
+    </bottom>
+    <left>
+
+    </left>
+    <right>
+
+    </right>
+    <center>
+        <TreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+                       AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
+                       fx:id="accessRightTable"/>
+
+    </center>
+</BorderPane>

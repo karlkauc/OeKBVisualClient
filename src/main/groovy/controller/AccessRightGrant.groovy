@@ -352,8 +352,9 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     grid.add(addSEGMENT_ISIN, 3, 6)
 
                     alert.dialogPane.content = grid
-
                     Optional<ButtonType> result = alert.showAndWait()
+
+
                     if (result.get() == ButtonType.OK) {
                         logButton.debug "ALLES OK"
 
