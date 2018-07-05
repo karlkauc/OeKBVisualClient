@@ -51,6 +51,9 @@
                 <JFXButton id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
                            prefHeight="60.0" prefWidth="200.0" styleClass="changeToDataUpload" text="Data Upload">
                 </JFXButton>
+                <JFXButton id="changeToOFI" alignment="CENTER_RIGHT" onAction="#changeToOFI"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToOFI" text="OeNB Meldung">
+                </JFXButton>
                 <HBox prefHeight="60.0" prefWidth="200.0">
                     <Label text="DDS: " styleClass="meneuText"
                            prefHeight="60.0" prefWidth="120.0"/>

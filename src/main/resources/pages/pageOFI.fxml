@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+            AnchorPane.rightAnchor="5.0"
+            stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.OFI">
+
+    <top>
+        <Label text="OeNB Meldung" styleClass="ueberschrift1"/>
+    </top>
+</BorderPane>

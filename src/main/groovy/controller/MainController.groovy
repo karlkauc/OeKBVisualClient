@@ -106,6 +106,21 @@ class MainController implements Initializable {
     }
 
     @FXML
+    private void changeToOFI() {
+        log.debug "chenage to OFI"
+
+        if (settingsData.oekbUserName.isEmpty() || settingsData.oekbPasswort.isEmpty()) {
+            log.debug "no settings found"
+            changeToSettings()
+        } else {
+            Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOFI.fxml"))
+            mainPane.getChildren().setAll(tempPane)
+            mainPane.setPrefSize(mainPane.maxWidth, mainPane.maxHeight)
+        }
+
+    }
+
+    @FXML
     private void changeToDataUpload() {
         log.debug "bin jetzt in changeToDataUpload"
 
