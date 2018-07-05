@@ -67,17 +67,17 @@
 
 /* line 82, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .accessRightsReceived {
-  -fx-background-image: url("../img/user_credentials_40_40.png");
+  -fx-background-image: url("../img/icons8-key-40.png");
 }
 
 /* line 86, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .settings {
-  -fx-background-image: url("../img/settings_40_40.png");
+  -fx-background-image: url("../img/icons8-settings-40.png");
 }
 
 /* line 90, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .changeToDataUpload {
-  -fx-background-image: url("../img/data_upload_40_40.png");
+  -fx-background-image: url("../img/icons8-upload-to-ftp-40.png");
 }
 
 /* line 94, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
@@ -92,7 +92,7 @@
 
 /* line 102, C:/Data/src/OeKBVisualClient/src/main/resources/sass/client.scss */
 .left .accessRightsGrant {
-  -fx-background-image: url("../img/user_credentials_40_40.png");
+  -fx-background-image: url("../img/icons8-people-40.png");
 }
 
 /* Data Upload */

@@ -12,6 +12,8 @@ import javafx.fxml.Initializable
 import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
 import javafx.util.Callback
 import model.AccessRule
@@ -279,6 +281,11 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     // ar.deleteRule(rule.item)
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
+
+                    Image image = new Image("img/icons8-people-80.png")
+                    ImageView imageView = new ImageView(image)
+                    alert.setGraphic(imageView)
+
                     alert.setTitle("Modify Access Rights")
                     alert.setHeaderText("Access Rights from: " + rule.item.dataSupplierCreatorShort)
 
@@ -287,29 +294,19 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     grid.setVgap(10)
                     grid.setPadding(new Insets(20, 30, 10, 20))
 
-                    TextField ruleId = new TextField()
-                    ruleId.text = rule.item.id
-
-                    TextField profile = new TextField()
-                    profile.text = rule.item.profile
-
-                    TextField toDDS = new TextField()
-                    toDDS.text = rule.item.dataSuppliersGivenShort
-
-                    TextField dateFrom = new TextField()
-                    dateFrom.text = rule.item.dateFrom
-
-                    TextField dateTo = new TextField()
-                    dateTo.text = rule.item.dateTo
+                    TextField ruleId = new TextField(rule.item.id)
+                    TextField profile = new TextField(rule.item.profile)
+                    TextField toDDS = new TextField(rule.item.dataSuppliersGivenShort)
+                    TextField dateFrom = new TextField(rule.item.dateFrom)
+                    TextField dateTo = new TextField(rule.item.dateTo)
+                    TextField frequency = new TextField(rule.item.frequency)
+                    TextField delay = new TextField(rule.item.accessDelayInDays)
 
                     CheckBox costsByDDS = new CheckBox()
                     costsByDDS.selected = rule.item.costsByDataSupplier
 
-                    TextField comment = new TextField()
-                    comment.text = "TBD"
-
-                    TextField contentType = new TextField()
-                    contentType.text = rule.item.contentType
+                    TextField comment = new TextField("TBD")
+                    TextField contentType = new TextField(rule.item.contentType)
 
                     TextField addLEI = new TextField()
                     TextField addOENB_ID = new TextField()
@@ -331,21 +328,25 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     grid.add(new Label("To Date: "), 2, 2)
                     grid.add(dateTo, 3,2)
 
-                    grid.add(new Label("Description: "), 0,3)
-                    grid.add(comment, 1,3)
-                    grid.add(new Label("Content Type: "), 2,3)
-                    grid.add(contentType, 3,3)
+                    grid.add(new Label("Freuency: "), 0, 3)
+                    grid.add(frequency, 1,3)
+                    grid.add(new Label("Delay in days: "), 2, 3)
+                    grid.add(delay, 3,3)
 
+                    grid.add(new Label("Description: "), 0,4)
+                    grid.add(comment, 1,4)
+                    grid.add(new Label("Content Type: "), 2,4)
+                    grid.add(contentType, 3,4)
 
-                    grid.add(new Label("Add LEI: "), 0, 4)
-                    grid.add(addLEI, 1,4)
-                    grid.add(new Label("Add OeNB ID: "), 2, 4)
-                    grid.add(addOENB_ID, 3,4)
+                    grid.add(new Label("Add LEI: "), 0, 5)
+                    grid.add(addLEI, 1,5)
+                    grid.add(new Label("Add OeNB ID: "), 2, 5)
+                    grid.add(addOENB_ID, 3,5)
 
-                    grid.add(new Label("Add ShareClass ISIN: "), 0, 5)
-                    grid.add(addSHARECLASS_ISIN, 1,5)
-                    grid.add(new Label("Add Segement ISIN: "), 2, 5)
-                    grid.add(addSEGMENT_ISIN, 3,5)
+                    grid.add(new Label("Add ShareClass ISIN: "), 0, 6)
+                    grid.add(addSHARECLASS_ISIN, 1,6)
+                    grid.add(new Label("Add Segement ISIN: "), 2, 6)
+                    grid.add(addSEGMENT_ISIN, 3,6)
 
                     alert.dialogPane.content = grid
 
