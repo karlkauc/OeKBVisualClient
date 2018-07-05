@@ -8,26 +8,31 @@
 
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <AnchorPane AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
             AnchorPane.rightAnchor="5.0"
             stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AccessRightGrant">
-        <HBox>
-            <Label text="Access Rights Granted" styleClass="ueberschrift1"/>
-            <JFXButton fx:id="exportToExcel" onAction="#exportToExcel"
-                       text="Export to Excel">
-                <graphic>
-                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../img/ms_excel.png"/>
-                    </ImageView>
-                </graphic>
-            </JFXButton>
-            <Label fx:id="statusMessage" />
-            <!-- <JFXButton fx:id="dumpData" text="DUMP Data" onAction="#dumpData" /> -->
-        </HBox>
+    <HBox style="-fx-background-color: red;">
 
-        <TreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-                       AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
-                       fx:id="accessRightTable" editable="true"/>
+        <Label text="Access Rights Granted" styleClass="ueberschrift1"/>
+        <Region prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+        <Label prefWidth="205.0" text="Label On the Center"/>
+        <Region prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+
+        <JFXButton fx:id="exportToExcel" onAction="#exportToExcel">
+            <graphic>
+                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/ms_excel.png"/>
+                </ImageView>
+            </graphic>
+        </JFXButton>
+        <Label fx:id="statusMessage"/>
+        <!-- <JFXButton fx:id="dumpData" text="DUMP Data" onAction="#dumpData" /> -->
+    </HBox>
+
+    <TreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+                   AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
+                   fx:id="accessRightTable" editable="true"/>
 
 </AnchorPane>

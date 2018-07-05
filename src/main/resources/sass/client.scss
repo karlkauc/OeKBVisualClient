@@ -35,8 +35,6 @@ $top: #2c5e7e;
 
 }
 
-
-
 .mainPane {
     -fx-background-color: $mainColor;
 }
@@ -46,6 +44,7 @@ $top: #2c5e7e;
     -fx-font-size           : 35px;
     -fx-text-fill           : #2c5e7e;
     -fx-padding             : 10 5 10 10; // TOP RIGHT BOTTOM LEFT 50/40
+    -fx-vgap                : 10;
 }
 
 .saveSetttings {
@@ -70,7 +69,6 @@ $menueBackground:   #29B6F6;
     -fx-background-position : left center;
     -fx-font-size           : 16px;
     -fx-font-family         : "Consolas";
-
 }
 
 .left .jfx-button:hover {
@@ -134,6 +132,13 @@ $menueBackground:   #29B6F6;
    -fx-font-family          : "Consolas";
    -fx-text-fill            : white;
 }
+
+.prodServer:hover, .left .dataSupplier:hover {
+   -fx-font-family          : "Consolas";
+   -fx-text-fill            : white;
+   -fx-background-color     : #2c5e7e;
+}
+
 
 
 .left .dataSupplier  {

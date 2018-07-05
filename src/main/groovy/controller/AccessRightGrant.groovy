@@ -213,10 +213,10 @@ class AccessRightGrant implements Initializable {
                 return new ButtonCell()
             }
         })
-        removeButton.prefWidth = 95
+        removeButton.prefWidth = 85
 
         TreeTableColumn<RuleRow, String> profile = new TreeTableColumn<>("Profile")
-        profile.prefWidth = 100
+        profile.prefWidth = 80
         profile.setCellValueFactory(new TreeItemPropertyValueFactory<>("profile"))
 
         TreeTableColumn<RuleRow, String> contentType = new TreeTableColumn<>("Content Type")
@@ -228,28 +228,28 @@ class AccessRightGrant implements Initializable {
         ddsFrom.prefWidth = 50
         ddsFrom.setCellValueFactory(new TreeItemPropertyValueFactory<>("dataSupplierCreatorShort"))
         TreeTableColumn<RuleRow, String> ddsTo = new TreeTableColumn<>("to")
-        ddsTo.prefWidth = 180
+        ddsTo.prefWidth = 150
         ddsTo.setCellValueFactory(new TreeItemPropertyValueFactory<>("dataSuppliersGivenShort"))
         dds.columns.addAll(ddsFrom, ddsTo)
 
         TreeTableColumn<RuleRow, String> ids = new TreeTableColumn<>("LEI / OENB ID / ISIN")
         TreeTableColumn<RuleRow, String> lei = new TreeTableColumn<>("LEI")
         lei.setCellValueFactory(new TreeItemPropertyValueFactory<>("LEI"))
-        lei.prefWidth = 150
+        lei.prefWidth = 130
         TreeTableColumn<RuleRow, String> oenbId = new TreeTableColumn<>("OENB ID")
         oenbId.setCellValueFactory(new TreeItemPropertyValueFactory<>("OENB_ID"))
         oenbId.prefWidth = 80
         TreeTableColumn<RuleRow, String> isin = new TreeTableColumn<>("ISIN SC")
         isin.setCellValueFactory(new TreeItemPropertyValueFactory<>("SHARECLASS_ISIN"))
-        isin.prefWidth = 110
+        isin.prefWidth = 90
         TreeTableColumn<RuleRow, String> isinSeg = new TreeTableColumn<>("ISIN Seg")
         isinSeg.setCellValueFactory(new TreeItemPropertyValueFactory<>("SEGMENT_ISIN"))
-        isinSeg.prefWidth = 110
+        isinSeg.prefWidth = 90
         ids.columns.addAll(lei, oenbId, isin, isinSeg)
 
         TreeTableColumn<RuleRow, String> fundName = new TreeTableColumn<>("Fund Name")
         fundName.setCellValueFactory(new TreeItemPropertyValueFactory<>("fundName"))
-        fundName.prefWidth = 200
+        fundName.prefWidth = 110
 
         TreeTableColumn<RuleRow, String> dateFrom = new TreeTableColumn<>("From")
         dateFrom.setCellValueFactory(new TreeItemPropertyValueFactory<>("dateFrom"))
@@ -258,11 +258,14 @@ class AccessRightGrant implements Initializable {
         TreeTableColumn<RuleRow, String> frequency = new TreeTableColumn<>("frequency")
         frequency.setCellValueFactory(new TreeItemPropertyValueFactory<>("frequency"))
 
+        TreeTableColumn<RuleRow, String> delay = new TreeTableColumn<>("Delay")
+        delay.setCellValueFactory(new TreeItemPropertyValueFactory<>("accessDelayInDays"))
+
+
         accessRightTable.tableMenuButtonVisible = true
-        accessRightTable.columns.addAll(ruleId, removeButton, profile, contentType, dds, ids, fundName, dateFrom, dateTo, frequency)
+        accessRightTable.columns.addAll(ruleId, removeButton, profile, contentType, dds, ids, fundName, dateFrom, dateTo, frequency, delay)
     }
 }
-
 
 
 @CompileStatic
@@ -319,39 +322,39 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     grid.add(profile, 3, 0)
 
                     grid.add(new Label("Datasupplier: "), 0, 1)
-                    grid.add(toDDS, 1,1)
+                    grid.add(toDDS, 1, 1)
                     grid.add(new Label("Costs by DDS: "), 2, 1)
-                    grid.add(costsByDDS, 3,1)
+                    grid.add(costsByDDS, 3, 1)
 
                     grid.add(new Label("From Date: "), 0, 2)
-                    grid.add(dateFrom, 1,2)
+                    grid.add(dateFrom, 1, 2)
                     grid.add(new Label("To Date: "), 2, 2)
-                    grid.add(dateTo, 3,2)
+                    grid.add(dateTo, 3, 2)
 
                     grid.add(new Label("Freuency: "), 0, 3)
-                    grid.add(frequency, 1,3)
+                    grid.add(frequency, 1, 3)
                     grid.add(new Label("Delay in days: "), 2, 3)
-                    grid.add(delay, 3,3)
+                    grid.add(delay, 3, 3)
 
-                    grid.add(new Label("Description: "), 0,4)
-                    grid.add(comment, 1,4)
-                    grid.add(new Label("Content Type: "), 2,4)
-                    grid.add(contentType, 3,4)
+                    grid.add(new Label("Description: "), 0, 4)
+                    grid.add(comment, 1, 4)
+                    grid.add(new Label("Content Type: "), 2, 4)
+                    grid.add(contentType, 3, 4)
 
                     grid.add(new Label("Add LEI: "), 0, 5)
-                    grid.add(addLEI, 1,5)
+                    grid.add(addLEI, 1, 5)
                     grid.add(new Label("Add OeNB ID: "), 2, 5)
-                    grid.add(addOENB_ID, 3,5)
+                    grid.add(addOENB_ID, 3, 5)
 
                     grid.add(new Label("Add ShareClass ISIN: "), 0, 6)
-                    grid.add(addSHARECLASS_ISIN, 1,6)
+                    grid.add(addSHARECLASS_ISIN, 1, 6)
                     grid.add(new Label("Add Segement ISIN: "), 2, 6)
-                    grid.add(addSEGMENT_ISIN, 3,6)
+                    grid.add(addSEGMENT_ISIN, 3, 6)
 
                     alert.dialogPane.content = grid
 
                     Optional<ButtonType> result = alert.showAndWait()
-                    if (result.get() == ButtonType.OK){
+                    if (result.get() == ButtonType.OK) {
                         logButton.debug "ALLES OK"
 
                         logButton.debug "RULE ID: " + ruleId.text
@@ -370,10 +373,30 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
                     alert.title = "Delete fund from rule"
                     alert.headerText = "Do you really want to delete the Fund?"
-                    alert.contentText = "lösche ISIN aus rule: " + rule.item.LEI + "/" + rule.item.OENB_ID + "/" + rule.item.SHARECLASS_ISIN + "/" + rule.item.SEGMENT_ISIN
+
+                    Image image = new Image("img/icons8-trash-40.png")
+                    ImageView imageView = new ImageView(image)
+                    alert.setGraphic(imageView)
+
+                    String text = "delete "
+                    if (rule.item.LEI) {
+                        text += "LEI [" + rule.item.LEI + "]"
+                    }
+                    if (rule.item.OENB_ID) {
+                        text += "OENB ID [" + rule.item.OENB_ID + "]"
+                    }
+                    if (rule.item.SHARECLASS_ISIN) {
+                        text += "Shareclass ISIN [" + rule.item.SHARECLASS_ISIN + "]"
+                    }
+                    if (rule.item.SEGMENT_ISIN) {
+                        text += "Segment ISIN [" + rule.item.SEGMENT_ISIN + "]"
+                    }
+                    text += " from rule [" + rule.item.id + "]"
+
+                    alert.contentText = text
 
                     Optional<ButtonType> result = alert.showAndWait()
-                    if (result.get() == ButtonType.OK){
+                    if (result.get() == ButtonType.OK) {
                         logButton.debug "ALLES OK"
 
                         AccesRights ar = new AccesRights()
