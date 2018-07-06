@@ -92,7 +92,6 @@ class AccessRightGrant implements Initializable {
                             OENB_ID: rule.OENB_ID.findAll { it.toString().size() > 0 }.size().toString(),
                             SHARECLASS_ISIN: rule.ISIN_SHARECLASS.size().toString(),
                             SEGMENT_ISIN: rule.ISIN_SEGMENT.size().toString(),
-                            deleteRule: false,
                             rootRow: true
                     )
             )
@@ -115,7 +114,6 @@ class AccessRightGrant implements Initializable {
                                 LEI: (String) LEI,
                                 OENB_ID: null as String,
                                 SHARECLASS_ISIN: null as String,
-                                deleteRule: false,
                                 rootRow: false
                         ))
                 rootTable.add(l)
@@ -139,7 +137,6 @@ class AccessRightGrant implements Initializable {
                                 LEI: null as String,
                                 OENB_ID: (String) OENB_ID,
                                 SHARECLASS_ISIN: null as String,
-                                deleteRule: false,
                                 rootRow: false
                         ))
                 rootTable.add(oenbTemp)
@@ -163,7 +160,6 @@ class AccessRightGrant implements Initializable {
                                 LEI: null as String,
                                 OENB_ID: null as String,
                                 SHARECLASS_ISIN: (String) ISIN,
-                                deleteRule: false,
                                 rootRow: false
                         ))
                 rootTable.add(isinTemp)
@@ -188,7 +184,6 @@ class AccessRightGrant implements Initializable {
                                 OENB_ID: null as String,
                                 SEGMENT_ISIN: (String) ISIN,
                                 SHARECLASS_ISIN: null as String,
-                                deleteRule: false,
                                 rootRow: false
                         ))
                 rootTable.add(isinTemp)
@@ -206,7 +201,7 @@ class AccessRightGrant implements Initializable {
         ruleId.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"))
         ruleId.editable = true
 
-        TreeTableColumn<RuleRow, Boolean> removeButton = new TreeTableColumn<RuleRow, Boolean>("Remove")
+        TreeTableColumn<RuleRow, Boolean> removeButton = new TreeTableColumn<RuleRow, Boolean>()
         removeButton.setCellFactory(new Callback<TreeTableColumn<RuleRow, Boolean>, TreeTableCell<RuleRow, Boolean>>() {
             @Override
             TreeTableCell<RuleRow, Boolean> call(TreeTableColumn<RuleRow, Boolean> param) {
@@ -354,12 +349,31 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     alert.dialogPane.content = grid
                     Optional<ButtonType> result = alert.showAndWait()
 
-
                     if (result.get() == ButtonType.OK) {
                         logButton.debug "ALLES OK"
 
-                        logButton.debug "RULE ID: " + ruleId.text
-                        logButton.debug "Profile: " + profile.text
+                        if (addLEI.text != null || addOENB_ID.text != null || addSHARECLASS_ISIN != null || addSEGMENT_ISIN != null) {
+                            logButton.info "have to add fund to rule...."
+                        } else {
+                            logButton.debug "nichts zum dazufügen."
+                        }
+
+                        RuleRow newRuleRow = new RuleRow(id: ruleId.text, contentType: contentType.text, profile: profile.text,
+                                dataSupplierCreatorShort: rule.item.dataSupplierCreatorShort, dataSupplierCreatorName: rule.item.dataSupplierCreatorName,
+                                creationTime: rule.item.creationTime,
+                                dataSuppliersGivenShort: toDDS.text, accessDelayInDays: delay.text,
+                                dateFrom: dateFrom.text, dateTo: dateTo.text, frequency: frequency.text, costsByDataSupplier: costsByDDS.selected,
+                                LEI: rule.item.LEI, OENB_ID: rule.item.OENB_ID, SHARECLASS_ISIN: rule.item.SHARECLASS_ISIN, SEGMENT_ISIN: rule.item.SEGMENT_ISIN,
+                                rootRow: rule.item.rootRow)
+
+                        logButton.debug "old Rule: " + rule.item
+                        logButton.debug "new Rule: " + newRuleRow
+
+                        if (newRuleRow == rule.item) {
+                            logButton.debug "alles gleich"
+                        } else {
+                            logButton.debug "unterschiedlich"
+                        }
 
                         // AccesRights ar = new AccesRights()
                         //ar.deleteRule(rule.item)

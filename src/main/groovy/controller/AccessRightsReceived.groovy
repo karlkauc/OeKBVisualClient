@@ -80,8 +80,7 @@ class AccessRightsReceived implements Initializable {
                             LEI: rule.LEI.findAll { it.toString().size() > 0 }.size().toString(),
                             OENB_ID: rule.OENB_ID.findAll { it.toString().size() > 0 }.size().toString(),
                             SHARECLASS_ISIN: rule.ISIN_SHARECLASS.size().toString(),
-                            SEGMENT_ISIN: rule.ISIN_SEGMENT.size().toString(),
-                            deleteRule: true
+                            SEGMENT_ISIN: rule.ISIN_SEGMENT.size().toString()
                     )
             )
 
@@ -102,8 +101,7 @@ class AccessRightsReceived implements Initializable {
                                 LEI: LEI as String,
                                 OENB_ID: null as String,
                                 SHARECLASS_ISIN: null as String,
-                                SEGMENT_ISIN: null as String,
-                                deleteRule: true
+                                SEGMENT_ISIN: null as String
                         ))
                 rootTable.add(l)
             }
@@ -125,8 +123,7 @@ class AccessRightsReceived implements Initializable {
                                 LEI: null as String,
                                 OENB_ID: OENB_ID as String,
                                 SHARECLASS_ISIN: null as String,
-                                SEGMENT_ISIN: null as String,
-                                deleteRule: true
+                                SEGMENT_ISIN: null as String
                         ))
                 rootTable.add(oenbTemp)
             }
@@ -148,8 +145,7 @@ class AccessRightsReceived implements Initializable {
                                 LEI: null as String,
                                 OENB_ID: null as String,
                                 SHARECLASS_ISIN: ISIN as String,
-                                SEGMENT_ISIN: null as String,
-                                deleteRule: true
+                                SEGMENT_ISIN: null as String
                         ))
                 rootTable.add(isinTemp)
             }
@@ -171,8 +167,7 @@ class AccessRightsReceived implements Initializable {
                                 LEI: null as String,
                                 OENB_ID: null as String,
                                 SHARECLASS_ISIN: null as String,
-                                SEGMENT_ISIN: ISIN as String,
-                                deleteRule: true
+                                SEGMENT_ISIN: ISIN as String
                         ))
                 rootTable.add(isinTemp)
             }

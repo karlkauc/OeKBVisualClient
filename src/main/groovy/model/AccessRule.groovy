@@ -30,16 +30,14 @@ class AccessRule {
 }
 
 @Sortable
-@ToString(includeFields = true)
+@ToString(includeNames = true)
 final class RuleRow {
     String id
-    String origId
     String contentType
     String profile
 
     String dataSupplierCreatorShort
     String dataSupplierCreatorName
-
     String dataSuppliersGivenShort
 
     String creationTime
@@ -54,7 +52,6 @@ final class RuleRow {
     String SHARECLASS_ISIN
     String SEGMENT_ISIN
 
-    Boolean deleteRule
     Boolean rootRow
 
     // String fundName

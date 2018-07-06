@@ -63,8 +63,10 @@
                     </TextField>
                 </HBox>
                 <HBox prefHeight="60.0" prefWidth="200.0">
-                    <Label fx:id="server" text="Prod Server" styleClass="meneuText" prefWidth="120.0" prefHeight="60.0"/>
-                    <JFXToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer" prefWidth="80.0" prefHeight="60.0"/>
+                    <Label fx:id="server" text="Prod Server" styleClass="meneuText" prefWidth="120.0"
+                           prefHeight="60.0"/>
+                    <JFXToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer"
+                                     prefWidth="80.0" prefHeight="60.0"/>
                 </HBox>
                 <CheckBox fx:id="fileSystem" mnemonicParsing="false" text="file System"
                           BorderPane.alignment="CENTER" onAction="#changeFileSystem" visible="false"/>
