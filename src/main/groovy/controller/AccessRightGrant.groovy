@@ -352,8 +352,14 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                     if (result.get() == ButtonType.OK) {
                         logButton.debug "ALLES OK"
 
-                        if (addLEI.text != null || addOENB_ID.text != null || addSHARECLASS_ISIN != null || addSEGMENT_ISIN != null) {
+                        if (addLEI.text != "" || addOENB_ID.text != "" || addSHARECLASS_ISIN.text != "" || addSEGMENT_ISIN.text != "") {
                             logButton.info "have to add fund to rule...."
+                            logButton.debug "LEI: " + addLEI.text
+                            logButton.debug "OENB ID: " + addOENB_ID.text
+                            logButton.debug "ShareClass ISIN: " + addSHARECLASS_ISIN.text
+                            logButton.debug "Segment ISIN: " + addSEGMENT_ISIN.text
+
+                            logButton.debug addLEI.text.class
                         } else {
                             logButton.debug "nichts zum dazufügen."
                         }
