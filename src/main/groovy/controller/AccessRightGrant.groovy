@@ -15,6 +15,7 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
+import javafx.stage.Stage
 import javafx.util.Callback
 import model.AccessRule
 import model.ApplicationSettings
@@ -66,7 +67,7 @@ class AccessRightGrant implements Initializable {
         log.debug "starte controller für settings"
 
         settingsData = ApplicationSettings.getInstance()
-        accessRule = ar.readAccessRightsGive()
+        accessRule = ar.getAccessRightsGivenFromOEKB()
         accessRightTable.editable = true
 
         def rootTable = []
@@ -274,15 +275,22 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
             void handle(ActionEvent t) {
                 TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow()
                 if (rule.item.rootRow) {
-
                     logButton.debug "Rule zum Löschen: " + rule.item
-                    // ar.deleteRule(rule.item)
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION)
 
                     Image image = new Image("img/icons8-people-80.png")
                     ImageView imageView = new ImageView(image)
                     alert.setGraphic(imageView)
+
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow()
+                    Image icon = new Image("img/connectdevelop.png")
+                    if (icon == null) {
+                        logButton.error "ICON NULL"
+                    }
+                    else {
+                        stage.getIcons().add(icon)
+                    }
 
                     alert.setTitle("Modify Access Rights")
                     alert.setHeaderText("Access Rights from: " + rule.item.dataSupplierCreatorShort)

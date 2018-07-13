@@ -12,7 +12,6 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import model.AccessRule
 import model.ApplicationSettings
@@ -59,7 +58,7 @@ class AccessRightsReceived implements Initializable {
         settingsData.readSettingsFromFile()
 
         AccesRights ar = new AccesRights()
-        accessRule = ar.readAccesRightsRecieved()
+        accessRule = ar.getAccesRightsRecievedFromOEKB()
 
         def rootTable = []
         TreeItem<RuleRow> root = new TreeItem<>()

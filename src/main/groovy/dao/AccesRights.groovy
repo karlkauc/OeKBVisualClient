@@ -12,7 +12,7 @@ class AccesRights {
 
     def applicationSettings = ApplicationSettings.getInstance()
 
-    List<AccessRule> readAccesRightsRecieved() {
+    List<AccessRule> getAccesRightsRecievedFromOEKB() {
         def outputString
 
         if (applicationSettings.fileSystem) {
@@ -79,7 +79,7 @@ class AccesRights {
 
     }
 
-    List<AccessRule> readAccessRightsGive() {
+    List<AccessRule> getAccessRightsGivenFromOEKB() {
         def outputString
 
         if (applicationSettings.fileSystem) {
@@ -148,9 +148,8 @@ class AccesRights {
     }
 
 
-    String deleteRule(AccessRule rule) {
-        println "drinnen"
-        println "Rule zum löschen: " + rule.id.toString()
+    static String deleteRule(AccessRule rule) {
+        log.debug "Delte Rule: " + rule.id.toString()
 
         def writer = new StringWriter()
         def xml = new MarkupBuilder(writer)
@@ -221,39 +220,31 @@ class AccesRights {
             }
         }
 
-
-        println "----"
-        println XmlUtil.serialize(writer.toString())
-        println "----"
+        log.debug XmlUtil.serialize(writer.toString())
         return writer.toString()
 
     }
 
     def deleteFundFromRule(RuleRow rule) {
-        println "im in deleteFundFromFule"
-        println "lösche Fund aus Rule: " + rule.id + ": " + rule.LEI + "/" + rule.OENB_ID + "/" + rule.SHARECLASS_ISIN + "/" + rule.SEGMENT_ISIN
+        log.debug "im in deleteFundFromFule"
+        log.debug "lösche Fund aus Rule: " + rule.id + ": " + rule.LEI + "/" + rule.OENB_ID + "/" + rule.SHARECLASS_ISIN + "/" + rule.SEGMENT_ISIN
 
-        def given = readAccessRightsGive()
+        def given = accesRightsRecievedFromOEKB
         def idToDelete = given.find { it.id == rule.id }
 
-        println "LEI vorher: " + idToDelete.LEI
+        log.debug"LEI vorher: " + idToDelete.LEI
         idToDelete.LEI.remove(rule.LEI)
-        println "LEI nachher: " + idToDelete.LEI
+        log.debug "LEI nachher: " + idToDelete.LEI
 
         def newRule1 = deleteRule(idToDelete)
         newRule(newRule1)
-
-
     }
 
     def newRule(String newRule) {
         def xml = new XmlSlurper().parseText(newRule)
-
         xml.Task = "import"
-        println "----"
 
-        println XmlUtil.serialize(xml)
-        println "----"
+        log.debug XmlUtil.serialize(xml)
     }
 
 }

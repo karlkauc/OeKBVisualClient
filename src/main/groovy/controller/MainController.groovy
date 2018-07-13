@@ -185,12 +185,7 @@ class MainController implements Initializable {
         dataSupplier.text = settingsData.dataSupplierList
         setLabelTextForServer()
 
-        if (settingsData.fileSystem) {
-            fileSystem.visible = true
-        }
-        else {
-            fileSystem.visible = false
-        }
+        fileSystem.visible = settingsData.fileSystem
     }
 
 }

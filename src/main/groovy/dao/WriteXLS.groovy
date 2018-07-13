@@ -70,7 +70,7 @@ class WorkbookBuilder {
 
     String filename
 
-    Workbook workbook(@DelegatesTo  (WorkbookBuilder.class) Closure closure) {
+    Workbook workbook(@DelegatesTo(WorkbookBuilder.class) Closure closure) {
         log.debug "erstelle workbook"
         workbook = new XSSFWorkbook()
 

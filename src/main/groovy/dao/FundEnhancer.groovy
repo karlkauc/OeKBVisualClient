@@ -14,12 +14,12 @@ class FundEnhancer {
     static void main(args) {
         getInstance().readData()
 
-        println "LEI: " + getInstance().getFundNameByID("529900RNEPM2AX88SJ32")
-        println "ISIN: " + getInstance().getFundNameByID("AT0000A20FX4")
+        println "LEI: " + getFundNameByID("529900RNEPM2AX88SJ32")
+        println "ISIN: " + getFundNameByID("AT0000A20FX4")
         // println "OENB ID: " + getInstance().getFundNameByID("7517734")
-        println getInstance().getFundNameByID("529900RNEPM2AX88SJ32").collect().first().getAt("Fondsbezeichnung")
-        println getInstance().getFundNameByID("AT0000A20FX4").collect().first().getAt("Fondsbezeichnung")
-        println getInstance().getFundNameByID("529900S56OD7UE7H1V04").collect().first().getAt("Fondsbezeichnung")
+        println getFundNameByID("529900RNEPM2AX88SJ32").collect().first()["Fondsbezeichnung"]
+        println getFundNameByID("AT0000A20FX4").collect().first()["Fondsbezeichnung"]
+        println getFundNameByID("529900S56OD7UE7H1V04").collect().first()["Fondsbezeichnung"]
     }
 
     @Memoized
@@ -50,7 +50,7 @@ class FundEnhancer {
                 log.info "ISINLEI CSV File not found under 'resources' folder"
             }
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException ignored) {
             log.info "internal ISIN LEI FILE NOT FOUND"
         }
     }
@@ -81,6 +81,7 @@ class FundEnhancer {
     }
 
     @Memoized
+    static
     def getFundNameByID(String id) {
         def temp = getInstance().getAllFundDataByID(id)
 

@@ -17,7 +17,7 @@
             </left>
             <right>
                 <HBox>
-                    <JFXButton fx:id="aa" onAction="#exportToExcel">
+                    <JFXButton onAction="#exportToExcel">
                         <graphic>
                             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                 <Image url="@../img/icons8-plus-48.png"/>

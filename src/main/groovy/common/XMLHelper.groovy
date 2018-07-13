@@ -19,6 +19,8 @@ class XMLHelper {
             return FileTypes.OFI
         }
 
+        return FileTypes.FUND_DATA // TODO: FIXEN
+
     }
 
     static boolean isOfiFile(String fileData) {
