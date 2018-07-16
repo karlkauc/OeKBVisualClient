@@ -20,7 +20,7 @@
                     <JFXButton onAction="#exportToExcel">
                         <graphic>
                             <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@../img/icons8-plus-48.png"/>
+                                <Image url="@../img/icons8-create-40.png"/>
                             </ImageView>
                         </graphic>
                     </JFXButton>
