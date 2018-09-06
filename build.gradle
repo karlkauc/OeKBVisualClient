@@ -132,4 +132,5 @@ task doAll() {
 
 tasks.doAll.dependsOn clean
 tasks.doAll.dependsOn createExe
+tasks.doAll.dependsOn copyFiles
 tasks.doAll.dependsOn zipWinExe
