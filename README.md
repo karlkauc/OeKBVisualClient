@@ -7,6 +7,13 @@ TODO: info
 
 Nur Systemuser - kein WebUser
 
+
+# More information
+Visit the [project page](http://karlkauc.github.io/OeKBVisualClient) for more information.
+
+# Screenshots
+![Screenshot01](docs/screenshot-01.png)
+
 # License
 Apache License, Version 2.0
 

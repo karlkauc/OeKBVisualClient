@@ -173,7 +173,7 @@ class WorkbookBuilder {
 
         if (filename.size() == 0) {
             log.warn "kein filename gesetzt!"
-            filename = ApplicationSettings.getInstance().backupDirectory + File.separator + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "__" + "export" + ".xslx"
+            filename = ApplicationSettings.getInstance().backupDirectory + File.separator + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "__" + "export" + ".xlsx"
         }
 
         new File(filename).delete()
