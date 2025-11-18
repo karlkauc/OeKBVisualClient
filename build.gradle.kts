@@ -2,7 +2,8 @@ import java.util.Date
 
 plugins {
     // id("edu.sc.seis.launch4j") version "2.4.4"  // Commented out for now
-    id("org.openjfx.javafxplugin") version "0.1.0"
+    // JavaFX plugin not needed with Liberica JDK+FX
+    // id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.jlink") version "3.0.1"
     java
     application
@@ -23,10 +24,11 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-javafx {
-    version = "25"
-    modules("javafx.controls", "javafx.fxml", "javafx.graphics")
-}
+// JavaFX configuration not needed - using Liberica JDK+FX
+// javafx {
+//     version = "25"
+//     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
+// }
 
 repositories {
     mavenCentral()
@@ -44,10 +46,10 @@ configurations {
 }
 
 dependencies {
-    // JavaFX (manually added since plugin is commented)
-    implementation("org.openjfx:javafx-controls:25")
-    implementation("org.openjfx:javafx-fxml:25")
-    implementation("org.openjfx:javafx-graphics:25")
+    // JavaFX is included in Liberica JDK+FX, no separate dependencies needed
+    // implementation("org.openjfx:javafx-controls:25")
+    // implementation("org.openjfx:javafx-fxml:25")
+    // implementation("org.openjfx:javafx-graphics:25")
 
     // Logging
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
