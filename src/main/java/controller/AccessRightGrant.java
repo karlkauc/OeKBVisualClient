@@ -85,6 +85,15 @@ public class AccessRightGrant implements Initializable {
         accessRule = ar.getAccessRightsGivenFromOEKB();
         accessRightTable.setEditable(true);
 
+        // Display user-friendly message if no data was retrieved
+        if (accessRule == null || accessRule.isEmpty()) {
+            log.info("No granted access rights found. This may be due to: invalid credentials, network issues, proxy blocking, or no rights granted.");
+            if (statusMessage != null) {
+                statusMessage.setText("No data available. Check: 1) Credentials in Settings, 2) Network/Proxy settings, 3) Server connection");
+                statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+            }
+        }
+
         for (AccessRule rule : accessRule) {
             String ddsGivenShort = String.join(";", rule.getDataSuppliersGivenShort());
 

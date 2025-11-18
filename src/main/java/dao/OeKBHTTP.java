@@ -177,17 +177,46 @@ public class OeKBHTTP {
 
             httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
+            log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
+
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                log.debug("Server response status: {}", statusCode);
+
                 HttpEntity responseEntity = response.getEntity();
                 if (responseEntity != null) {
                     outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (outputString == null || outputString.trim().isEmpty()) {
+                        log.warn("Server returned empty response. Check credentials and server availability.");
+                    } else if (statusCode != 200) {
+                        log.warn("Server returned non-OK status code: {}. Response: {}",
+                            statusCode,
+                            outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        log.debug("Received {} bytes from server", outputString.length());
+                    }
+                } else {
+                    log.warn("No response entity received from server");
                 }
             }
 
-            saveToBackup(outputString, "DOWNLOAD_ACCESS_RULE");
+            if (outputString != null && !outputString.trim().isEmpty()) {
+                saveToBackup(outputString, "DOWNLOAD_ACCESS_RULE");
+            }
 
+        } catch (java.net.UnknownHostException e) {
+            log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+        } catch (java.net.ConnectException e) {
+            log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.", e.getMessage());
+        } catch (javax.net.ssl.SSLException e) {
+            log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+        } catch (java.net.SocketTimeoutException e) {
+            log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
         } catch (Exception e) {
-            log.error("Error downloading access rules", e);
+            log.error("Error downloading access rules: {}. Check credentials, proxy settings, and network connection.",
+                e.getMessage());
+            log.debug("Full exception details", e);
         }
 
         return outputString;
@@ -216,17 +245,46 @@ public class OeKBHTTP {
 
             httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
+            log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
+
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                log.debug("Server response status: {}", statusCode);
+
                 HttpEntity responseEntity = response.getEntity();
                 if (responseEntity != null) {
                     outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (outputString == null || outputString.trim().isEmpty()) {
+                        log.warn("Server returned empty response. Check credentials and server availability.");
+                    } else if (statusCode != 200) {
+                        log.warn("Server returned non-OK status code: {}. Response: {}",
+                            statusCode,
+                            outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        log.debug("Received {} bytes from server", outputString.length());
+                    }
+                } else {
+                    log.warn("No response entity received from server");
                 }
             }
 
-            saveToBackup(outputString, "DOWNLOAD_AR_ASSIGNED");
+            if (outputString != null && !outputString.trim().isEmpty()) {
+                saveToBackup(outputString, "DOWNLOAD_AR_ASSIGNED");
+            }
 
+        } catch (java.net.UnknownHostException e) {
+            log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+        } catch (java.net.ConnectException e) {
+            log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.", e.getMessage());
+        } catch (javax.net.ssl.SSLException e) {
+            log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+        } catch (java.net.SocketTimeoutException e) {
+            log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
         } catch (Exception e) {
-            log.error("Error downloading given access rules", e);
+            log.error("Error downloading given access rules: {}. Check credentials, proxy settings, and network connection.",
+                e.getMessage());
+            log.debug("Full exception details", e);
         }
 
         return outputString;

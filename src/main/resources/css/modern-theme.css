@@ -84,8 +84,7 @@
     -fx-background-radius: 4px;
     -fx-border-color: -border-color-light;
     -fx-border-width: 1;
-    -fx4px: 4px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 8, 0.0, 0, 2);
     -fx-padding: 24;
 }
 
@@ -153,7 +152,7 @@
     -fx-border-color: -border-color-light;
     -fx-border-width: 1;
     -fx-border-radius: 4px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 8, 0.0, 0, 2);
     -fx-padding: 14;
 }
 
@@ -189,13 +188,13 @@
     -fx-background-color: transparent;
     -fx-background-radius: 0;
     -fx-text-fill: rgba(255, 255, 255, 0.92);
-    -fx-min-height: 52px;
-    -fx-min-width: 200px;
+    -fx-min-height: 40px;
+    -fx-min-width: 160px;
     -fx-font-weight: 500;
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 20 0 20;
-    -fx-graphic-text-gap: 12;
+    -fx-padding: 0 12 0 12;
+    -fx-graphic-text-gap: 8;
     -fx-cursor: hand;
     -fx-border-width: 0 0 0 3;
     -fx-border-color: transparent;
@@ -229,8 +228,7 @@
     -fx-font-size: 14px;
     -fx-cursor: hand;
     -fx-border-width: 1;
-    -fx4px: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0.0, 0, 1);
 }
 
 .btn-primary,
@@ -294,7 +292,6 @@
     -fx-padding: 10 14;
     -fx-background-radius: 3px;
     -fx-border-color: -border-color;
-    -fx4px: 3px;
     -fx-border-width: 1;
 }
 
@@ -313,7 +310,6 @@
 .check-box .box {
     -fx-background-color: white;
     -fx-border-color: -border-color;
-    -fx4px: 2px;
     -fx-background-radius: 2px;
     -fx-border-width: 1;
 }
@@ -333,7 +329,6 @@
     -fx-background-radius: 3px;
     -fx-border-color: #adb5bd;
     -fx-border-width: 1;
-    -fx4px: 3px;
 }
 
 .toggle-button:selected {
@@ -354,11 +349,11 @@
    MENU ITEMS (DDS, Server Toggle)
    ============================================ */
 .meneuText {
-    -fx-font-size: 13px;
+    -fx-font-size: 11px;
     -fx-font-weight: 500;
     -fx-background-color: transparent;
     -fx-text-fill: rgba(255, 255, 255, 0.85);
-    -fx-padding: 0 10 0 20;
+    -fx-padding: 0 5 0 12;
 }
 
 .dataSupplier {
@@ -370,7 +365,6 @@
     -fx-padding: 8 14;
     -fx-border-color: rgba(255, 255, 255, 0.2);
     -fx-border-width: 1;
-    -fx4px: 3px;
 }
 
 .dataSupplier:focused {
@@ -393,7 +387,6 @@
     -fx-border-color: -border-color;
     -fx-border-width: 2;
     -fx-border-style: dashed;
-    -fx4px: 4px;
     -fx-padding: 40;
 }
 
@@ -403,7 +396,6 @@
     -fx-border-color: -success-color;
     -fx-border-width: 2;
     -fx-border-style: solid;
-    -fx4px: 4px;
     -fx-padding: 40;
 }
 
@@ -442,7 +434,6 @@
     -fx-background-radius: 4px;
     -fx-border-color: -border-color-light;
     -fx-border-width: 1;
-    -fx4px: 4px;
 }
 
 .tree-table-view .column-header,

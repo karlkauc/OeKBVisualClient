@@ -117,6 +117,19 @@ public class AccesRights {
     private List<AccessRule> parseAccessRules(String xmlString, boolean includeDataSuppliers) {
         List<AccessRule> accessRules = new ArrayList<>();
 
+        // Validate input before parsing
+        if (xmlString == null || xmlString.trim().isEmpty()) {
+            log.warn("Empty or null XML string received from server. Server may have returned an error or proxy blocked the connection.");
+            return accessRules;
+        }
+
+        // Check if response looks like XML
+        if (!xmlString.trim().startsWith("<")) {
+            log.error("Server response does not appear to be XML. Response: {}",
+                xmlString.length() > 200 ? xmlString.substring(0, 200) + "..." : xmlString);
+            return accessRules;
+        }
+
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -204,8 +217,14 @@ public class AccesRights {
 
                 accessRules.add(rule);
             }
+        } catch (org.xml.sax.SAXParseException e) {
+            log.error("XML parsing error: {}. This typically means the server returned invalid XML, " +
+                "an empty response, or the proxy blocked the connection. Check credentials and network connection.",
+                e.getMessage());
+            log.debug("SAXParseException details", e);
         } catch (Exception e) {
-            log.error("Error parsing access rules XML", e);
+            log.error("Unexpected error parsing access rules XML: {}. Check server connection and proxy settings.",
+                e.getMessage(), e);
         }
 
         return accessRules;

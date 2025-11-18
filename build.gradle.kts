@@ -10,6 +10,9 @@ plugins {
 
 application {
     mainClass.set("StartApp")
+    applicationDefaultJvmArgs = listOf(
+        "--enable-native-access=javafx.graphics"
+    )
 }
 
 version = "0.3"

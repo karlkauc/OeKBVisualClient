@@ -25,7 +25,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import model.AccessRule;
 import model.ApplicationSettings;
 import model.RuleRow;
@@ -49,7 +49,7 @@ public class AccessRightsReceived implements Initializable {
     private Button exportToExcel;
 
     @FXML
-    private BorderPane accessRightPane;
+    private VBox accessRightPane;
 
     @FXML
     private TreeTableView<RuleRow> accessRightTable;
@@ -77,6 +77,15 @@ public class AccessRightsReceived implements Initializable {
         accessRule = ar.getAccesRightsRecievedFromOEKB();
 
         TreeItem<RuleRow> root = new TreeItem<>();
+
+        // Display user-friendly message if no data was retrieved
+        if (accessRule == null || accessRule.isEmpty()) {
+            log.info("No access rights received. This may be due to: invalid credentials, network issues, proxy blocking, or no rights assigned.");
+            if (statusMessage != null) {
+                statusMessage.setText("No data available. Check: 1) Credentials in Settings, 2) Network/Proxy settings, 3) Server connection");
+                statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+            }
+        }
 
         for (AccessRule rule : accessRule) {
             List<TreeItem<RuleRow>> rootTable = new ArrayList<>();

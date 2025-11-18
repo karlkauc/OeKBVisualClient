@@ -62,7 +62,7 @@ public class StartApp extends Application {
         stage.getIcons().add(icon);
         stage.setTitle("OeKB Visual Client");
         stage.setScene(scene);
-        // stage.setFullScreen(true)
+        stage.setMaximized(true);
 
         stage.show();
     }

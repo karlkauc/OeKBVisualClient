@@ -148,7 +148,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOFI.fxml"));
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOFI_new.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
