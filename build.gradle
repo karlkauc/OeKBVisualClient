@@ -1,57 +1,72 @@
 plugins {
-    id "edu.sc.seis.launch4j" version "2.4.4"
+    // id "edu.sc.seis.launch4j" version "2.4.4"  // Commented out for now
+    // id 'org.openjfx.javafxplugin' version '0.1.0'  // Commented out for now
+    id 'java'
+    id 'application'
+    id 'idea'
 }
-
-apply plugin: 'edu.sc.seis.launch4j'
-apply plugin: 'groovy'
-apply plugin: 'java-library'
-apply plugin: 'application'
-apply plugin: 'idea'
 
 mainClassName = 'StartApp'
 version = '0.3'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
+
+// javafx {
+//     version = "25"
+//     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics' ]
+// }
 
 repositories {
     mavenCentral()
 }
 
-project.extensions.poiVersion = '3.+'
-project.extensions.log4jVersion = '2.+'
+project.extensions.poiVersion = '5.3.0'
+project.extensions.log4jVersion = '2.24.3'
 
 configurations {
-    compile.exclude module: 'stax'
-    compile.exclude module: 'stax-api'
-    compile.exclude module: 'xpp3'
+    implementation.exclude module: 'stax'
+    implementation.exclude module: 'stax-api'
+    implementation.exclude module: 'xpp3'
 }
 
 dependencies {
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.+'
+    // JavaFX (manually added since plugin is commented)
+    implementation group: 'org.openjfx', name: 'javafx-controls', version: '25'
+    implementation group: 'org.openjfx', name: 'javafx-fxml', version: '25'
+    implementation group: 'org.openjfx', name: 'javafx-graphics', version: '25'
 
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.extensions.log4jVersion
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.extensions.log4jVersion
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: project.extensions.log4jVersion
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.+'
+    // Logging
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.extensions.log4jVersion
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.extensions.log4jVersion
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j2-impl', version: project.extensions.log4jVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
 
-    compile group: 'org.apache.poi', name: 'poi', version: project.extensions.poiVersion
-    compile group: 'org.apache.poi', name: 'poi-ooxml', version: project.extensions.poiVersion
-    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: project.extensions.poiVersion
-    compile group: 'org.apache.poi', name: 'ooxml-schemas', version: '1.3'
+    // Apache POI for Excel
+    implementation group: 'org.apache.poi', name: 'poi', version: project.extensions.poiVersion
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: project.extensions.poiVersion
 
-    compile group: 'io.github.http-builder-ng', name : 'http-builder-ng-apache', version:  '1.0.+'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.+'
+    // HTTP Client
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4.1'
+    implementation group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.3.1'
 
-    compile group: 'com.jfoenix', name: 'jfoenix', version: '8.0.+'
+    // JFoenix Material Design (may need replacement for JavaFX 25)
+    implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
 
-    // für Java 9/10/11
-    // compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.+'
-    // compile group: 'com.jfoenix', name: 'jfoenix', version: '9.0.+'
-    // compile group: 'org.openjfx', name: 'javafx-base', version: '11-ea+25'
+    // JAXB for Java 17+
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '4.0.5'
 
-    // compile files('lib/OeKB-FDP-Client-2.3.0.jar')
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+    // Apache Commons Codec for Base64
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.17.1'
+
+    // Testing
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.4'
+    testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {
@@ -69,17 +84,17 @@ jar {
     exclude('**/isinlei.csv')
 }
 
-launch4j {
-    dontWrapJar = true
-    mainClassName = 'StartApp'
-    headerType = "gui"
-    icon = "${projectDir}/img/icons8-connectdevelop.ico"
-    copyright = System.getProperty('user.name')
-    jvmOptions = ["-Dlog4j.configurationFile=resources/log4j2.properties"]
-    bundledJre64Bit = true
-    bundledJrePath = 'jre'
-    outputDir = project.name
-}
+// launch4j {
+//     dontWrapJar = true
+//     mainClassName = 'StartApp'
+//     headerType = "gui"
+//     icon = "${projectDir}/img/icons8-connectdevelop.ico"
+//     copyright = System.getProperty('user.name')
+//     jvmOptions = ["-Dlog4j.configurationFile=resources/log4j2.properties"]
+//     bundledJre64Bit = true
+//     bundledJrePath = 'jre'
+//     outputDir = project.name
+// }
 
 /*
 task sourceSetProperties() {
@@ -118,20 +133,20 @@ task copyFiles() {
     }
 }
 
-tasks.createExe.dependsOn(copyFiles)
+// tasks.createExe.dependsOn(copyFiles)
 
-task zipWinExe(type: Zip) {
-    from "$buildDir"
-    include "$project.name/**"
-    exclude '*launch4j*'
-    archiveName project.name + "-" + version + ".zip"
-    destinationDir file("$buildDir")
-}
+// task zipWinExe(type: Zip) {
+//     from "$buildDir"
+//     include "$project.name/**"
+//     exclude '*launch4j*'
+//     archiveName project.name + "-" + version + ".zip"
+//     destinationDir file("$buildDir")
+// }
 
-task doAll() {
-}
+// task doAll() {
+// }
 
-tasks.doAll.dependsOn clean
-tasks.doAll.dependsOn createExe
-tasks.doAll.dependsOn copyFiles
-tasks.doAll.dependsOn zipWinExe
+// tasks.doAll.dependsOn clean
+// tasks.doAll.dependsOn createExe
+// tasks.doAll.dependsOn copyFiles
+// tasks.doAll.dependsOn zipWinExe
