@@ -1,0 +1,486 @@
+/*
+ * Modern Colorful Theme for OeKB Visual Client
+ * Based on modern Material Design principles with vibrant colors
+ */
+
+/* ============================================
+   ROOT & GLOBAL STYLES
+   ============================================ */
+.root {
+    /* Color Palette */
+    -primary-color: #6366f1;           /* Indigo */
+    -primary-dark: #4f46e5;
+    -primary-light: #818cf8;
+
+    -secondary-color: #ec4899;         /* Pink */
+    -secondary-dark: #db2777;
+    -secondary-light: #f472b6;
+
+    -accent-color: #f59e0b;            /* Amber */
+    -success-color: #10b981;           /* Green */
+    -warning-color: #f59e0b;           /* Orange */
+    -danger-color: #ef4444;            /* Red */
+    -info-color: #3b82f6;              /* Blue */
+
+    -bg-gradient-start: #667eea;
+    -bg-gradient-end: #764ba2;
+
+    -sidebar-gradient-start: #4f46e5;
+    -sidebar-gradient-end: #7c3aed;
+
+    -card-bg: #ffffff;
+    -text-primary: #1f2937;
+    -text-secondary: #6b7280;
+    -text-light: #ffffff;
+
+    -border-radius: 12px;
+    -border-radius-small: 8px;
+    -border-radius-large: 16px;
+
+    -shadow-small: 0 2px 4px rgba(0, 0, 0, 0.1);
+    -shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    -shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    -shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0;
+}
+
+/* ============================================
+   LAYOUT SECTIONS
+   ============================================ */
+.top {
+    -fx-background-color: linear-gradient(to right, -bg-gradient-start, -bg-gradient-end);
+    -fx-padding: 15 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 2);
+}
+
+.left {
+    -fx-background-color: linear-gradient(to bottom, -sidebar-gradient-start, -sidebar-gradient-end);
+    -fx-padding: 20 0 20 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 15, 0, 2, 0);
+}
+
+.bottom {
+    -fx-background-color: linear-gradient(to right, #fbbf24, #f59e0b);
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, -2);
+}
+
+.mainPane {
+    -fx-background-color: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    -fx-padding: 30;
+}
+
+/* ============================================
+   CARDS & CONTAINERS
+   ============================================ */
+.card {
+    -fx-background-color: -card-bg;
+    -fx-background-radius: -border-radius;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 4);
+    -fx-padding: 25;
+}
+
+.card-header {
+    -fx-background-color: linear-gradient(to right, -primary-color, -primary-light);
+    -fx-background-radius: -border-radius -border-radius 0 0;
+    -fx-padding: 20;
+    -fx-text-fill: -text-light;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.ueberschrift1,
+.page-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -primary-color;
+    -fx-padding: 0 0 20 0;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 5, 0, 0, 2);
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -text-primary;
+    -fx-padding: 15 0 10 0;
+}
+
+.label-primary {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+.label-secondary {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 13px;
+}
+
+/* ============================================
+   BUTTONS - NAVIGATION
+   ============================================ */
+.left .jfx-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -jfx-button-type: FLAT;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-min-height: 60px;
+    -fx-min-width: 200px;
+    -fx-font-weight: 600;
+    -fx-font-size: 15px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 20 0 60;
+    -fx-background-size: 32px 32px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 20px center;
+    -fx-cursor: hand;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent;
+}
+
+.left .jfx-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+    -fx-border-color: -accent-color;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.left .jfx-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Navigation Button Icons */
+.left .settings {
+    -fx-background-image: url("../img/icons8-settings-40.png");
+}
+
+.left .accessRightsReceived {
+    -fx-background-image: url("../img/icons8-key-40.png");
+}
+
+.left .accessRightsGrant {
+    -fx-background-image: url("../img/icons8-people-40.png");
+}
+
+.left .changeToDataUpload {
+    -fx-background-image: url("../img/icons8-upload-to-ftp-40.png");
+}
+
+.left .changeToOFI {
+    -fx-background-color: transparent;
+}
+
+.left .fundsXMLDataDownload {
+    -fx-background-image: url("../img/data_upload_40_40.png");
+}
+
+.left .history {
+    -fx-background-image: url("../img/history_40_40.png");
+}
+
+/* ============================================
+   BUTTONS - ACTION BUTTONS
+   ============================================ */
+.jfx-button {
+    -fx-background-radius: -border-radius-small;
+    -fx-padding: 12 24;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);
+}
+
+.btn-primary,
+.saveSetttings {
+    -jfx-button-type: RAISED;
+    -fx-background-color: linear-gradient(to bottom, -success-color, #059669);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+}
+
+.btn-primary:hover,
+.saveSetttings:hover {
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.btn-secondary {
+    -jfx-button-type: RAISED;
+    -fx-background-color: linear-gradient(to bottom, -secondary-color, -secondary-dark);
+    -fx-text-fill: white;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: linear-gradient(to bottom, -secondary-dark, #be185d);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.btn-danger {
+    -jfx-button-type: RAISED;
+    -fx-background-color: linear-gradient(to bottom, -danger-color, #dc2626);
+    -fx-text-fill: white;
+}
+
+.btn-danger:hover {
+    -fx-background-color: linear-gradient(to bottom, #dc2626, #b91c1c);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.btn-info {
+    -jfx-button-type: RAISED;
+    -fx-background-color: linear-gradient(to bottom, -info-color, #2563eb);
+    -fx-text-fill: white;
+}
+
+.btn-info:hover {
+    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* ============================================
+   FORM CONTROLS
+   ============================================ */
+.jfx-text-field,
+.jfx-password-field {
+    -fx-prompt-text-fill: -text-secondary;
+    -jfx-focus-color: -primary-color;
+    -jfx-unfocus-color: #d1d5db;
+    -fx-font-size: 14px;
+    -fx-padding: 12 16;
+}
+
+.jfx-text-field:focused,
+.jfx-password-field:focused {
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 8, 0, 0, 0);
+}
+
+.jfx-check-box {
+    -jfx-checked-color: -primary-color;
+    -jfx-unchecked-color: #9ca3af;
+    -fx-font-size: 14px;
+}
+
+.jfx-toggle-button {
+    -jfx-toggle-color: -success-color;
+    -jfx-untoggle-color: #d1d5db;
+    -jfx-toggle-line-color: #059669;
+    -jfx-untoggle-line-color: #9ca3af;
+    -jfx-size: 12.0;
+}
+
+/* ============================================
+   MENU ITEMS (DDS, Server Toggle)
+   ============================================ */
+.meneuText {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-padding: 0 10 0 20;
+}
+
+.dataSupplier {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: -border-radius-small;
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-padding: 10 15;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 1;
+    -fx-border-radius: -border-radius-small;
+}
+
+.dataSupplier:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: -accent-color;
+}
+
+.prodServer {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: white;
+}
+
+/* ============================================
+   DATA UPLOAD AREA
+   ============================================ */
+.dataUploadPane {
+    -fx-background-color: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    -fx-background-radius: -border-radius;
+    -fx-border-color: -info-color;
+    -fx-border-width: 3;
+    -fx-border-style: dashed;
+    -fx-border-radius: -border-radius;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 12, 0, 0, 0);
+}
+
+.dataUploadPaneAccepted {
+    -fx-background-color: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    -fx-background-radius: -border-radius;
+    -fx-border-color: -success-color;
+    -fx-border-width: 3;
+    -fx-border-style: dashed;
+    -fx-border-radius: -border-radius;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 15, 0, 0, 0);
+}
+
+.dataUploadTextBox {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+}
+
+/* ============================================
+   TEXT AREA (Debug Messages)
+   ============================================ */
+.jfx-text-area {
+    -fx-background-color: rgba(31, 41, 55, 0.95);
+    -fx-text-fill: #10b981;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 10;
+}
+
+.jfx-text-area .content {
+    -fx-background-color: rgba(31, 41, 55, 0.95);
+}
+
+.jfx-text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+/* ============================================
+   TABLE & TREE TABLE
+   ============================================ */
+.tree-table-view,
+.table-view {
+    -fx-background-color: -card-bg;
+    -fx-background-radius: -border-radius;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+}
+
+.tree-table-view .column-header,
+.table-view .column-header {
+    -fx-background-color: linear-gradient(to bottom, -primary-color, -primary-dark);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 12 8;
+}
+
+.tree-table-view .tree-table-row-cell:odd,
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+
+.tree-table-view .tree-table-row-cell:even,
+.table-view .table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.tree-table-view .tree-table-row-cell:hover,
+.table-view .table-row-cell:hover {
+    -fx-background-color: #e0e7ff;
+}
+
+.tree-table-view .tree-table-row-cell:selected,
+.table-view .table-row-cell:selected {
+    -fx-background-color: -primary-light;
+    -fx-text-fill: white;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -primary-light;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -primary-color;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 4px;
+}
+
+/* ============================================
+   SPECIAL EFFECTS & ANIMATIONS
+   ============================================ */
+.glow-on-hover:hover {
+    -fx-effect: dropshadow(gaussian, -primary-color, 15, 0.5, 0, 0);
+}
+
+.pulse {
+    -fx-effect: dropshadow(gaussian, -primary-color, 10, 0.7, 0, 0);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.spacing-small {
+    -fx-spacing: 10;
+}
+
+.spacing-medium {
+    -fx-spacing: 20;
+}
+
+.spacing-large {
+    -fx-spacing: 30;
+}
+
+.padding-small {
+    -fx-padding: 10;
+}
+
+.padding-medium {
+    -fx-padding: 20;
+}
+
+.padding-large {
+    -fx-padding: 30;
+}
+
+.text-white {
+    -fx-text-fill: white;
+}
+
+.text-primary {
+    -fx-text-fill: -primary-color;
+}
+
+.text-secondary {
+    -fx-text-fill: -text-secondary;
+}
+
+.bg-gradient-primary {
+    -fx-background-color: linear-gradient(to right, -primary-color, -primary-light);
+}
+
+.bg-gradient-secondary {
+    -fx-background-color: linear-gradient(to right, -secondary-color, -secondary-light);
+}
+
+.bg-gradient-accent {
+    -fx-background-color: linear-gradient(to right, -accent-color, #fbbf24);
+}

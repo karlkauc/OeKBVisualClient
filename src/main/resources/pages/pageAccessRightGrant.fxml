@@ -1,59 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<BorderPane AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-            AnchorPane.rightAnchor="5.0"
-            stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AccessRightGrant">
-    <top>
-        <BorderPane>
-            <left>
-                <Label text="Access Rights Granted" styleClass="ueberschrift1"/>
-            </left>
-            <right>
-                <HBox>
-                    <JFXButton onAction="#exportToExcel">
-                        <graphic>
-                            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@../img/icons8-create-40.png"/>
-                            </ImageView>
-                        </graphic>
-                    </JFXButton>
 
-                    <JFXButton fx:id="exportToExcel" onAction="#exportToExcel">
-                        <graphic>
-                            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@../img/ms_excel.png"/>
-                            </ImageView>
-                        </graphic>
-                    </JFXButton>
-                </HBox>
-            </right>
-            <center>
-                <Label fx:id="statusMessage"/>
-            </center>
-        </BorderPane>
-    </top>
-    <bottom>
+<VBox styleClass="mainPane" spacing="25"
+      AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+      AnchorPane.rightAnchor="0.0"
+      stylesheets="@../css/modern-theme.css" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AccessRightGrant">
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
 
-    </bottom>
-    <left>
+    <!-- Page Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="Access Rights Granted" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Label fx:id="statusMessage"/>
+        <JFXButton onAction="#exportToExcel">
+            <graphic>
+                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/icons8-create-40.png"/>
+                </ImageView>
+            </graphic>
+        </JFXButton>
+        <JFXButton fx:id="exportToExcel" onAction="#exportToExcel">
+            <graphic>
+                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/ms_excel.png"/>
+                </ImageView>
+            </graphic>
+        </JFXButton>
+    </HBox>
 
-    </left>
-    <right>
-
-    </right>
-    <center>
-        <TreeTableView AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-                       AnchorPane.rightAnchor="5.0" styleClass="accessRightTable" id="accessRightTable"
-                       fx:id="accessRightTable" editable="true"/>
-
-    </center>
-</BorderPane>
+    <!-- Table Card -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        <TreeTableView fx:id="accessRightTable" styleClass="accessRightTable" editable="true" VBox.vgrow="ALWAYS"/>
+    </VBox>
+</VBox>
 
 

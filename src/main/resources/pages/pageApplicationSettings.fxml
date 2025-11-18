@@ -4,52 +4,106 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="settings"
-            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-            AnchorPane.rightAnchor="5.0"
-            stylesheets="@../css/client.css"
+<ScrollPane fitToWidth="true" fitToHeight="true" stylesheets="@../css/modern-theme.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ApplicationSettings">
-    <JFXTextField fx:id="userNameField" labelFloat="true" layoutX="52.0" layoutY="154.0" prefHeight="27.0"
-                  prefWidth="300.0" promptText="Username"/>
-    <JFXPasswordField fx:id="passwordField" labelFloat="true" layoutX="400.0" layoutY="154.0" prefHeight="27.0"
-                      prefWidth="300.0" promptText="Password"/>
+    <content>
+        <VBox styleClass="mainPane" spacing="25" padding="30">
+            <!-- Page Title -->
+            <Label text="Application Settings" styleClass="page-title"/>
 
-    <Label layoutX="50.0" layoutY="40.0" text="Application Settings">
-        <font>
-            <Font size="35.0"/>
-        </font>
-    </Label>
-    <JFXTextField fx:id="proxyHost" layoutX="52.0" layoutY="273.0" prefHeight="27.0" prefWidth="200.0"
-                  promptText="Proxy Host"/>
-    <JFXTextField fx:id="proxyPort" layoutX="285.0" layoutY="274.0" prefHeight="27.0" prefWidth="200.0"
-                  promptText="Proxy Port"/>
-    <JFXCheckBox fx:id="proxySystemSettings" layoutX="52.0" layoutY="356.0"
-                 text="use Proxy Systemsettings" selected="true"/>
-    <JFXCheckBox fx:id="jbOverwriteData" layoutX="52.0" layoutY="428.0" text="overwrite Data without asking"/>
-    <JFXCheckBox fx:id="jbNewAccesRuleId" layoutX="52.0" layoutY="460.0" text="use new ID for Access Rights"/>
-    <JFXTextField fx:id="proxyUser" layoutX="52.0" layoutY="311.0" prefHeight="27.0" prefWidth="200.0"
-                  promptText="Proxy User"/>
-    <JFXPasswordField fx:id="proxyPassword" layoutX="285.0" layoutY="311.0" prefHeight="27.0" prefWidth="200.0"
-                      promptText="Proxy Password"/>
+            <!-- OeKB Credentials Card -->
+            <VBox styleClass="card" spacing="20">
+                <Label text="OeKB Credentials" styleClass="section-title"/>
+                <Separator/>
 
-    <!-- <Label layoutX="52.0" layoutY="350.0" text="hier die dds 0"/> -->
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                    </columnConstraints>
 
-    <JFXButton id="saveSetttings" fx:id="save" layoutX="44.0" layoutY="515.0" onAction="#saveSettings" prefHeight="55.0"
-               prefWidth="280.0" styleClass="saveSetttings" text="Save Application Settings">
-        <graphic>
-            <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="@../img/save.png"/>
-            </ImageView>
-        </graphic>
-        <font>
-            <Font size="18.0"/>
-        </font>
-    </JFXButton>
-</AnchorPane>
+                    <JFXTextField fx:id="userNameField" labelFloat="true"
+                                  promptText="Username" styleClass="label-primary"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+
+                    <JFXPasswordField fx:id="passwordField" labelFloat="true"
+                                      promptText="Password" styleClass="label-primary"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Proxy Settings Card -->
+            <VBox styleClass="card" spacing="20">
+                <Label text="Proxy Configuration" styleClass="section-title"/>
+                <Separator/>
+
+                <JFXCheckBox fx:id="proxySystemSettings"
+                             text="Use System Proxy Settings"
+                             selected="true" styleClass="label-primary"/>
+
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                    </columnConstraints>
+
+                    <JFXTextField fx:id="proxyHost" labelFloat="true"
+                                  promptText="Proxy Host"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+
+                    <JFXTextField fx:id="proxyPort" labelFloat="true"
+                                  promptText="Proxy Port"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <JFXTextField fx:id="proxyUser" labelFloat="true"
+                                  promptText="Proxy User"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+
+                    <JFXPasswordField fx:id="proxyPassword" labelFloat="true"
+                                      promptText="Proxy Password"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Application Options Card -->
+            <VBox styleClass="card" spacing="15">
+                <Label text="Application Options" styleClass="section-title"/>
+                <Separator/>
+
+                <JFXCheckBox fx:id="jbOverwriteData"
+                             text="Overwrite data without asking"
+                             styleClass="label-primary"/>
+
+                <JFXCheckBox fx:id="jbNewAccesRuleId"
+                             text="Use new ID for Access Rights"
+                             styleClass="label-primary"/>
+            </VBox>
+
+            <!-- Save Button -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <JFXButton fx:id="save" onAction="#saveSettings"
+                           prefHeight="55.0" prefWidth="280.0"
+                           styleClass="saveSetttings"
+                           text="Save Application Settings">
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/save.png"/>
+                        </ImageView>
+                    </graphic>
+                    <font>
+                        <Font size="16.0" name="System Bold"/>
+                    </font>
+                </JFXButton>
+            </HBox>
+        </VBox>
+    </content>
+</ScrollPane>
