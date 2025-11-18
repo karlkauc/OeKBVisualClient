@@ -1,40 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextArea?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-
 <?import com.jfoenix.controls.JFXButton?>
-<?import javafx.scene.image.ImageView?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
-<BorderPane AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-            AnchorPane.rightAnchor="5.0"
-            stylesheets="@../css/client.css" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DataUpload">
-    <top>
-        <BorderPane>
-            <left>
-                <Label styleClass="ueberschrift1" text="Page Data Upload"/>
-            </left>
-            <right>
-                <JFXButton>
-                    <graphic>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../img/icons8-xml-40.png"/>
-                        </ImageView>
-                    </graphic>
-                </JFXButton>
-            </right>
-        </BorderPane>
-    </top>
-    <center>
-        <JFXTextArea fx:id="dataUploadMessage" styleClass="dataUploadTextBox"/>
-    </center>
-    <bottom>
-        <StackPane fx:id="dataUpload" styleClass="dataUploadPane"
-                   onDragDropped="#dataUploadDropped" onDragOver="#onDataUpload" prefHeight="100">
-            <Label text="DROP XML FILES HERE"/>
-        </StackPane>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-    </bottom>
-</BorderPane>
+<VBox styleClass="mainPane" spacing="25" padding="30"
+      stylesheets="@../css/modern-theme.css"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.DataUpload">
+
+    <!-- Page Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="Data Upload" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <JFXButton styleClass="btn-info">
+            <graphic>
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/icons8-xml-40.png"/>
+                </ImageView>
+            </graphic>
+        </JFXButton>
+    </HBox>
+
+    <!-- Upload Messages Card -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <Label text="Upload Log" styleClass="section-title"/>
+        <JFXTextArea fx:id="dataUploadMessage" styleClass="dataUploadTextBox"
+                     VBox.vgrow="ALWAYS" prefHeight="300"/>
+    </VBox>
+
+    <!-- Drag & Drop Zone -->
+    <StackPane fx:id="dataUpload" styleClass="dataUploadPane"
+               onDragDropped="#dataUploadDropped" onDragOver="#onDataUpload"
+               prefHeight="150" minHeight="150">
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../img/icons8-upload-to-ftp-40.png"/>
+            </ImageView>
+            <Label text="DROP XML FILES HERE" styleClass="section-title">
+                <font>
+                    <Font size="20.0" name="System Bold"/>
+                </font>
+            </Label>
+            <Label text="or click to browse" styleClass="label-secondary">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+        </VBox>
+    </StackPane>
+</VBox>
