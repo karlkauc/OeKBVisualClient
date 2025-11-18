@@ -246,9 +246,31 @@ tasks.register("createWindowsInstaller") {
     dependsOn("jpackage")
 }
 
+// Task to create portable app image (no installer)
+tasks.register("createAppImage") {
+    group = "distribution"
+    description = "Creates a portable application image (no installer)"
+    dependsOn("jpackageImage")
+}
+
+// Task to create ZIP from app image
+tasks.register<Zip>("createPortableZip") {
+    group = "distribution"
+    description = "Creates a portable ZIP package of the application"
+    dependsOn("jpackageImage")
+
+    from(layout.buildDirectory.dir("jpackage/OeKBVisualClient"))
+    archiveFileName.set("OeKBVisualClient-${project.version}-windows-x64.zip")
+    destinationDirectory.set(layout.buildDirectory.dir("jpackage"))
+
+    doFirst {
+        println("Creating portable ZIP package...")
+    }
+}
+
 // Task to build all distribution packages
 tasks.register("buildDistribution") {
     group = "distribution"
-    description = "Builds complete distribution with runtime image and installers"
-    dependsOn("createRuntimeImage", "createWindowsInstaller")
+    description = "Builds complete distribution with runtime image, installers, and portable ZIP"
+    dependsOn("createRuntimeImage", "createWindowsInstaller", "createPortableZip")
 }

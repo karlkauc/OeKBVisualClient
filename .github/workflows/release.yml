@@ -38,6 +38,20 @@ jobs:
         run: ./gradlew jpackage
         shell: bash
 
+      - name: Create Windows App Image (portable)
+        run: ./gradlew jpackageImage
+        shell: bash
+
+      - name: Create ZIP from App Image
+        run: |
+          cd build/jpackage
+          if (Test-Path "OeKBVisualClient") {
+            Compress-Archive -Path "OeKBVisualClient" -DestinationPath "OeKBVisualClient-0.4-windows-x64.zip" -Force
+            echo "ZIP_CREATED=true" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+        id: create-zip
+
       - name: Find installer files
         id: find-installer
         run: |
@@ -75,11 +89,23 @@ jobs:
           asset_name: ${{ steps.find-installer.outputs.EXE_NAME }}
           asset_content_type: application/x-msdownload
 
+      - name: Upload ZIP (Portable App Image) to Release
+        if: steps.create-zip.outputs.ZIP_CREATED == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: build/jpackage/OeKBVisualClient-0.4-windows-x64.zip
+          asset_name: OeKBVisualClient-0.4-windows-x64.zip
+          asset_content_type: application/zip
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer
+          name: windows-packages
           path: |
             build/jpackage/*.msi
             build/jpackage/*.exe
+            build/jpackage/*.zip
           retention-days: 5

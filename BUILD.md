@@ -29,10 +29,17 @@ This creates a custom JRE in `build/image/` with only required modules.
 ```
 This creates a Windows MSI installer in `build/jpackage/`.
 
-#### 4. Build Everything (One Command)
+#### 4. Create Portable ZIP (No Installation Required)
+```bash
+./gradlew createPortableZip
+```
+This creates a portable ZIP file in `build/jpackage/` that can be extracted and run without installation.
+
+#### 5. Build Everything (One Command)
 ```bash
 ./gradlew buildDistribution
 ```
+This creates runtime image, MSI installer, and portable ZIP.
 
 ### Installer Features
 
@@ -49,10 +56,13 @@ The generated Windows installer:
 | Task | Description |
 |------|-------------|
 | `./gradlew jlink` | Creates custom runtime image with jlink |
-| `./gradlew jpackage` | Creates Windows installer with jpackage |
+| `./gradlew jpackage` | Creates Windows MSI installer with jpackage |
+| `./gradlew jpackageImage` | Creates app image without installer |
 | `./gradlew createRuntimeImage` | Alias for jlink |
 | `./gradlew createWindowsInstaller` | Alias for jpackage |
-| `./gradlew buildDistribution` | Builds everything (runtime + installer) |
+| `./gradlew createAppImage` | Creates portable app image |
+| `./gradlew createPortableZip` | Creates portable ZIP (no install needed) |
+| `./gradlew buildDistribution` | Builds everything (runtime + installer + ZIP) |
 
 ### Customization
 
@@ -68,6 +78,8 @@ After successful build:
 - **Runtime Image**: `build/image/OeKBVisualClient/`
 - **Launcher**: `build/image/OeKBVisualClient/bin/OeKBVisualClient.bat`
 - **MSI Installer**: `build/jpackage/OeKBVisualClient-0.4.msi`
+- **Portable ZIP**: `build/jpackage/OeKBVisualClient-0.4-windows-x64.zip`
+- **App Image** (unzipped): `build/jpackage/OeKBVisualClient/`
 
 ### Troubleshooting
 
