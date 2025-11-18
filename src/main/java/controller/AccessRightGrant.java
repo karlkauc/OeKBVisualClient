@@ -15,7 +15,7 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXButton;
+import javafx.scene.control.Button;
 import dao.AccesRights;
 import dao.WriteXLS;
 import javafx.fxml.FXML;
@@ -54,13 +54,13 @@ public class AccessRightGrant implements Initializable {
     private TreeTableView<RuleRow> accessRightTable;
 
     @FXML
-    private JFXButton exportToExcel;
+    private Button exportToExcel;
 
     @FXML
     private Label statusMessage;
 
     @FXML
-    private JFXButton dumpData;
+    private Button dumpData;
 
     @FXML
     void dumpData() {

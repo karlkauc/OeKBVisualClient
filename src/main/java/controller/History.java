@@ -15,141 +15,129 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 public class History implements Initializable {
     private static final Logger log = LogManager.getLogger(History.class);
 
     @FXML
-    private JFXTreeTableView<User> table;
+    private TreeTableView<User> table;
 
     @FXML
-    private JFXTreeTableColumn<User, String> department;
+    private TreeTableColumn<User, String> department;
 
     @FXML
-    private JFXTreeTableColumn<User, Integer> age;
+    private TreeTableColumn<User, Integer> age;
 
     @FXML
-    private JFXTreeTableColumn<User, String> userName;
+    private TreeTableColumn<User, String> userName;
 
     @FXML
-    private JFXTextField searchField;
+    private TreeTableColumn<User, String> email;
 
     @FXML
-    private JFXButton dump;
-
-    private ObservableList<User> users = FXCollections.observableArrayList();
-
-    private <T> void setupCellValueFactory(JFXTreeTableColumn<User, T> column, Function<User, ObservableValue<T>> mapper) {
-        column.setCellValueFactory((TreeTableColumn.CellDataFeatures<User, T> param) -> {
-            if (column.validateValue(param)) {
-                return mapper.apply(param.getValue().getValue());
-            } else {
-                return column.getComputedValue(param);
-            }
-        });
-    }
+    private TextField searchField;
 
     @FXML
-    private void dumpValues() {
-        System.out.println(" DUMP : ");
-        for (User user : users) {
-            System.out.println(user);
-        }
-    }
+    private Button searchButton;
+
+    private final ObservableList<User> users = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("bin in groovy hisroty");
+        log.debug("Initializing History controller");
 
-        users.add(new User("Computer Department", 23, "CD 1"));
-        users.add(new User("Sales Department", 22, "Employee 1"));
-        users.add(new User("Sales Department", 22, "Employee 2"));
-        users.add(new User("Sales Department", 25, "Employee 4"));
-        users.add(new User("Sales Department", 25, "Employee 5"));
-        users.add(new User("IT Department", 42, "ID 2"));
-        users.add(new User("HR Department", 22, "HR 1"));
-        users.add(new User("HR Department", 22, "HR 2"));
-
-        // https://github.com/jfoenixadmin/JFoenix/blob/master/demo/src/main/java/demos/gui/uicomponents/TreeTableViewController.java
-        setupCellValueFactory(department, user -> user.department);
-        setupCellValueFactory(age, user -> user.age.asObject());
-        setupCellValueFactory(userName, user -> user.userName);
-
-        userName.setCellFactory(param -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-
-        userName.setOnEditCommit(t -> {
-            t.getTreeTableView()
-                    .getTreeItem(t.getTreeTablePosition().getRow())
-                    .getValue().userName.set(t.getNewValue());
-        });
-
-        table.setRoot(new RecursiveTreeItem<>(users, RecursiveTreeObject::getChildren));
-
-        department.setPrefWidth(200);
-        table.group(department);
-        table.setTableMenuButtonVisible(true);
-        table.autosize();
-
-        table.setShowRoot(false);
-        table.setEditable(true);
-        table.getColumns().setAll(department, age, userName);
-
-        searchField.textProperty().addListener(setupSearchField(table));
+        setupTableColumns();
+        loadData();
     }
 
-    private javafx.beans.value.ChangeListener<String> setupSearchField(final JFXTreeTableView<User> tableView) {
-        return (o, oldVal, newVal) -> {
-            tableView.setPredicate(personProp -> {
-                final User person = personProp.getValue();
-                return person.userName.get().contains(newVal) ||
-                       person.department.get().contains(newVal) ||
-                       Integer.toString(person.age.get()).contains(newVal);
-            });
-        };
+    private void setupTableColumns() {
+        department.setCellValueFactory(param -> param.getValue().getValue().department);
+        userName.setCellValueFactory(param -> param.getValue().getValue().userName);
+        age.setCellValueFactory(param -> param.getValue().getValue().age.asObject());
+        email.setCellValueFactory(param -> param.getValue().getValue().email);
     }
 
-    public static class User extends RecursiveTreeObject<User> {
-        private StringProperty userName;
-        private SimpleIntegerProperty age;
-        private StringProperty department;
+    private void loadData() {
+        users.add(new User("Computer Department", "23", "CD 1", "exampleMail@ex.com"));
+        users.add(new User("Sales Department", "22", "Employee 1", "exampleMail@ex.com"));
+        users.add(new User("IT Department", "25", "IT 1", "exampleMail@ex.com"));
+        users.add(new User("HR Department", "30", "HR 1", "exampleMail@ex.com"));
+        users.add(new User("Logistics Department", "19", "LOG 1", "exampleMail@ex.com"));
 
-        public User(String department, Integer age, String userName) {
-            this.department = new SimpleStringProperty(department);
-            this.userName = new SimpleStringProperty(userName);
-            this.age = new SimpleIntegerProperty(age);
+        TreeItem<User> root = new TreeItem<>(new User("Departments", "", "", ""));
+        root.setExpanded(true);
+
+        for (User user : users) {
+            TreeItem<User> item = new TreeItem<>(user);
+            root.getChildren().add(item);
         }
 
-        @Override
-        public String toString() {
-            return "User{" +
-                    "userName=" + userName.get() +
-                    ", age=" + age.get() +
-                    ", department=" + department.get() +
-                    '}';
+        table.setRoot(root);
+        table.setShowRoot(false);
+    }
+
+    @FXML
+    private void search() {
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.isEmpty()) {
+            loadData();
+            return;
+        }
+
+        ObservableList<User> filteredUsers = FXCollections.observableArrayList();
+        for (User user : users) {
+            if (user.userName.get().toLowerCase().contains(searchText) ||
+                user.department.get().toLowerCase().contains(searchText) ||
+                user.email.get().toLowerCase().contains(searchText)) {
+                filteredUsers.add(user);
+            }
+        }
+
+        TreeItem<User> root = new TreeItem<>(new User("Filtered Results", "", "", ""));
+        root.setExpanded(true);
+
+        for (User user : filteredUsers) {
+            TreeItem<User> item = new TreeItem<>(user);
+            root.getChildren().add(item);
+        }
+
+        table.setRoot(root);
+        table.setShowRoot(false);
+    }
+
+    public static class User {
+        public final SimpleStringProperty department;
+        public final SimpleIntegerProperty age;
+        public final SimpleStringProperty userName;
+        public final SimpleStringProperty email;
+
+        public User(String department, String age, String userName, String email) {
+            this.department = new SimpleStringProperty(department);
+            int ageValue = 0;
+            try {
+                ageValue = age.isEmpty() ? 0 : Integer.parseInt(age);
+            } catch (NumberFormatException e) {
+                ageValue = 0;
+            }
+            this.age = new SimpleIntegerProperty(ageValue);
+            this.userName = new SimpleStringProperty(userName);
+            this.email = new SimpleStringProperty(email);
         }
     }
 }

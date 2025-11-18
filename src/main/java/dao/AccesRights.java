@@ -182,7 +182,7 @@ public class AccesRights {
                 rule.setFrequency(getNestedElementText(ruleElement, "DataAccessRange", "Frequency"));
 
                 String costsByDataSupplier = getElementText(ruleElement, "CostsByDataSupplier");
-                rule.setCostsByDataSupplier(Boolean.parseBoolean(costsByDataSupplier));
+                rule.setCostsByDataSupplier(costsByDataSupplier);
 
                 rule.setLEI(leiList);
                 rule.setOENB_ID(oenbIdList);

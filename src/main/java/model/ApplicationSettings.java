@@ -226,6 +226,10 @@ public class ApplicationSettings {
         return connectionUseSystemSettings;
     }
 
+    public boolean isConnectionUseSystemSettings() {
+        return Boolean.TRUE.equals(connectionUseSystemSettings);
+    }
+
     public void setConnectionUseSystemSettings(Boolean connectionUseSystemSettings) {
         this.connectionUseSystemSettings = connectionUseSystemSettings;
     }
@@ -266,6 +270,10 @@ public class ApplicationSettings {
         return overwriteData;
     }
 
+    public boolean isOverwriteData() {
+        return Boolean.TRUE.equals(overwriteData);
+    }
+
     public void setOverwriteData(Boolean overwriteData) {
         this.overwriteData = overwriteData;
     }
@@ -274,12 +282,20 @@ public class ApplicationSettings {
         return newAccesRuleId;
     }
 
+    public boolean isNewAccesRuleId() {
+        return Boolean.TRUE.equals(newAccesRuleId);
+    }
+
     public void setNewAccesRuleId(Boolean newAccesRuleId) {
         this.newAccesRuleId = newAccesRuleId;
     }
 
     public Boolean getUseProdServer() {
         return useProdServer;
+    }
+
+    public boolean isUseProdServer() {
+        return Boolean.TRUE.equals(useProdServer);
     }
 
     public void setUseProdServer(Boolean useProdServer) {
@@ -296,6 +312,10 @@ public class ApplicationSettings {
 
     public Boolean getFileSystem() {
         return fileSystem;
+    }
+
+    public boolean isFileSystem() {
+        return Boolean.TRUE.equals(fileSystem);
     }
 
     public void setFileSystem(Boolean fileSystem) {

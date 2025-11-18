@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTextArea?>
+
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 
 <VBox styleClass="mainPane" spacing="25" padding="30"
       stylesheets="@../css/modern-theme.css"
@@ -19,19 +21,19 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="Data Upload" styleClass="page-title"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <JFXButton styleClass="btn-info">
+        <Button styleClass="btn-info">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../img/icons8-xml-40.png"/>
                 </ImageView>
             </graphic>
-        </JFXButton>
+        </Button>
     </HBox>
 
     <!-- Upload Messages Card -->
     <VBox styleClass="card" VBox.vgrow="ALWAYS">
         <Label text="Upload Log" styleClass="section-title"/>
-        <JFXTextArea fx:id="dataUploadMessage" styleClass="dataUploadTextBox"
+        <TextArea fx:id="dataUploadMessage" styleClass="dataUploadTextBox"
                      VBox.vgrow="ALWAYS" prefHeight="300"/>
     </VBox>
 

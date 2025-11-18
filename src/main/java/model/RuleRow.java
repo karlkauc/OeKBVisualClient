@@ -40,6 +40,67 @@ public final class RuleRow implements Comparable<RuleRow> {
 
     private Boolean rootRow;
 
+    // Default constructor
+    public RuleRow() {
+    }
+
+    // Full constructor (15 params - for AccessRightsReceived)
+    public RuleRow(String id, String contentType, String profile,
+                   String dataSupplierCreatorShort, String dataSupplierCreatorName,
+                   String dataSuppliersGivenShort, String creationTime,
+                   String accessDelayInDays, String dateFrom, String dateTo,
+                   String frequency, String LEI, String OENB_ID,
+                   String SHARECLASS_ISIN, String SEGMENT_ISIN) {
+        this.id = id;
+        this.contentType = contentType;
+        this.profile = profile;
+        this.dataSupplierCreatorShort = dataSupplierCreatorShort;
+        this.dataSupplierCreatorName = dataSupplierCreatorName;
+        this.dataSuppliersGivenShort = dataSuppliersGivenShort;
+        this.creationTime = creationTime;
+        this.accessDelayInDays = accessDelayInDays;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.frequency = frequency;
+        this.LEI = LEI;
+        this.OENB_ID = OENB_ID;
+        this.SHARECLASS_ISIN = SHARECLASS_ISIN;
+        this.SEGMENT_ISIN = SEGMENT_ISIN;
+    }
+
+    // Extended constructor with Boolean costsByDataSupplier (17 params - for AccessRightGrant)
+    // Note: param12 can be Boolean or String depending on usage
+    public RuleRow(String id, String contentType, String profile,
+                   String dataSupplierCreatorShort, String dataSupplierCreatorName,
+                   String dataSuppliersGivenShort, String creationTime,
+                   String accessDelayInDays, String dateFrom, String dateTo,
+                   String frequency, Object costsByDataSupplier,
+                   String LEI, String OENB_ID,
+                   String SHARECLASS_ISIN, String SEGMENT_ISIN,
+                   boolean rootRow) {
+        this.id = id;
+        this.contentType = contentType;
+        this.profile = profile;
+        this.dataSupplierCreatorShort = dataSupplierCreatorShort;
+        this.dataSupplierCreatorName = dataSupplierCreatorName;
+        this.dataSuppliersGivenShort = dataSuppliersGivenShort;
+        this.creationTime = creationTime;
+        this.accessDelayInDays = accessDelayInDays;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.frequency = frequency;
+        if (costsByDataSupplier instanceof Boolean) {
+            this.costsByDataSupplier = (Boolean) costsByDataSupplier;
+        } else if (costsByDataSupplier instanceof String) {
+            this.costsByDataSupplier = Boolean.parseBoolean((String) costsByDataSupplier);
+        }
+        this.LEI = LEI;
+        this.OENB_ID = OENB_ID;
+        this.SHARECLASS_ISIN = SHARECLASS_ISIN;
+        this.SEGMENT_ISIN = SEGMENT_ISIN;
+        this.rootRow = rootRow;
+    }
+
     public String getFundName() {
         String myId = null;
 
@@ -152,6 +213,10 @@ public final class RuleRow implements Comparable<RuleRow> {
         return costsByDataSupplier;
     }
 
+    public boolean isCostsByDataSupplier() {
+        return Boolean.TRUE.equals(costsByDataSupplier);
+    }
+
     public void setCostsByDataSupplier(Boolean costsByDataSupplier) {
         this.costsByDataSupplier = costsByDataSupplier;
     }
@@ -190,6 +255,10 @@ public final class RuleRow implements Comparable<RuleRow> {
 
     public Boolean getRootRow() {
         return rootRow;
+    }
+
+    public boolean isRootRow() {
+        return Boolean.TRUE.equals(rootRow);
     }
 
     public void setRootRow(Boolean rootRow) {

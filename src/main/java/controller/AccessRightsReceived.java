@@ -15,7 +15,7 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXButton;
+import javafx.scene.control.Button;
 import dao.AccesRights;
 import dao.WriteXLS;
 import javafx.fxml.FXML;
@@ -46,7 +46,7 @@ public class AccessRightsReceived implements Initializable {
     private List<AccessRule> accessRule;
 
     @FXML
-    private JFXButton exportToExcel;
+    private Button exportToExcel;
 
     @FXML
     private BorderPane accessRightPane;

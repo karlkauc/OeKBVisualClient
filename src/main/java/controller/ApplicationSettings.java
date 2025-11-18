@@ -15,10 +15,10 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXTextField;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import org.apache.logging.log4j.LogManager;
@@ -33,34 +33,34 @@ public class ApplicationSettings implements Initializable {
     private model.ApplicationSettings settingsData;
 
     @FXML
-    private JFXTextField userNameField;
+    private TextField userNameField;
 
     @FXML
-    private JFXPasswordField passwordField;
+    private PasswordField passwordField;
 
     @FXML
-    private JFXButton save;
+    private Button save;
 
     @FXML
-    private JFXTextField proxyHost;
+    private TextField proxyHost;
 
     @FXML
-    private JFXTextField proxyPort;
+    private TextField proxyPort;
 
     @FXML
-    private JFXCheckBox proxySystemSettings;
+    private CheckBox proxySystemSettings;
 
     @FXML
-    private JFXCheckBox jbOverwriteData;
+    private CheckBox jbOverwriteData;
 
     @FXML
-    private JFXCheckBox jbNewAccesRuleId;
+    private CheckBox jbNewAccesRuleId;
 
     @FXML
-    private JFXTextField proxyUser;
+    private TextField proxyUser;
 
     @FXML
-    private JFXPasswordField proxyPassword;
+    private PasswordField proxyPassword;
 
     @FXML
     void saveSettings() {

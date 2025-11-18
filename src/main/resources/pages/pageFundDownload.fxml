@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.FundDownload"
+            prefHeight="700.0" prefWidth="900.0"
+            style="-fx-background-color: #f5f5f5;">
+
+    <VBox spacing="20.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <Label text="Fund Download" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Input Section -->
+        <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+            <Label text="LEI / OeNB-ID eingeben:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <TextField fx:id="leiOenIdField"
+                         promptText="Mehrere IDs mit Leerzeichen oder Komma trennen (z.B. 123456 789012)"
+                         prefWidth="800.0"/>
+
+            <Label text="oder aus Datei laden:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="selectFileButton"
+                          text="Datei auswählen"
+                          onAction="#selectFile"
+                          style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Label fx:id="fileLabel" text="Keine Datei ausgewählt" style="-fx-text-fill: #7f8c8d;"/>
+                <Button text="Löschen"
+                          onAction="#clearFile"
+                          style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+
+        <!-- Parameters Section -->
+        <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+            <Label text="Parameter:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+            <HBox spacing="20.0">
+                <VBox spacing="5.0">
+                    <Label text="Datum:"/>
+                    <DatePicker fx:id="datePicker" prefWidth="200.0"/>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Profil:"/>
+                    <ComboBox fx:id="profileComboBox" prefWidth="200.0"/>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Block Size (max 10):"/>
+                    <TextField fx:id="blockSizeField" prefWidth="100.0"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Action Section -->
+        <HBox spacing="15.0" alignment="CENTER_LEFT">
+            <Button fx:id="downloadButton"
+                      text="Download starten"
+                      onAction="#download"
+                      style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30;">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Button>
+            <ProgressIndicator fx:id="progressIndicator" prefWidth="30.0" prefHeight="30.0"/>
+            <Label fx:id="statusLabel" text="Bereit" style="-fx-text-fill: #2c3e50;"/>
+        </HBox>
+
+        <!-- Result Section -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+            <Label text="Ergebnis (XML):" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <TextArea fx:id="resultTextArea"
+                        VBox.vgrow="ALWAYS"
+                        prefHeight="300.0"
+                        editable="false"
+                        style="-fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+        </VBox>
+
+    </VBox>
+</AnchorPane>

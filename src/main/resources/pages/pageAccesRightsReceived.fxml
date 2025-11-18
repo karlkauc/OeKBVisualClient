@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
 
 <VBox fx:id="accessRightPane"
       styleClass="mainPane" spacing="25"
@@ -22,13 +23,13 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="Access Rights Received" styleClass="page-title" HBox.hgrow="ALWAYS"/>
         <Label fx:id="statusMessage"/>
-        <JFXButton fx:id="exportToExcel" onAction="#exportToExcel">
+        <Button fx:id="exportToExcel" onAction="#exportToExcel">
             <graphic>
                 <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../img/ms_excel.png"/>
                 </ImageView>
             </graphic>
-        </JFXButton>
+        </Button>
     </HBox>
 
     <!-- Table Card -->

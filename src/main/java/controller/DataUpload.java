@@ -15,7 +15,7 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXTextArea;
+import javafx.scene.control.TextArea;
 import common.XMLHelper;
 import dao.OeKBHTTP;
 import javafx.application.Platform;
@@ -41,7 +41,7 @@ public class DataUpload implements Initializable {
     private static final Logger log = LogManager.getLogger(DataUpload.class);
 
     @FXML
-    private JFXTextArea dataUploadMessage;
+    private TextArea dataUploadMessage;
 
     @FXML
     private StackPane dataUpload;

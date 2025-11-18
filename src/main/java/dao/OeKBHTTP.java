@@ -16,6 +16,7 @@
 package dao;
 
 import model.ApplicationSettings;
+import model.DownloadParameters;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -44,11 +45,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class OeKBHTTP {
     private static final Logger log = LogManager.getLogger(OeKBHTTP.class);
@@ -262,5 +266,416 @@ public class OeKBHTTP {
         } catch (Exception e) {
             log.error("Error saving backup file", e);
         }
+    }
+
+    /**
+     * Generic download method for all download modes
+     * @param params Download parameters
+     * @return XML response as string
+     */
+    private static String genericDownload(Map<String, String> params) {
+        applicationSettings.readSettingsFromFile();
+        String outputString = "";
+
+        try (CloseableHttpClient httpClient = getOekbConnection()) {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build form parameters
+            List<NameValuePair> formParams = new ArrayList<>();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                    formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                }
+            }
+
+            httpPost.setEntity(new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8));
+
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+                }
+            }
+
+            // Save backup if mode is available
+            String mode = params.get("mode");
+            if (mode != null) {
+                saveToBackup(outputString, mode + "_RESPONSE");
+            }
+
+        } catch (Exception e) {
+            log.error("Error in generic download", e);
+        }
+
+        return outputString;
+    }
+
+    /**
+     * DOWNLOAD_FUND - Download fund data by LEI or OeNB-ID
+     */
+    public static String downloadFund(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_FUND");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.getRequestBlockSize() != null) {
+            requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_SHARECLASS_SEGMENT - Download shareclass/segment data by ISIN
+     */
+    public static String downloadShareClass(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_SHARECLASS_SEGMENT");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (params.getRequestBlockSize() != null) {
+            requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_AGGREGIERUNG - Download OeNB aggregated data
+     */
+    public static String downloadOeNBAggregierung(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_AGGREGIERUNG");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.isExcludeInvalid()) {
+            requestParams.put("excludeinvalid", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_SECBYSEC - Download OeNB Security-by-Security data
+     */
+    public static String downloadOeNBSecBySec(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_SECBYSEC");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.isExcludeInvalid()) {
+            requestParams.put("excludeinvalid", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_CHECK - Download OeNB aggregation check
+     */
+    public static String downloadOeNBCheck(LocalDate date, String validFilter) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_CHECK");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (date != null) {
+            requestParams.put("date", date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (validFilter != null) {
+            requestParams.put("valid", validFilter); // "true" or "false"
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_JOURNAL - Download journal entries
+     */
+    public static String downloadJournal(LocalDateTime timeFrom, LocalDateTime timeTo,
+                                        String action, String type, String userJournal,
+                                        String uniqueId, boolean excludeEmptyDownloads) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_JOURNAL");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (timeFrom != null) {
+            requestParams.put("time_from", timeFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (timeTo != null) {
+            requestParams.put("time_to", timeTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (action != null) {
+            requestParams.put("action", action); // UL, DL
+        }
+
+        if (type != null) {
+            requestParams.put("type", type); // AR, FXML_DATA, etc.
+        }
+
+        if (userJournal != null) {
+            requestParams.put("user_journal", userJournal);
+        }
+
+        if (uniqueId != null) {
+            requestParams.put("unique_id", uniqueId);
+        }
+
+        if (excludeEmptyDownloads) {
+            requestParams.put("exclude_empty_dl", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_DOCUMENTS - Download documents
+     */
+    public static String downloadDocuments(DownloadParameters params, String documentType) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_DOCUMENTS");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (documentType != null) {
+            // Check if it's a listed or unlisted document type
+            if (isListedDocumentType(documentType)) {
+                requestParams.put("listed_doc_type", documentType);
+            } else {
+                requestParams.put("unlisted_doc_type", documentType);
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_REG_REPORTINGS - Download regulatory reportings
+     */
+    public static String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_REG_REPORTINGS");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (reportingType != null) {
+            requestParams.put("reg_reporting_type", reportingType);
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_AVAILABLE_DATA - Download available data information
+     */
+    public static String downloadAvailableData(LocalDate contentDate, LocalDateTime uploadTimeFrom,
+                                               LocalDateTime uploadTimeTo, String fdpContent,
+                                               DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_AVAILABLE_DATA");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params != null && params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (contentDate != null) {
+            requestParams.put("date", contentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (uploadTimeFrom != null) {
+            requestParams.put("upload_time_from",
+                    uploadTimeFrom.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        }
+
+        if (uploadTimeTo != null) {
+            requestParams.put("upload_time_to",
+                    uploadTimeTo.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        }
+
+        if (fdpContent != null) {
+            requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
+        }
+
+        if (params != null) {
+            if (params.hasLeiOenIds()) {
+                requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+            }
+            if (params.hasIsins()) {
+                requestParams.put("isin", String.join(" ", params.getIsins()));
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OWN_DATA_DOWNLOADED - Download information about own data downloaded by others
+     */
+    public static String downloadOwnDataDownloaded(LocalDate dateFrom, LocalDate dateTo,
+                                                   String fdpContent, DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OWN_DATA_DOWNLOADED");
+        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", params != null && params.getDataSupplier() != null ?
+                params.getDataSupplier() : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", "4.4.0");
+
+        if (dateFrom != null) {
+            requestParams.put("date_from", dateFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (dateTo != null) {
+            requestParams.put("date_to", dateTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (fdpContent != null) {
+            requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
+        }
+
+        if (params != null) {
+            if (params.hasLeiOenIds()) {
+                requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+            }
+            if (params.hasIsins()) {
+                requestParams.put("isin", String.join(" ", params.getIsins()));
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * Helper method to check if document type is listed
+     */
+    private static boolean isListedDocumentType(String docType) {
+        return docType.equals("AIFMD") || docType.equals("AnnualReport") ||
+               docType.equals("AuditReport") || docType.equals("Factsheet") ||
+               docType.equals("KID") || docType.equals("Prospectus") ||
+               docType.equals("PRIIPS-KID");
+    }
+
+    /**
+     * Batch upload multiple files
+     */
+    public static List<String> uploadDataFiles(List<File> files) {
+        List<String> results = new ArrayList<>();
+
+        for (File file : files) {
+            log.info("Uploading file: " + file.getName());
+            String result = uploadDataFile(file);
+            results.add(result);
+        }
+
+        return results;
     }
 }

@@ -15,8 +15,8 @@
  */
 package controller;
 
-import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXToggleButton;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,10 +38,10 @@ public class MainController implements Initializable {
     private ApplicationSettings settingsData;
 
     @FXML
-    private JFXTextArea debugMessages;
+    private TextArea debugMessages;
 
     @FXML
-    private JFXToggleButton prodServer;
+    private ToggleButton prodServer;
 
     @FXML
     private CheckBox fileSystem;
@@ -69,7 +69,7 @@ public class MainController implements Initializable {
         log.debug("bin jetzt in settings");
 
         try {
-            Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageApplicationSettings.fxml"));
+            javafx.scene.Parent tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageApplicationSettings.fxml"));
             mainPane.getChildren().setAll(tempPane);
         } catch (IOException e) {
             log.error("Error loading settings page", e);
@@ -91,6 +91,11 @@ public class MainController implements Initializable {
         }
     }
 
+    private boolean hasValidSettings() {
+        return settingsData.getOekbUserName() != null && !settingsData.getOekbUserName().isEmpty() &&
+               settingsData.getOekbPasswort() != null && !settingsData.getOekbPasswort().isEmpty();
+    }
+
     @FXML
     private void changeServer() {
         settingsData.setUseProdServer(prodServer.isSelected());
@@ -102,7 +107,7 @@ public class MainController implements Initializable {
     private void changeToAccessRightsReceived() {
         log.debug("bin jetzt im access rights receive");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -120,7 +125,7 @@ public class MainController implements Initializable {
     private void changeToAccessRightsGrant() {
         System.out.println("bin jetzt im access rights GRANT");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -138,7 +143,7 @@ public class MainController implements Initializable {
     private void changeToOFI() {
         log.debug("chenage to OFI");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -156,7 +161,7 @@ public class MainController implements Initializable {
     private void changeToDataUpload() {
         log.debug("bin jetzt in changeToDataUpload");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -174,7 +179,7 @@ public class MainController implements Initializable {
     private void changeToHistory() {
         log.debug("bin jetzt in changeToHistory");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -192,7 +197,7 @@ public class MainController implements Initializable {
     private void changeToDataDownload() {
         log.debug("bin jetzt in changeToDataDownload");
 
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         } else {
@@ -202,6 +207,114 @@ public class MainController implements Initializable {
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
                 log.error("Error loading data download page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToFundDownload() {
+        log.debug("change to Fund Download");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageFundDownload.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading fund download page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToShareClassDownload() {
+        log.debug("change to ShareClass Download");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageShareClassDownload.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading shareclass download page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToDocumentDownload() {
+        log.debug("change to Document Download");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDocumentDownload.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading document download page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToRegulatoryReporting() {
+        log.debug("change to Regulatory Reporting");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageRegulatoryReporting.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading regulatory reporting page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToAvailableData() {
+        log.debug("change to Available Data");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAvailableData.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading available data page", e);
+            }
+        }
+    }
+
+    @FXML
+    private void changeToOwnDataDownloaded() {
+        log.debug("change to Own Data Downloaded");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOwnDataDownloaded.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading own data downloaded page", e);
             }
         }
     }
@@ -220,13 +333,13 @@ public class MainController implements Initializable {
         fileSystem.setSelected(settingsData.isFileSystem());
 
         // keine Zugangsdaten eingegeben -> zuerst mal zur Settings Seite
-        if (settingsData.getOekbUserName().isEmpty() || settingsData.getOekbPasswort().isEmpty()) {
+        if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         }
 
         dataSupplier.setEditable(true);
-        dataSupplier.setText(settingsData.getDataSupplierList());
+        dataSupplier.setText(settingsData.getDataSupplierList() != null ? settingsData.getDataSupplierList() : "");
         setLabelTextForServer();
 
         fileSystem.setVisible(settingsData.isFileSystem());

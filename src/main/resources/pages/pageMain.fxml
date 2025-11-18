@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane prefHeight="900.0" prefWidth="1600.0"
             stylesheets="@../css/modern-theme.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
@@ -33,27 +36,78 @@
     </top>
     <bottom>
         <Pane prefHeight="20.0" prefWidth="1024.0" styleClass="bottom" BorderPane.alignment="CENTER">
-            <JFXTextArea id="debugMessages" fx:id="debugMessages" prefHeight="84.0" prefWidth="1385.0"/>
+            <TextArea id="debugMessages" fx:id="debugMessages" prefHeight="84.0" prefWidth="1385.0"/>
         </Pane>
     </bottom>
     <left>
         <Pane prefHeight="200.0" prefWidth="200.0" styleClass="left" BorderPane.alignment="CENTER">
             <VBox spacing="3.0">
-                <JFXButton id="settings" alignment="CENTER_RIGHT" onAction="#changeToSettings" prefHeight="60.0"
+                <Button id="settings" alignment="CENTER_RIGHT" onAction="#changeToSettings" prefHeight="60.0"
                            prefWidth="200.0" styleClass="settings" text="Settings" textFill="WHITE">
-                </JFXButton>
-                <JFXButton id="accessRightsReceived" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsReceived"
-                           prefHeight="60.0" prefWidth="200.0" styleClass="accessRightsReceived" text="Rights Recieved">
-                </JFXButton>
-                <JFXButton id="accessRightsGrant" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsGrant"
+                    <graphic>
+                        <FontIcon iconLiteral="bi-gear-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="accessRightsReceived" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsReceived"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="accessRightsReceived" text="Rights Received">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-key-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="accessRightsGrant" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsGrant"
                            prefHeight="60.0" prefWidth="200.0" styleClass="accessRightsGrant" text="Grant Rights">
-                </JFXButton>
-                <JFXButton id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
+                    <graphic>
+                        <FontIcon iconLiteral="bi-people-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
                            prefHeight="60.0" prefWidth="200.0" styleClass="changeToDataUpload" text="Data Upload">
-                </JFXButton>
-                <JFXButton id="changeToOFI" alignment="CENTER_RIGHT" onAction="#changeToOFI"
+                    <graphic>
+                        <FontIcon iconLiteral="bi-cloud-upload-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToOFI" alignment="CENTER_RIGHT" onAction="#changeToOFI"
                            prefHeight="60.0" prefWidth="200.0" styleClass="changeToOFI" text="OeNB Meldung">
-                </JFXButton>
+                    <graphic>
+                        <FontIcon iconLiteral="bi-file-earmark-text-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToFundDownload" alignment="CENTER_RIGHT" onAction="#changeToFundDownload"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToFundDownload" text="Fund Download">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-cloud-download-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToShareClassDownload" alignment="CENTER_RIGHT" onAction="#changeToShareClassDownload"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToShareClassDownload" text="ShareClass Download">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-download" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToDocumentDownload" alignment="CENTER_RIGHT" onAction="#changeToDocumentDownload"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToDocumentDownload" text="Documents">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-files" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToRegulatoryReporting" alignment="CENTER_RIGHT" onAction="#changeToRegulatoryReporting"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToRegulatoryReporting" text="Regulatory Reporting">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-clipboard-check" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToAvailableData" alignment="CENTER_RIGHT" onAction="#changeToAvailableData"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToAvailableData" text="Available Data">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+                <Button id="changeToOwnDataDownloaded" alignment="CENTER_RIGHT" onAction="#changeToOwnDataDownloaded"
+                           prefHeight="60.0" prefWidth="200.0" styleClass="changeToOwnDataDownloaded" text="Download Stats">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-bar-chart-line-fill" iconSize="20" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
                 <HBox prefHeight="60.0" prefWidth="200.0">
                     <Label text="DDS: " styleClass="meneuText"
                            prefHeight="60.0" prefWidth="120.0"/>
@@ -65,20 +119,20 @@
                 <HBox prefHeight="60.0" prefWidth="200.0">
                     <Label fx:id="server" text="Prod Server" styleClass="meneuText" prefWidth="120.0"
                            prefHeight="60.0"/>
-                    <JFXToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer"
+                    <ToggleButton fx:id="prodServer" onAction="#changeServer" styleClass="prodServer"
                                      prefWidth="80.0" prefHeight="60.0"/>
                 </HBox>
                 <CheckBox fx:id="fileSystem" mnemonicParsing="false" text="file System"
                           BorderPane.alignment="CENTER" onAction="#changeFileSystem" visible="false"/>
                 <!--
-                <JFXButton id="fundsXMLDataDownload" alignment="CENTER_RIGHT" onAction="#changeToDataDownload"
+                <Button id="fundsXMLDataDownload" alignment="CENTER_RIGHT" onAction="#changeToDataDownload"
                            prefHeight="60.0" prefWidth="200.0" styleClass="fundsXMLDataDownload" text="Data Download">
-                </JFXButton>
+                </Button>
                 -->
                 <!--
-                <JFXButton id="history" alignment="CENTER_RIGHT" onAction="#changeToHistory" prefHeight="60.0"
+                <Button id="history" alignment="CENTER_RIGHT" onAction="#changeToHistory" prefHeight="60.0"
                            prefWidth="200.0" styleClass="history" text="History">
-                </JFXButton>
+                </Button>
                 -->
             </VBox>
         </Pane>

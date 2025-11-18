@@ -1,108 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import com.jfoenix.controls.JFXPasswordField?>
-<?import com.jfoenix.controls.JFXTextField?>
+
+
+
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 
-<ScrollPane fitToWidth="true" fitToHeight="true" stylesheets="@../css/modern-theme.css"
+<ScrollPane fitToWidth="true" stylesheets="@../css/modern-theme.css"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ApplicationSettings">
     <content>
-        <VBox styleClass="mainPane" spacing="25" padding="30">
+        <VBox styleClass="mainPane" spacing="12">
+            <padding>
+                <Insets top="12" right="16" bottom="16" left="16"/>
+            </padding>
             <!-- Page Title -->
-            <Label text="Application Settings" styleClass="page-title"/>
+            <Label text="Application Settings" styleClass="page-title-compact"/>
 
             <!-- OeKB Credentials Card -->
-            <VBox styleClass="card" spacing="20">
-                <Label text="OeKB Credentials" styleClass="section-title"/>
+            <VBox styleClass="card-compact" spacing="10">
+                <Label text="OeKB Credentials" styleClass="section-title-compact"/>
                 <Separator/>
 
-                <GridPane hgap="20" vgap="15">
+                <GridPane hgap="12" vgap="8">
                     <columnConstraints>
-                        <ColumnConstraints minWidth="150" prefWidth="200"/>
-                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
+                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
                     </columnConstraints>
 
-                    <JFXTextField fx:id="userNameField" labelFloat="true"
-                                  promptText="Username" styleClass="label-primary"
-                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Username" styleClass="label-secondary-compact"/>
+                        <TextField fx:id="userNameField" promptText="Enter username" styleClass="text-field-compact"/>
+                    </VBox>
 
-                    <JFXPasswordField fx:id="passwordField" labelFloat="true"
-                                      promptText="Password" styleClass="label-primary"
-                                      GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Password" styleClass="label-secondary-compact"/>
+                        <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="text-field-compact"/>
+                    </VBox>
                 </GridPane>
             </VBox>
 
             <!-- Proxy Settings Card -->
-            <VBox styleClass="card" spacing="20">
-                <Label text="Proxy Configuration" styleClass="section-title"/>
+            <VBox styleClass="card-compact" spacing="10">
+                <Label text="Proxy Configuration" styleClass="section-title-compact"/>
                 <Separator/>
 
-                <JFXCheckBox fx:id="proxySystemSettings"
+                <CheckBox fx:id="proxySystemSettings"
                              text="Use System Proxy Settings"
-                             selected="true" styleClass="label-primary"/>
+                             selected="true" styleClass="checkbox-compact"/>
 
-                <GridPane hgap="20" vgap="15">
+                <GridPane hgap="12" vgap="8">
                     <columnConstraints>
-                        <ColumnConstraints minWidth="150" prefWidth="200"/>
-                        <ColumnConstraints minWidth="150" prefWidth="200"/>
+                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
+                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
                     </columnConstraints>
 
-                    <JFXTextField fx:id="proxyHost" labelFloat="true"
-                                  promptText="Proxy Host"
-                                  GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Proxy Host" styleClass="label-secondary-compact"/>
+                        <TextField fx:id="proxyHost" promptText="proxy.example.com" styleClass="text-field-compact"/>
+                    </VBox>
 
-                    <JFXTextField fx:id="proxyPort" labelFloat="true"
-                                  promptText="Proxy Port"
-                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Proxy Port" styleClass="label-secondary-compact"/>
+                        <TextField fx:id="proxyPort" promptText="8080" styleClass="text-field-compact"/>
+                    </VBox>
 
-                    <JFXTextField fx:id="proxyUser" labelFloat="true"
-                                  promptText="Proxy User"
-                                  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Proxy Username" styleClass="label-secondary-compact"/>
+                        <TextField fx:id="proxyUser" promptText="Enter proxy username" styleClass="text-field-compact"/>
+                    </VBox>
 
-                    <JFXPasswordField fx:id="proxyPassword" labelFloat="true"
-                                      promptText="Proxy Password"
-                                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Proxy Password" styleClass="label-secondary-compact"/>
+                        <PasswordField fx:id="proxyPassword" promptText="Enter proxy password" styleClass="text-field-compact"/>
+                    </VBox>
                 </GridPane>
             </VBox>
 
             <!-- Application Options Card -->
-            <VBox styleClass="card" spacing="15">
-                <Label text="Application Options" styleClass="section-title"/>
+            <VBox styleClass="card-compact" spacing="10">
+                <Label text="Application Options" styleClass="section-title-compact"/>
                 <Separator/>
 
-                <JFXCheckBox fx:id="jbOverwriteData"
-                             text="Overwrite data without asking"
-                             styleClass="label-primary"/>
+                <VBox spacing="6">
+                    <CheckBox fx:id="jbOverwriteData"
+                                 text="Overwrite data without asking" styleClass="checkbox-compact"/>
 
-                <JFXCheckBox fx:id="jbNewAccesRuleId"
-                             text="Use new ID for Access Rights"
-                             styleClass="label-primary"/>
+                    <CheckBox fx:id="jbNewAccesRuleId"
+                                 text="Use new ID for Access Rights" styleClass="checkbox-compact"/>
+                </VBox>
             </VBox>
 
             <!-- Save Button -->
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <JFXButton fx:id="save" onAction="#saveSettings"
-                           prefHeight="55.0" prefWidth="280.0"
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <padding>
+                    <Insets top="8" bottom="8"/>
+                </padding>
+                <Button fx:id="save" onAction="#saveSettings"
+                           prefHeight="36.0" minWidth="180.0"
                            styleClass="saveSetttings"
-                           text="Save Application Settings">
+                           text="Save Settings">
                     <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                             <Image url="@../img/save.png"/>
                         </ImageView>
                     </graphic>
-                    <font>
-                        <Font size="16.0" name="System Bold"/>
-                    </font>
-                </JFXButton>
+                </Button>
             </HBox>
         </VBox>
     </content>

@@ -1,0 +1,1 @@
+- wenn du icons von ikonli hinzufügst, schaue zuerst in den jeweiligen cheat sheet nach, ob dieses icon auch existiert. die cheat sheets sind unter https://kordamp.org/ikonli/ verlinkt

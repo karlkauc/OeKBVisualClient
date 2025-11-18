@@ -7,8 +7,10 @@
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import com.jfoenix.controls.JFXTreeTableColumn?>
 <?import javafx.scene.layout.HBox?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+
+
 
 <VBox styleClass="mainPane" spacing="25"
       AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -22,8 +24,8 @@
     <!-- Page Header -->
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="History" styleClass="page-title" HBox.hgrow="ALWAYS"/>
-        <JFXTextField fx:id="searchField" text=" search ... " promptText="Search..."/>
-        <JFXButton fx:id="dump" text="DUMP" onAction="#dumpValues"/>
+        <TextField fx:id="searchField" text=" search ... " promptText="Search..."/>
+        <Button fx:id="dump" text="DUMP" onAction="#dumpValues"/>
     </HBox>
 
     <!-- Table Card -->

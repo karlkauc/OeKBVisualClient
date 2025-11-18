@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.OwnDataDownloaded"
+            prefHeight="700.0" prefWidth="900.0"
+            style="-fx-background-color: #f5f5f5;">
+
+    <VBox spacing="20.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <Label text="Download-Statistiken (Wer hat meine Daten heruntergeladen?)"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
+                   wrapText="true"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Parameters Section -->
+        <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+            <Label text="Zeitraum:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+            <HBox spacing="20.0">
+                <VBox spacing="5.0">
+                    <Label text="Download Date From:"/>
+                    <DatePicker fx:id="dateFromPicker" prefWidth="200.0"/>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Download Date To:"/>
+                    <DatePicker fx:id="dateToPicker" prefWidth="200.0"/>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="FDP Content Type:"/>
+                    <ComboBox fx:id="fdpContentCombo" prefWidth="150.0"/>
+                </VBox>
+            </HBox>
+
+            <Separator/>
+
+            <VBox spacing="5.0">
+                <Label text="Identifier Filter (optional):"/>
+                <TextField fx:id="identifierField"
+                             promptText="LEI/OeNB-ID oder ISIN (mehrere durch Leerzeichen getrennt)"
+                             prefWidth="700.0"/>
+                <Label text="Leer lassen für alle eigenen Daten" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+            </VBox>
+        </VBox>
+
+        <!-- Action Section -->
+        <HBox spacing="15.0" alignment="CENTER_LEFT">
+            <Button fx:id="downloadButton"
+                      text="Statistik abrufen"
+                      onAction="#download"
+                      style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30;">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Button>
+            <ProgressIndicator fx:id="progressIndicator" prefWidth="30.0" prefHeight="30.0"/>
+            <Label fx:id="statusLabel" text="Bereit" style="-fx-text-fill: #2c3e50;"/>
+        </HBox>
+
+        <!-- Result Section -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+            <Label text="Ergebnis (XML):" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <TextArea fx:id="resultTextArea"
+                        VBox.vgrow="ALWAYS"
+                        prefHeight="300.0"
+                        editable="false"
+                        style="-fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+        </VBox>
+
+    </VBox>
+</AnchorPane>
