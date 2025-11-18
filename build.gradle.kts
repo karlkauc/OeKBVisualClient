@@ -2,7 +2,8 @@ import java.util.Date
 
 plugins {
     // id("edu.sc.seis.launch4j") version "2.4.4"  // Commented out for now
-    // id("org.openjfx.javafxplugin") version "0.1.0"  // Commented out for now
+    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.jlink") version "3.0.1"
     java
     application
     idea
@@ -15,17 +16,17 @@ application {
     )
 }
 
-version = "0.3"
+version = "0.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-// javafx {
-//     version = "25"
-//     modules("javafx.controls", "javafx.fxml", "javafx.graphics")
-// }
+javafx {
+    version = "25"
+    modules("javafx.controls", "javafx.fxml", "javafx.graphics")
+}
 
 repositories {
     mavenCentral()
@@ -170,3 +171,84 @@ tasks.register<Copy>("copyFiles") {
 // tasks.register("doAll") {
 //     dependsOn(tasks.clean, tasks.named("createExe"), tasks.named("copyFiles"), tasks.named("zipWinExe"))
 // }
+
+/* ============================================
+   JLINK & JPACKAGE CONFIGURATION
+   ============================================ */
+
+jlink {
+    // Image name
+    imageName.set("OeKBVisualClient")
+
+    // Main module (since we don't use modules, we use the launcher)
+    launcher {
+        name = "OeKBVisualClient"
+        jvmArgs = listOf(
+            "--enable-native-access=javafx.graphics"
+        )
+    }
+
+    // JVM options for the runtime
+    options.set(listOf(
+        "--strip-debug",
+        "--compress", "2",
+        "--no-header-files",
+        "--no-man-pages"
+    ))
+
+    // Force merge of module info (we're not using modules)
+    forceMerge("log4j-api", "log4j-core")
+
+    // JPackage configuration
+    jpackage {
+        imageName = "OeKBVisualClient"
+        installerName = "OeKBVisualClient"
+
+        // Basic installer options
+        val baseInstallerOptions = mutableListOf(
+            "--vendor", "Karl Kauc",
+            "--copyright", "Copyright © 2024 Karl Kauc",
+            "--license-file", file("LICENSE").absolutePath,
+            "--win-per-user-install",  // Install per user (no admin rights needed)
+            "--win-dir-chooser",        // Allow user to choose installation directory
+            "--win-menu",               // Add to start menu
+            "--win-shortcut",           // Create desktop shortcut
+            "--win-shortcut-prompt"     // Ask user if they want shortcuts
+        )
+
+        // Set icon if available
+        val iconFile = file("src/main/resources/img/connectdevelop.ico")
+        if (iconFile.exists()) {
+            imageOptions = listOf("--icon", iconFile.absolutePath)
+            baseInstallerOptions.addAll(listOf("--icon", iconFile.absolutePath))
+        }
+
+        installerOptions = baseInstallerOptions
+
+        // Installer types - for Windows: msi
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
+            installerType = "msi"  // MSI installer (can also be "exe")
+        }
+    }
+}
+
+// Task to create runtime image with jlink
+tasks.register("createRuntimeImage") {
+    group = "distribution"
+    description = "Creates a custom runtime image using jlink"
+    dependsOn("jlink")
+}
+
+// Task to create Windows installer with jpackage
+tasks.register("createWindowsInstaller") {
+    group = "distribution"
+    description = "Creates a Windows installer using jpackage"
+    dependsOn("jpackage")
+}
+
+// Task to build all distribution packages
+tasks.register("buildDistribution") {
+    group = "distribution"
+    description = "Builds complete distribution with runtime image and installers"
+    dependsOn("createRuntimeImage", "createWindowsInstaller")
+}

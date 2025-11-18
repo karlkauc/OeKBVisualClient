@@ -36,6 +36,20 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 ./gradlew clean build
 ```
 
+### Create Windows Installer
+```bash
+# Create runtime image with jlink
+./gradlew jlink
+
+# Create Windows installer with jpackage (requires Windows + WiX Toolset)
+./gradlew jpackage
+
+# Or build everything at once
+./gradlew buildDistribution
+```
+
+See [BUILD.md](BUILD.md) for detailed build instructions and GitHub Actions setup.
+
 ## Architecture
 
 ### Project Structure
