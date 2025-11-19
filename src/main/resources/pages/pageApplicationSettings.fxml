@@ -23,15 +23,15 @@
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.ApplicationSettings">
     <content>
-        <VBox styleClass="mainPane" spacing="12">
+        <VBox styleClass="mainPane" spacing="10">
             <padding>
-                <Insets top="12" right="16" bottom="16" left="16"/>
+                <Insets top="10" right="16" bottom="10" left="16"/>
             </padding>
             <!-- Page Title -->
             <Label text="Application Settings" styleClass="page-title-compact"/>
 
             <!-- OeKB Credentials Card -->
-            <VBox styleClass="card-compact" spacing="10">
+            <VBox styleClass="card-compact" spacing="8">
                 <Label text="OeKB Credentials" styleClass="section-title-compact"/>
                 <Separator/>
 
@@ -59,7 +59,7 @@
             </VBox>
 
             <!-- Proxy Settings Card -->
-            <VBox styleClass="card-compact" spacing="10">
+            <VBox styleClass="card-compact" spacing="8">
                 <Label text="Proxy Configuration" styleClass="section-title-compact"/>
                 <Separator/>
 
@@ -96,7 +96,7 @@
             </VBox>
 
             <!-- Application Options Card -->
-            <VBox styleClass="card-compact" spacing="10">
+            <VBox styleClass="card-compact" spacing="8">
                 <Label text="Application Options" styleClass="section-title-compact"/>
                 <Separator/>
 

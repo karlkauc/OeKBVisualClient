@@ -30,99 +30,99 @@
     </bottom>
     <left>
         <Pane prefHeight="200.0" prefWidth="160.0" styleClass="left" BorderPane.alignment="CENTER">
-            <VBox spacing="2.0">
-                <Button id="settings" alignment="CENTER_RIGHT" onAction="#changeToSettings" prefHeight="45.0"
+            <VBox spacing="1.0">
+                <Button id="settings" alignment="CENTER_RIGHT" onAction="#changeToSettings" prefHeight="32.0"
                            prefWidth="160.0" styleClass="settings" text="Settings" textFill="WHITE">
                     <graphic>
                         <FontIcon iconLiteral="bi-gear-fill" iconSize="16" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="accessRightsReceived" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsReceived"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="accessRightsReceived" text="Rights Received">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="accessRightsReceived" text="Rights Received">
                     <graphic>
-                        <FontIcon iconLiteral="bi-key-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-key-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="accessRightsGrant" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsGrant"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="accessRightsGrant" text="Grant Rights">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="accessRightsGrant" text="Grant Rights">
                     <graphic>
-                        <FontIcon iconLiteral="bi-people-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-people-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToJournal" alignment="CENTER_RIGHT" onAction="#changeToJournal"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToJournal" text="Activity Journal">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToJournal" text="Activity Journal">
                     <graphic>
-                        <FontIcon iconLiteral="bi-journal-text" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-journal-text" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToNewInformation" alignment="CENTER_RIGHT" onAction="#changeToNewInformation"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToNewInformation" text="New Information">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToNewInformation" text="New Information">
                     <graphic>
-                        <FontIcon iconLiteral="bi-bell-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-bell-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToDataUpload" text="Data Upload">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToDataUpload" text="Data Upload">
                     <graphic>
-                        <FontIcon iconLiteral="bi-cloud-upload-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-cloud-upload-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToOFI" alignment="CENTER_RIGHT" onAction="#changeToOFI"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToOFI" text="OeNB Meldung">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToOFI" text="OeNB Meldung">
                     <graphic>
-                        <FontIcon iconLiteral="bi-file-earmark-text-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-file-earmark-text-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToFundDownload" alignment="CENTER_RIGHT" onAction="#changeToFundDownload"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToFundDownload" text="Fund Download">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToFundDownload" text="Fund Download">
                     <graphic>
-                        <FontIcon iconLiteral="bi-cloud-download-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-cloud-download-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToShareClassDownload" alignment="CENTER_RIGHT" onAction="#changeToShareClassDownload"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToShareClassDownload" text="ShareClass">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToShareClassDownload" text="ShareClass">
                     <graphic>
-                        <FontIcon iconLiteral="bi-download" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-download" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToDocumentDownload" alignment="CENTER_RIGHT" onAction="#changeToDocumentDownload"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToDocumentDownload" text="Documents">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToDocumentDownload" text="Documents">
                     <graphic>
-                        <FontIcon iconLiteral="bi-files" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-files" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToRegulatoryReporting" alignment="CENTER_RIGHT" onAction="#changeToRegulatoryReporting"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToRegulatoryReporting" text="Regulatory">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToRegulatoryReporting" text="Regulatory">
                     <graphic>
-                        <FontIcon iconLiteral="bi-clipboard-check" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-clipboard-check" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToAvailableData" alignment="CENTER_RIGHT" onAction="#changeToAvailableData"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToAvailableData" text="Available Data">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToAvailableData" text="Available Data">
                     <graphic>
-                        <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="16" iconColor="WHITE"/>
+                        <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="14" iconColor="WHITE"/>
                     </graphic>
                 </Button>
                 <Button id="changeToOwnDataDownloaded" alignment="CENTER_RIGHT" onAction="#changeToOwnDataDownloaded"
-                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToOwnDataDownloaded" text="Download Stats">
+                           prefHeight="32.0" prefWidth="160.0" styleClass="changeToOwnDataDownloaded" text="Download Stats">
                     <graphic>
                         <FontIcon iconLiteral="bi-bar-chart-line-fill" iconSize="16" iconColor="WHITE"/>
                     </graphic>
                 </Button>
-                <VBox prefWidth="160.0" spacing="2.0">
-                    <Label text="Server:" styleClass="meneuText" prefHeight="25.0" prefWidth="160.0"/>
+                <VBox prefWidth="160.0" spacing="1.0">
+                    <Label text="Server:" styleClass="meneuText" prefHeight="20.0" prefWidth="160.0"/>
                     <Button fx:id="prodServerButton" onAction="#changeToProdServer"
                             styleClass="server-button-prod" text="PRODUCTION"
-                            prefHeight="35.0" prefWidth="160.0">
+                            prefHeight="28.0" prefWidth="160.0">
                         <graphic>
-                            <FontIcon iconLiteral="bi-shield-fill-check" iconSize="14" iconColor="WHITE"/>
+                            <FontIcon iconLiteral="bi-shield-fill-check" iconSize="12" iconColor="WHITE"/>
                         </graphic>
                     </Button>
                     <Button fx:id="devServerButton" onAction="#changeToDevServer"
                             styleClass="server-button-dev" text="DEVELOPMENT"
-                            prefHeight="35.0" prefWidth="160.0">
+                            prefHeight="28.0" prefWidth="160.0">
                         <graphic>
-                            <FontIcon iconLiteral="bi-code-slash" iconSize="14" iconColor="WHITE"/>
+                            <FontIcon iconLiteral="bi-code-slash" iconSize="12" iconColor="WHITE"/>
                         </graphic>
                     </Button>
                 </VBox>
