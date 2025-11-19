@@ -248,6 +248,79 @@
 }
 
 /* ============================================
+   MENU SECTION HEADERS & ACTIVE STATE
+   ============================================ */
+.menu-section-header {
+    -fx-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-letter-spacing: 0.5px;
+    -fx-padding: 12 12 4 12;
+}
+
+.menu-section-header-important {
+    -fx-text-fill: #fbbf24;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 0.8px;
+    -fx-padding: 8 12 4 12;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: rgba(255, 255, 255, 0.92);
+    -fx-min-height: 32px;
+    -fx-min-width: 160px;
+    -fx-font-weight: 500;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 12 0 12;
+    -fx-graphic-text-gap: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-color: transparent;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+    -fx-border-color: -accent-color;
+}
+
+.menu-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.menu-button .ikonli-font-icon {
+    -fx-icon-color: rgba(255, 255, 255, 0.92);
+}
+
+.menu-button:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.menu-button-active,
+.left .menu-button-active {
+    -fx-background-color: rgba(200, 16, 46, 0.25) !important;
+    -fx-text-fill: white !important;
+    -fx-border-color: -accent-color !important;
+    -fx-border-width: 0 0 0 3 !important;
+    -fx-font-weight: 700 !important;
+}
+
+.menu-button-active .ikonli-font-icon,
+.left .menu-button-active .ikonli-font-icon {
+    -fx-icon-color: white !important;
+}
+
+.server-section {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-background-radius: 3px;
+    -fx-padding: 4 0;
+}
+
+/* ============================================
    BUTTONS - ACTION BUTTONS
    ============================================ */
 .button {

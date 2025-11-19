@@ -202,6 +202,18 @@ public class RegulatoryReportingDownload implements Initializable {
 
                 String reportingType = reportingTypeCombo.getValue();
 
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultTextArea.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressIndicator.setVisible(false);
+                        downloadButton.setDisable(false);
+                    });
+                    return;
+                }
+
                 log.info("Downloading regulatory reportings for {} IDs, type: {}", ids.size(), reportingType);
                 String result = OeKBHTTP.downloadRegulatoryReportings(params, reportingType);
 

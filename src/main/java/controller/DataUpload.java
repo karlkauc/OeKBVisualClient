@@ -98,6 +98,15 @@ public class DataUpload implements Initializable {
             text.append("speichere File: ").append(file).append(System.lineSeparator());
 
             try {
+                // Check if in FileSystem mode
+                model.ApplicationSettings settings = model.ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    dataUploadMessage.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                    e.setDropCompleted(false);
+                    e.consume();
+                    return;
+                }
+
                 String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
                 XMLHelper.FileTypes fileType = XMLHelper.getFileType(fileContent);
 

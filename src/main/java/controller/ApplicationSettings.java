@@ -85,6 +85,12 @@ public class ApplicationSettings implements Initializable {
     private PasswordField proxyPassword;
 
     @FXML
+    private CheckBox fileSystemCheckBox;
+
+    @FXML
+    private TextField backupDirectoryField;
+
+    @FXML
     void saveSettings() {
         settingsData.setOekbUserName(userNameField.getText());
         settingsData.setOekbPasswort(passwordField.getText());
@@ -102,7 +108,15 @@ public class ApplicationSettings implements Initializable {
         settingsData.setOverwriteData(jbOverwriteData.isSelected());
         settingsData.setConnectionUseSystemSettings(proxySystemSettings.isSelected());
         settingsData.setNewAccesRuleId(jbNewAccesRuleId.isSelected());
+
+        // Development & Testing settings
+        settingsData.setFileSystem(fileSystemCheckBox.isSelected());
+        settingsData.setBackupDirectory(backupDirectoryField.getText());
+
         settingsData.saveSettingsDataToFile();
+
+        log.info("Settings saved - File System Mode: {}, Backup Directory: {}",
+                fileSystemCheckBox.isSelected(), backupDirectoryField.getText());
     }
 
     @Override
@@ -136,5 +150,9 @@ public class ApplicationSettings implements Initializable {
 
         jbOverwriteData.setSelected(settingsData.isOverwriteData());
         jbNewAccesRuleId.setSelected(settingsData.isNewAccesRuleId());
+
+        // Development & Testing settings
+        fileSystemCheckBox.setSelected(settingsData.isFileSystem());
+        backupDirectoryField.setText(settingsData.getBackupDirectory());
     }
 }

@@ -23,6 +23,9 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.Taskbar;
+import java.awt.Toolkit;
+
 /**
  * Start Application (GUI)
  */
@@ -54,12 +57,38 @@ public class StartApp extends Application {
         log.debug("user.name: [" + System.getProperty("user.name") + "]");
         log.debug("java.specification.version: [" + System.getProperty("java.specification.version", "99.0") + "]");
 
+        // Set macOS dock icon using AWT Taskbar API (works better than JavaFX stage.getIcons())
+        if (Taskbar.isTaskbarSupported()) {
+            try {
+                var taskbar = Taskbar.getTaskbar();
+                if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+                    // Load icon using AWT Toolkit for macOS dock
+                    var iconURL = getClass().getResource("img/connectdevelop-256.png");
+                    if (iconURL != null) {
+                        var awtIcon = Toolkit.getDefaultToolkit().getImage(iconURL);
+                        taskbar.setIconImage(awtIcon);
+                        log.debug("macOS dock icon set successfully");
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Failed to set macOS dock icon: " + e.getMessage());
+            }
+        }
+
         Parent root = FXMLLoader.load(getClass().getResource("pages/pageMain.fxml"));
         Scene scene = new Scene(root);
 
         // Font.loadFont("file:resources/fonts/isadoracyr.ttf", 120)
-        Image icon = new Image(getClass().getResourceAsStream("img/connectdevelop.png"));
-        stage.getIcons().add(icon);
+        // Load multiple icon sizes for optimal display in Windows taskbar and macOS dock
+        stage.getIcons().addAll(
+            new Image(getClass().getResourceAsStream("img/connectdevelop-16.png")),
+            new Image(getClass().getResourceAsStream("img/connectdevelop-32.png")),
+            new Image(getClass().getResourceAsStream("img/connectdevelop-48.png")),
+            new Image(getClass().getResourceAsStream("img/connectdevelop-64.png")),
+            new Image(getClass().getResourceAsStream("img/connectdevelop.png")),      // 96x96
+            new Image(getClass().getResourceAsStream("img/connectdevelop-128.png")),
+            new Image(getClass().getResourceAsStream("img/connectdevelop-256.png"))
+        );
         stage.setTitle("OeKB Visual Client");
         stage.setScene(scene);
         stage.setMaximized(true);

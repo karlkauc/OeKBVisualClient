@@ -59,6 +59,30 @@ Die Anwendung liest nun die Mock-Daten aus diesem Verzeichnis statt vom FDP-Serv
   - Document und Regulatory Types
   - Verschiedene Data Supplier Typen (CB, IC, Vendor)
 
+### Access Rights Received (Empfangene Zugriffsrechte)
+**Datei:** `20251119_DOWNLOAD_ACCESS_RULE.xml`
+- **Schema:** FundsXML_AccessRules_2.3.0.xsd
+- **Inhalt:** 7 Access Rules die DIR von anderen erteilt wurden
+  - 3 FUND ContentType (3BA, AMP, CAP)
+  - 2 DOC ContentType (AIB mit ExcludedISINs, UniCredit+NOEVERS multi-supplier)
+  - 2 REG ContentType (RZB mit 3 Subfunds, OeKB)
+  - Profile: all, Vendor, PKG, allOhneSegmente, VendorMitShareClass
+  - LEI und OeNB_Identnr Identifiers
+  - ShareClass ISINs
+- **Verwendung:** Rights Received Seite
+
+### Access Rights Granted (Erteilte Zugriffsrechte)
+**Datei:** `20251119_DOWNLOAD_AR_ASSIGNED.xml`
+- **Schema:** FundsXML_AccessRules_2.3.0.xsd
+- **Inhalt:** 8 Access Rules die DU anderen erteilt hast
+  - 4 FUND ContentType (RZB, FactSet+ThomsonReuters, NOEVERS, CAP)
+  - 2 DOC ContentType (UniCredit+3BA+AIB multi-supplier mit ExcludedISINs, AMP)
+  - 2 REG ContentType (OeKB mit Subfunds, ssat)
+  - Profile: all, Vendor, PKG, VendorOhneShareClassPositions, allOhneSegmente
+  - Multiple Data Suppliers pro Rule
+  - LEI, OeNB_Identnr und ShareClass ISINs
+- **Verwendung:** Grant Rights Seite
+
 ### Upload Reply (Validierungsergebnisse)
 
 #### Erfolgreicher Upload
@@ -99,6 +123,8 @@ Die Anwendung sucht nach Dateien mit folgenden Pattern:
 - Journal: `*DOWNLOAD_JOURNAL.xml`
 - NewInformation: `*DOWNLOAD_AVAILABLE_DATA.xml` oder `*DOWNLOAD_NEWINFORMATION.xml`
 - DownloadedInformation: `*DOWNLOAD_OWN_DATA_DOWNLOADED.xml` oder `*DOWNLOADED_INFORMATION.xml`
+- Access Rights Received: `*DOWNLOAD_ACCESS_RULE.xml`
+- Access Rights Granted: `*DOWNLOAD_AR_ASSIGNED.xml`
 
 Das Präfix (z.B. `20251119_`) dient der Versionierung - die Anwendung wählt automatisch die neueste Datei.
 
@@ -141,11 +167,12 @@ Die Anwendung verbindet sich nun wieder mit dem echten OeKB FDP Server.
 - **Activity Journal** - zeigt Upload/Download Aktivitäten
 - **New Information** - zeigt neu verfügbare Daten
 - **Download Statistics** - zeigt wer eigene Daten heruntergeladen hat
+- **Rights Received** - zeigt empfangene Zugriffsrechte (7 Access Rules)
+- **Grant Rights** - zeigt erteilte Zugriffsrechte (8 Access Rules)
 
 ### ⏳ Noch nicht implementiert
 - **Upload Reply Integration** - wird in Data Upload Seite integriert
 - **OeNBCheck** - für OeNB Meldung Seite
-- **AccessRules** - bereits Modelle vorhanden, UI-Integration steht aus
 
 ## Schema-Referenzen
 
@@ -154,6 +181,7 @@ Alle XML-Dateien basieren auf den offiziellen OeKB FDP XSD-Schemas:
 - `FundsXML_Journal_1.0.3.xsd`
 - `FundsXML_NewInformation_1.0.2.xsd`
 - `FundsXML_DownloadedInformation_1.0.0.xsd`
+- `FundsXML_AccessRules_2.3.0.xsd`
 - `FundsXML_Reply_3.0.1.xsd`
 
 Die Schemas befinden sich in `src/main/resources/xsd/`.

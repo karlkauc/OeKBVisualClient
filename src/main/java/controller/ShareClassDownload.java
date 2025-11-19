@@ -175,6 +175,18 @@ public class ShareClassDownload implements Initializable {
 
                 params.setIsins(isins);
 
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultTextArea.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressIndicator.setVisible(false);
+                        downloadButton.setDisable(false);
+                    });
+                    return;
+                }
+
                 log.info("Downloading shareclass data for {} ISINs", isins.size());
                 String result = OeKBHTTP.downloadShareClass(params);
 

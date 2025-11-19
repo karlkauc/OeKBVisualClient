@@ -3,7 +3,6 @@
 
 
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -30,84 +29,101 @@
             <!-- Page Title -->
             <Label text="Application Settings" styleClass="page-title-compact"/>
 
-            <!-- OeKB Credentials Card -->
-            <VBox styleClass="card-compact" spacing="8">
-                <Label text="OeKB Credentials" styleClass="section-title-compact"/>
-                <Separator/>
+            <!-- Row 1: OeKB Credentials and Proxy Configuration -->
+            <HBox spacing="10" alignment="TOP_LEFT">
+                <!-- OeKB Credentials Card -->
+                <VBox styleClass="card-compact" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="OeKB Credentials" styleClass="section-title-compact"/>
+                    <Separator/>
 
-                <GridPane hgap="12" vgap="8">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
-                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
-                    </columnConstraints>
+                    <VBox spacing="8">
+                        <VBox spacing="4">
+                            <Label text="Username" styleClass="label-secondary-compact"/>
+                            <TextField fx:id="userNameField" promptText="Enter username" styleClass="text-field-compact"/>
+                        </VBox>
 
-                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="Username" styleClass="label-secondary-compact"/>
-                        <TextField fx:id="userNameField" promptText="Enter username" styleClass="text-field-compact"/>
+                        <VBox spacing="4">
+                            <Label text="Password" styleClass="label-secondary-compact"/>
+                            <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="text-field-compact"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Data Supplier (DDS)" styleClass="label-secondary-compact"/>
+                            <ComboBox fx:id="dataSupplierComboBox" promptText="Select Data Supplier"
+                                      styleClass="combo-box-compact" maxWidth="Infinity" editable="true"/>
+                        </VBox>
                     </VBox>
-
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <Label text="Password" styleClass="label-secondary-compact"/>
-                        <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="text-field-compact"/>
-                    </VBox>
-
-                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <Label text="Data Supplier (DDS)" styleClass="label-secondary-compact"/>
-                        <ComboBox fx:id="dataSupplierComboBox" promptText="Select Data Supplier" styleClass="combo-box-compact" prefWidth="240" editable="true"/>
-                    </VBox>
-                </GridPane>
-            </VBox>
-
-            <!-- Proxy Settings Card -->
-            <VBox styleClass="card-compact" spacing="8">
-                <Label text="Proxy Configuration" styleClass="section-title-compact"/>
-                <Separator/>
-
-                <CheckBox fx:id="proxySystemSettings"
-                             text="Use System Proxy Settings"
-                             selected="true" styleClass="checkbox-compact"/>
-
-                <GridPane hgap="12" vgap="8">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
-                        <ColumnConstraints minWidth="180" prefWidth="240" hgrow="SOMETIMES"/>
-                    </columnConstraints>
-
-                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="Proxy Host" styleClass="label-secondary-compact"/>
-                        <TextField fx:id="proxyHost" promptText="proxy.example.com" styleClass="text-field-compact"/>
-                    </VBox>
-
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <Label text="Proxy Port" styleClass="label-secondary-compact"/>
-                        <TextField fx:id="proxyPort" promptText="8080" styleClass="text-field-compact"/>
-                    </VBox>
-
-                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <Label text="Proxy Username" styleClass="label-secondary-compact"/>
-                        <TextField fx:id="proxyUser" promptText="Enter proxy username" styleClass="text-field-compact"/>
-                    </VBox>
-
-                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <Label text="Proxy Password" styleClass="label-secondary-compact"/>
-                        <PasswordField fx:id="proxyPassword" promptText="Enter proxy password" styleClass="text-field-compact"/>
-                    </VBox>
-                </GridPane>
-            </VBox>
-
-            <!-- Application Options Card -->
-            <VBox styleClass="card-compact" spacing="8">
-                <Label text="Application Options" styleClass="section-title-compact"/>
-                <Separator/>
-
-                <VBox spacing="6">
-                    <CheckBox fx:id="jbOverwriteData"
-                                 text="Overwrite data without asking" styleClass="checkbox-compact"/>
-
-                    <CheckBox fx:id="jbNewAccesRuleId"
-                                 text="Use new ID for Access Rights" styleClass="checkbox-compact"/>
                 </VBox>
-            </VBox>
+
+                <!-- Proxy Settings Card -->
+                <VBox styleClass="card-compact" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Proxy Configuration" styleClass="section-title-compact"/>
+                    <Separator/>
+
+                    <CheckBox fx:id="proxySystemSettings"
+                                 text="Use System Proxy Settings"
+                                 selected="true" styleClass="checkbox-compact"/>
+
+                    <VBox spacing="8">
+                        <VBox spacing="4">
+                            <Label text="Proxy Host" styleClass="label-secondary-compact"/>
+                            <TextField fx:id="proxyHost" promptText="proxy.example.com" styleClass="text-field-compact"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Proxy Port" styleClass="label-secondary-compact"/>
+                            <TextField fx:id="proxyPort" promptText="8080" styleClass="text-field-compact"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Proxy Username" styleClass="label-secondary-compact"/>
+                            <TextField fx:id="proxyUser" promptText="Enter proxy username" styleClass="text-field-compact"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Proxy Password" styleClass="label-secondary-compact"/>
+                            <PasswordField fx:id="proxyPassword" promptText="Enter proxy password" styleClass="text-field-compact"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </HBox>
+
+            <!-- Row 2: Application Options and Development & Testing -->
+            <HBox spacing="10" alignment="TOP_LEFT">
+                <!-- Application Options Card -->
+                <VBox styleClass="card-compact" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Application Options" styleClass="section-title-compact"/>
+                    <Separator/>
+
+                    <VBox spacing="6">
+                        <CheckBox fx:id="jbOverwriteData"
+                                     text="Overwrite data without asking" styleClass="checkbox-compact"/>
+
+                        <CheckBox fx:id="jbNewAccesRuleId"
+                                     text="Use new ID for Access Rights" styleClass="checkbox-compact"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Development & Testing Card -->
+                <VBox styleClass="card-compact" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Development &amp; Testing" styleClass="section-title-compact"/>
+                    <Separator/>
+
+                    <VBox spacing="8">
+                        <CheckBox fx:id="fileSystemCheckBox"
+                                     text="Use File System Mode (Mock XML Data)" styleClass="checkbox-compact"/>
+                        <Label text="When enabled, the application reads data from local XML files instead of the FDP server."
+                               styleClass="label-hint-compact" wrapText="true"/>
+
+                        <VBox spacing="4">
+                            <Label text="Backup Directory" styleClass="label-secondary-compact"/>
+                            <TextField fx:id="backupDirectoryField" promptText="backup" styleClass="text-field-compact"/>
+                            <Label text="Directory for backup files and mock XML data (relative or absolute path)"
+                                   styleClass="label-hint-compact" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </HBox>
 
             <!-- Save Button -->
             <HBox alignment="CENTER_LEFT" spacing="12">

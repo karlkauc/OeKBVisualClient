@@ -63,6 +63,12 @@ public class AccessRightGrant implements Initializable {
     private Button dumpData;
 
     @FXML
+    private TextField searchField;
+
+    @FXML
+    private Label searchResultLabel;
+
+    @FXML
     void dumpData() {
         for (AccessRule rule : accessRule) {
             System.out.println(rule);
@@ -280,6 +286,108 @@ public class AccessRightGrant implements Initializable {
 
         accessRightTable.setTableMenuButtonVisible(true);
         accessRightTable.getColumns().addAll(ruleIdCol, removeButton, profile, contentType, dds, ids, fundName, dateFrom, dateTo, frequency, delay);
+
+        // Setup search functionality
+        setupSearch();
+    }
+
+    /**
+     * Setup search filter for table
+     */
+    private void setupSearch() {
+        if (searchField != null) {
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filterTable(newValue);
+            });
+        }
+    }
+
+    /**
+     * Filter table based on search text
+     */
+    private void filterTable(String searchText) {
+        if (searchText == null || searchText.trim().isEmpty()) {
+            // Show all items
+            accessRightTable.setRoot(root);
+            accessRightTable.setShowRoot(false);
+            searchResultLabel.setText("");
+            return;
+        }
+
+        String lowerCaseFilter = searchText.toLowerCase().trim();
+        TreeItem<RuleRow> filteredRoot = new TreeItem<>();
+        int matchCount = 0;
+
+        // Search through all rules
+        for (TreeItem<RuleRow> ruleItem : root.getChildren()) {
+            RuleRow rule = ruleItem.getValue();
+            boolean ruleMatches = false;
+
+            // Check if rule matches search
+            if (matches(rule, lowerCaseFilter)) {
+                ruleMatches = true;
+            }
+
+            // Check children (LEI, OENB, ISINs)
+            List<TreeItem<RuleRow>> matchingChildren = new ArrayList<>();
+            for (TreeItem<RuleRow> child : ruleItem.getChildren()) {
+                if (matches(child.getValue(), lowerCaseFilter)) {
+                    matchingChildren.add(child);
+                }
+            }
+
+            // Add rule if it or any of its children match
+            if (ruleMatches || !matchingChildren.isEmpty()) {
+                TreeItem<RuleRow> filteredRuleItem = new TreeItem<>(rule);
+                if (ruleMatches) {
+                    // Add all children if rule itself matches
+                    filteredRuleItem.getChildren().addAll(ruleItem.getChildren());
+                } else {
+                    // Add only matching children
+                    filteredRuleItem.getChildren().addAll(matchingChildren);
+                }
+                filteredRoot.getChildren().add(filteredRuleItem);
+                matchCount++;
+            }
+        }
+
+        accessRightTable.setRoot(filteredRoot);
+        accessRightTable.setShowRoot(false);
+
+        if (matchCount == 0) {
+            searchResultLabel.setText("No matches found");
+            searchResultLabel.setStyle("-fx-text-fill: #c8102e;");
+        } else {
+            searchResultLabel.setText(matchCount + " rule(s) found");
+            searchResultLabel.setStyle("-fx-text-fill: #28a745;");
+        }
+    }
+
+    /**
+     * Check if a RuleRow matches the search text
+     */
+    private boolean matches(RuleRow row, String searchText) {
+        if (row == null) return false;
+
+        return contains(row.getId(), searchText) ||
+               contains(row.getContentType(), searchText) ||
+               contains(row.getProfile(), searchText) ||
+               contains(row.getDataSupplierCreatorShort(), searchText) ||
+               contains(row.getDataSuppliersGivenShort(), searchText) ||
+               contains(row.getLEI(), searchText) ||
+               contains(row.getOENB_ID(), searchText) ||
+               contains(row.getSHARECLASS_ISIN(), searchText) ||
+               contains(row.getSEGMENT_ISIN(), searchText) ||
+               contains(row.getDateFrom(), searchText) ||
+               contains(row.getDateTo(), searchText) ||
+               contains(row.getFrequency(), searchText);
+    }
+
+    /**
+     * Helper method to check if string contains search text
+     */
+    private boolean contains(String value, String searchText) {
+        return value != null && value.toLowerCase().contains(searchText);
     }
 }
 
@@ -317,18 +425,36 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                 grid.setPadding(new Insets(20, 30, 10, 20));
 
                 TextField ruleId = new TextField(rule.getItem().getId());
-                TextField profile = new TextField(rule.getItem().getProfile());
+
+                // Profile ComboBox with enumeration values from XSD
+                ComboBox<String> profile = new ComboBox<>();
+                profile.getItems().addAll("all", "PKG", "Vendor", "allOhneSegmente",
+                                         "VendorOhneShareClassPositions", "VendorMitShareClass");
+                profile.setValue(rule.getItem().getProfile());
+                profile.setEditable(false);
+
                 TextField toDDS = new TextField(rule.getItem().getDataSuppliersGivenShort());
                 TextField dateFrom = new TextField(rule.getItem().getDateFrom());
                 TextField dateTo = new TextField(rule.getItem().getDateTo());
-                TextField frequency = new TextField(rule.getItem().getFrequency());
+
+                // Frequency ComboBox with enumeration values from XSD
+                ComboBox<String> frequency = new ComboBox<>();
+                frequency.getItems().addAll("daily", "monthly");
+                frequency.setValue(rule.getItem().getFrequency());
+                frequency.setEditable(false);
+
                 TextField delay = new TextField(rule.getItem().getAccessDelayInDays());
 
                 CheckBox costsByDDS = new CheckBox();
                 costsByDDS.setSelected(rule.getItem().isCostsByDataSupplier());
 
                 TextField comment = new TextField("TBD");
-                TextField contentType = new TextField(rule.getItem().getContentType());
+
+                // ContentType ComboBox with enumeration values from XSD
+                ComboBox<String> contentType = new ComboBox<>();
+                contentType.getItems().addAll("FUND", "DOC", "REG");
+                contentType.setValue(rule.getItem().getContentType());
+                contentType.setEditable(false);
 
                 TextField addLEI = new TextField();
                 TextField addOENB_ID = new TextField();
@@ -389,12 +515,12 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
                         logButton.debug("nichts zum dazufügen.");
                     }
 
-                    RuleRow newRuleRow = new RuleRow(ruleId.getText(), contentType.getText(), profile.getText(),
+                    RuleRow newRuleRow = new RuleRow(ruleId.getText(), contentType.getValue(), profile.getValue(),
                             rule.getItem().getDataSupplierCreatorShort(), rule.getItem().getDataSupplierCreatorName(),
                             toDDS.getText(),
                             rule.getItem().getCreationTime(),
                             delay.getText(),
-                            dateFrom.getText(), dateTo.getText(), frequency.getText(), costsByDDS.isSelected(),
+                            dateFrom.getText(), dateTo.getText(), frequency.getValue(), costsByDDS.isSelected(),
                             rule.getItem().getLEI(), rule.getItem().getOENB_ID(),
                             rule.getItem().getSHARECLASS_ISIN(), rule.getItem().getSEGMENT_ISIN(),
                             rule.getItem().isRootRow());

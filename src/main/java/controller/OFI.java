@@ -186,6 +186,18 @@ public class OFI implements Initializable {
 
                 params.setLeiOenIds(ids);
 
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultAggTextArea.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressAgg.setVisible(false);
+                        downloadAggButton.setDisable(false);
+                    });
+                    return;
+                }
+
                 log.info("Downloading OeNB Aggregierung for {} IDs", ids.size());
                 String result = OeKBHTTP.downloadOeNBAggregierung(params);
 
@@ -233,6 +245,18 @@ public class OFI implements Initializable {
 
                 params.setLeiOenIds(ids);
 
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultSecTextArea.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressSec.setVisible(false);
+                        downloadSecButton.setDisable(false);
+                    });
+                    return;
+                }
+
                 log.info("Downloading OeNB SecBySec for {} IDs", ids.size());
                 String result = OeKBHTTP.downloadOeNBSecBySec(params);
 
@@ -273,6 +297,18 @@ public class OFI implements Initializable {
                     validFilter = "false";
                 }
                 // validAll selected means no filter (null)
+
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultCheckTextArea.setText("⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressCheck.setVisible(false);
+                        downloadCheckButton.setDisable(false);
+                    });
+                    return;
+                }
 
                 log.info("Downloading OeNB Check for date {}", date);
                 String result = OeKBHTTP.downloadOeNBCheck(date, validFilter);

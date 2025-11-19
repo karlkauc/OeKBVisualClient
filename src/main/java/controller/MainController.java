@@ -20,9 +20,7 @@ import javafx.scene.control.TextArea;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import model.ApplicationSettings;
 import org.apache.logging.log4j.LogManager;
@@ -47,9 +45,6 @@ public class MainController implements Initializable {
     private Button devServerButton;
 
     @FXML
-    private CheckBox fileSystem;
-
-    @FXML
     private URL location;
 
     @FXML
@@ -61,8 +56,75 @@ public class MainController implements Initializable {
     @FXML
     private Label globalDdsStatus;
 
+    // Menu buttons
+    @FXML
+    private Button btnSettings;
+
+    @FXML
+    private Button btnAccessRightsReceived;
+
+    @FXML
+    private Button btnAccessRightsGrant;
+
+    @FXML
+    private Button btnJournal;
+
+    @FXML
+    private Button btnNewInformation;
+
+    @FXML
+    private Button btnAvailableData;
+
+    @FXML
+    private Button btnDownloadStats;
+
+    @FXML
+    private Button btnDataUpload;
+
+    @FXML
+    private Button btnOeNB;
+
+    @FXML
+    private Button btnFundDownload;
+
+    @FXML
+    private Button btnShareClassDownload;
+
+    @FXML
+    private Button btnDocumentDownload;
+
+    @FXML
+    private Button btnRegulatoryReporting;
+
+    /**
+     * Updates the active menu button styling
+     */
+    private void setActiveMenuButton(Button activeButton) {
+        // Remove active class from all menu buttons
+        Button[] allMenuButtons = {
+            btnSettings, btnAccessRightsReceived, btnAccessRightsGrant,
+            btnJournal, btnNewInformation, btnAvailableData, btnDownloadStats,
+            btnDataUpload, btnOeNB, btnFundDownload, btnShareClassDownload,
+            btnDocumentDownload, btnRegulatoryReporting
+        };
+
+        for (Button btn : allMenuButtons) {
+            if (btn != null) {
+                btn.getStyleClass().removeAll("menu-button-active");
+            }
+        }
+
+        // Add active class to the current button
+        if (activeButton != null) {
+            if (!activeButton.getStyleClass().contains("menu-button-active")) {
+                activeButton.getStyleClass().add("menu-button-active");
+            }
+        }
+    }
+
     @FXML
     private void changeToSettings() {
+        setActiveMenuButton(btnSettings);
         log.debug("bin jetzt in settings");
 
         try {
@@ -71,13 +133,6 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             log.error("Error loading settings page", e);
         }
-    }
-
-    @FXML
-    private void changeFileSystem() {
-        settingsData.setFileSystem(fileSystem.isSelected());
-        log.debug("file system: " + fileSystem.isSelected());
-        settingsData.saveSettingsDataToFile();
     }
 
     private void updateServerButtonStyles() {
@@ -140,6 +195,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToAccessRightsReceived() {
+        setActiveMenuButton(btnAccessRightsReceived);
         log.debug("bin jetzt im access rights receive");
 
         if (!hasValidSettings()) {
@@ -147,7 +203,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAccesRightsReceived.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAccesRightsReceived.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -158,6 +214,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToAccessRightsGrant() {
+        setActiveMenuButton(btnAccessRightsGrant);
         System.out.println("bin jetzt im access rights GRANT");
 
         if (!hasValidSettings()) {
@@ -165,7 +222,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAccessRightGrant.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAccessRightGrant.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -176,6 +233,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToJournal() {
+        setActiveMenuButton(btnJournal);
         log.debug("change to Activity Journal");
 
         if (!hasValidSettings()) {
@@ -183,7 +241,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageJournal.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageJournal.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -194,6 +252,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToNewInformation() {
+        setActiveMenuButton(btnNewInformation);
         log.debug("change to New Information");
 
         if (!hasValidSettings()) {
@@ -201,7 +260,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageNewInformation.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageNewInformation.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -212,6 +271,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToOFI() {
+        setActiveMenuButton(btnOeNB);
         log.debug("chenage to OFI");
 
         if (!hasValidSettings()) {
@@ -219,7 +279,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOFI_new.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOFI_new.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -230,6 +290,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToDataUpload() {
+        setActiveMenuButton(btnDataUpload);
         log.debug("bin jetzt in changeToDataUpload");
 
         if (!hasValidSettings()) {
@@ -237,7 +298,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDataUpload.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDataUpload.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -255,7 +316,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageHistory.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageHistory.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -273,7 +334,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDataDownload.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDataDownload.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -284,6 +345,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToFundDownload() {
+        setActiveMenuButton(btnFundDownload);
         log.debug("change to Fund Download");
 
         if (!hasValidSettings()) {
@@ -291,7 +353,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageFundDownload.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageFundDownload.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -302,6 +364,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToShareClassDownload() {
+        setActiveMenuButton(btnShareClassDownload);
         log.debug("change to ShareClass Download");
 
         if (!hasValidSettings()) {
@@ -309,7 +372,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageShareClassDownload.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageShareClassDownload.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -320,6 +383,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToDocumentDownload() {
+        setActiveMenuButton(btnDocumentDownload);
         log.debug("change to Document Download");
 
         if (!hasValidSettings()) {
@@ -327,7 +391,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDocumentDownload.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDocumentDownload.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -338,6 +402,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToRegulatoryReporting() {
+        setActiveMenuButton(btnRegulatoryReporting);
         log.debug("change to Regulatory Reporting");
 
         if (!hasValidSettings()) {
@@ -345,7 +410,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageRegulatoryReporting.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageRegulatoryReporting.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -356,6 +421,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToAvailableData() {
+        setActiveMenuButton(btnAvailableData);
         log.debug("change to Available Data");
 
         if (!hasValidSettings()) {
@@ -363,7 +429,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAvailableData.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAvailableData.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -374,6 +440,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToOwnDataDownloaded() {
+        setActiveMenuButton(btnDownloadStats);
         log.debug("change to Own Data Downloaded");
 
         if (!hasValidSettings()) {
@@ -381,7 +448,7 @@ public class MainController implements Initializable {
             changeToSettings();
         } else {
             try {
-                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOwnDataDownloaded.fxml"));
+                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageOwnDataDownloaded.fxml"));
                 mainPane.getChildren().setAll(tempPane);
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
@@ -400,20 +467,13 @@ public class MainController implements Initializable {
         settingsData = ApplicationSettings.getInstance();
         settingsData.readSettingsFromFile();
 
-        fileSystem.setSelected(settingsData.isFileSystem());
-
         // Update server button styles based on settings
         updateServerButtonStyles();
 
         // Update global status bar
         updateGlobalStatus();
 
-        // keine Zugangsdaten eingegeben -> zuerst mal zur Settings Seite
-        if (!hasValidSettings()) {
-            log.debug("no settings found");
-            changeToSettings();
-        }
-
-        fileSystem.setVisible(settingsData.isFileSystem());
+        // Immer Settings Seite beim Start laden
+        changeToSettings();
     }
 }
