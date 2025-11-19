@@ -1,14 +1,10 @@
 import java.util.Date
 
 plugins {
-    // id("edu.sc.seis.launch4j") version "2.4.4"  // Commented out for now
-    // JavaFX plugin not needed with Liberica JDK+FX
-    // id("org.openjfx.javafxplugin") version "0.1.0"
-    // Using native jlink and jpackage instead of plugin
-    // id("org.beryx.jlink") version "3.0.1"
     java
     application
     idea
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 application {
@@ -25,17 +21,11 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-// JavaFX configuration not needed - using Liberica JDK+FX
-// javafx {
-//     version = "25"
-//     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
-// }
-
 repositories {
     mavenCentral()
 }
 
-val poiVersion = "5.3.0"
+val poiVersion = "5.5.0"
 val log4jVersion = "2.24.3"
 
 configurations {
@@ -68,10 +58,10 @@ dependencies {
 
     // JAXB for Java 17+
     implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.6")
 
     // Apache Commons Codec for Base64
-    implementation("commons-codec:commons-codec:1.17.1")
+    implementation("commons-codec:commons-codec:1.20.0")
 
     // Icons
     implementation("org.kordamp.ikonli:ikonli-javafx:12.4.0")
