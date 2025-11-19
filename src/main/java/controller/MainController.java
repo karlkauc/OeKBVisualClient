@@ -15,8 +15,8 @@
  */
 package controller;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -41,7 +41,10 @@ public class MainController implements Initializable {
     private TextArea debugMessages;
 
     @FXML
-    private ToggleButton prodServer;
+    private Button prodServerButton;
+
+    @FXML
+    private Button devServerButton;
 
     @FXML
     private CheckBox fileSystem;
@@ -53,16 +56,10 @@ public class MainController implements Initializable {
     private Pane mainPane;
 
     @FXML
-    private TextField dataSupplier;
+    private Label globalServerStatus;
 
     @FXML
-    private Label server;
-
-    @FXML
-    void changeDDS() {
-        settingsData.setDataSupplierList(dataSupplier.getText());
-        settingsData.saveSettingsDataToFile();
-    }
+    private Label globalDdsStatus;
 
     @FXML
     private void changeToSettings() {
@@ -83,11 +80,38 @@ public class MainController implements Initializable {
         settingsData.saveSettingsDataToFile();
     }
 
-    private void setLabelTextForServer() {
+    private void updateServerButtonStyles() {
         if (settingsData.isUseProdServer()) {
-            server.setText("PROD SERVER");
+            prodServerButton.getStyleClass().removeAll("inactive");
+            prodServerButton.getStyleClass().add("active");
+            devServerButton.getStyleClass().removeAll("active");
+            devServerButton.getStyleClass().add("inactive");
         } else {
-            server.setText("DEV SERVER");
+            devServerButton.getStyleClass().removeAll("inactive");
+            devServerButton.getStyleClass().add("active");
+            prodServerButton.getStyleClass().removeAll("active");
+            prodServerButton.getStyleClass().add("inactive");
+        }
+    }
+
+    private void updateGlobalStatus() {
+        // Update server status
+        if (settingsData.isUseProdServer()) {
+            globalServerStatus.setText("PRODUCTION SERVER");
+            globalServerStatus.getStyleClass().removeAll("server-status-dev");
+            globalServerStatus.getStyleClass().add("server-status-prod");
+        } else {
+            globalServerStatus.setText("DEVELOPMENT SERVER");
+            globalServerStatus.getStyleClass().removeAll("server-status-prod");
+            globalServerStatus.getStyleClass().add("server-status-dev");
+        }
+
+        // Update DDS status
+        String dds = settingsData.getDataSupplierList();
+        if (dds != null && !dds.isEmpty()) {
+            globalDdsStatus.setText("DDS: " + dds);
+        } else {
+            globalDdsStatus.setText("");
         }
     }
 
@@ -97,10 +121,21 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void changeServer() {
-        settingsData.setUseProdServer(prodServer.isSelected());
+    private void changeToProdServer() {
+        log.debug("switching to PRODUCTION server");
+        settingsData.setUseProdServer(true);
         settingsData.saveSettingsDataToFile();
-        setLabelTextForServer();
+        updateServerButtonStyles();
+        updateGlobalStatus();
+    }
+
+    @FXML
+    private void changeToDevServer() {
+        log.debug("switching to DEVELOPMENT server");
+        settingsData.setUseProdServer(false);
+        settingsData.saveSettingsDataToFile();
+        updateServerButtonStyles();
+        updateGlobalStatus();
     }
 
     @FXML
@@ -329,18 +364,19 @@ public class MainController implements Initializable {
         settingsData = ApplicationSettings.getInstance();
         settingsData.readSettingsFromFile();
 
-        prodServer.setSelected(settingsData.isUseProdServer());
         fileSystem.setSelected(settingsData.isFileSystem());
+
+        // Update server button styles based on settings
+        updateServerButtonStyles();
+
+        // Update global status bar
+        updateGlobalStatus();
 
         // keine Zugangsdaten eingegeben -> zuerst mal zur Settings Seite
         if (!hasValidSettings()) {
             log.debug("no settings found");
             changeToSettings();
         }
-
-        dataSupplier.setEditable(true);
-        dataSupplier.setText(settingsData.getDataSupplierList() != null ? settingsData.getDataSupplierList() : "");
-        setLabelTextForServer();
 
         fileSystem.setVisible(settingsData.isFileSystem());
     }

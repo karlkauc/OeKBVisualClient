@@ -37,11 +37,6 @@ configurations {
 }
 
 dependencies {
-    // JavaFX is included in Liberica JDK+FX, no separate dependencies needed
-    // implementation("org.openjfx:javafx-controls:25")
-    // implementation("org.openjfx:javafx-fxml:25")
-    // implementation("org.openjfx:javafx-graphics:25")
-
     // Logging
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
@@ -97,38 +92,6 @@ tasks.jar {
     exclude("**/isinlei.csv")
 }
 
-// launch4j {
-//     dontWrapJar = true
-//     mainClassName = "StartApp"
-//     headerType = "gui"
-//     icon = "${projectDir}/img/icons8-connectdevelop.ico"
-//     copyright = System.getProperty("user.name")
-//     jvmOptions = listOf("-Dlog4j.configurationFile=resources/log4j2.properties")
-//     bundledJre64Bit = true
-//     bundledJrePath = "jre"
-//     outputDir = project.name
-// }
-
-/*
-tasks.register("sourceSetProperties") {
-    doLast {
-        sourceSets {
-            main {
-                println("java.srcDirs = ${java.srcDirs}")
-                println("resources.srcDirs = ${resources.srcDirs}")
-                println("java.files = ${java.files.map { it.name }}")
-                println("allJava.files = ${allJava.files.map { it.name }}")
-                println("resources.files = ${resources.files.map { it.name }}")
-                println("allSource.files = ${allSource.files.map { it.name }}")
-                println("output.classesDir = ${output.classesDirs}")
-                println("output.resourcesDir = ${output.resourcesDir}")
-                println("output.files = ${output.files}")
-            }
-        }
-    }
-}
-*/
-
 tasks.register<Copy>("copyFiles") {
     doLast {
         copy {
@@ -148,22 +111,6 @@ tasks.register<Copy>("copyFiles") {
         layout.buildDirectory.dir("${project.name}/logs").get().asFile.mkdirs()
     }
 }
-
-// tasks.named("createExe").configure {
-//     dependsOn(tasks.named("copyFiles"))
-// }
-
-// tasks.register<Zip>("zipWinExe") {
-//     from(layout.buildDirectory)
-//     include("${project.name}/**")
-//     exclude("*launch4j*")
-//     archiveFileName.set("${project.name}-${version}.zip")
-//     destinationDirectory.set(layout.buildDirectory)
-// }
-
-// tasks.register("doAll") {
-//     dependsOn(tasks.clean, tasks.named("createExe"), tasks.named("copyFiles"), tasks.named("zipWinExe"))
-// }
 
 /* ============================================
    NATIVE JLINK & JPACKAGE TASKS

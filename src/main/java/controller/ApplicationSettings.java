@@ -39,6 +39,9 @@ public class ApplicationSettings implements Initializable {
     private PasswordField passwordField;
 
     @FXML
+    private TextField dataSupplierField;
+
+    @FXML
     private Button save;
 
     @FXML
@@ -66,6 +69,7 @@ public class ApplicationSettings implements Initializable {
     void saveSettings() {
         settingsData.setOekbUserName(userNameField.getText());
         settingsData.setOekbPasswort(passwordField.getText());
+        settingsData.setDataSupplierList(dataSupplierField.getText());
         settingsData.setConnectionProxyHost(proxyHost.getText());
 
         if (proxyPort.getText() != null && proxyPort.getText().length() > 1) {
@@ -91,6 +95,7 @@ public class ApplicationSettings implements Initializable {
 
         userNameField.setText(settingsData.getOekbUserName());
         passwordField.setText(settingsData.getOekbPasswort());
+        dataSupplierField.setText(settingsData.getDataSupplierList() != null ? settingsData.getDataSupplierList() : "");
 
         proxyHost.setText(settingsData.getConnectionProxyHost());
         proxyUser.setText(settingsData.getConnectionProxyUser());

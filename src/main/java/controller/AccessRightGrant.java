@@ -71,7 +71,7 @@ public class AccessRightGrant implements Initializable {
 
     @FXML
     void exportToExcel() {
-        final String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_accessRulesGranted.xslx";
+        final String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_accessRulesGranted.xlsx";
         log.debug("speichere alle ab [" + fileName + "].");
         WriteXLS.writeAccessRights(fileName, accessRule);
         statusMessage.setText("Alles gespeichert!");

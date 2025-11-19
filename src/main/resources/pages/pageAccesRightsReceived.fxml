@@ -3,11 +3,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="accessRightPane"
       styleClass="mainPane" spacing="25"
@@ -30,6 +32,18 @@
                 </ImageView>
             </graphic>
         </Button>
+    </HBox>
+
+    <!-- Search Field -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="search-bar">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <FontIcon iconLiteral="bi-search" iconSize="18" iconColor="#6c757d"/>
+        <TextField fx:id="searchField" promptText="Suche in allen Spalten..."
+                   styleClass="search-field" HBox.hgrow="ALWAYS"
+                   onKeyReleased="#filterTable"/>
+        <Label fx:id="searchResultLabel" styleClass="search-result-label"/>
     </HBox>
 
     <!-- Table Card -->

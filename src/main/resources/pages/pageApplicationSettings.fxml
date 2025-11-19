@@ -49,6 +49,11 @@
                         <Label text="Password" styleClass="label-secondary-compact"/>
                         <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="text-field-compact"/>
                     </VBox>
+
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Data Supplier (DDS)" styleClass="label-secondary-compact"/>
+                        <TextField fx:id="dataSupplierField" promptText="Enter Data Supplier ID" styleClass="text-field-compact"/>
+                    </VBox>
                 </GridPane>
             </VBox>
 

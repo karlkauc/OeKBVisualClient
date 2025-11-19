@@ -16,6 +16,7 @@
 package controller;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import dao.AccesRights;
 import dao.WriteXLS;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class AccessRightsReceived implements Initializable {
 
     private ApplicationSettings settingsData;
     private List<AccessRule> accessRule;
+    private TreeItem<RuleRow> rootData;
 
     @FXML
     private Button exportToExcel;
@@ -58,12 +60,104 @@ public class AccessRightsReceived implements Initializable {
     private Label statusMessage;
 
     @FXML
+    private TextField searchField;
+
+    @FXML
+    private Label searchResultLabel;
+
+    @FXML
     void exportToExcel() {
-        final String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "accessRulesReceived.xslx";
+        final String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_accessRulesReceived.xlsx";
         log.debug("speichere alles nach Excel [" + fileName + "].");
 
         WriteXLS.writeAccessRights(fileName, accessRule);
         statusMessage.setText("Gespeichert");
+    }
+
+    @FXML
+    void filterTable() {
+        String searchText = searchField.getText().toLowerCase().trim();
+
+        if (searchText.isEmpty()) {
+            // No search text, show all data
+            accessRightTable.setRoot(rootData);
+            searchResultLabel.setText("");
+            return;
+        }
+
+        // Create filtered root
+        TreeItem<RuleRow> filteredRoot = new TreeItem<>();
+        int totalMatches = 0;
+        int ruleMatches = 0;
+
+        for (TreeItem<RuleRow> ruleItem : rootData.getChildren()) {
+            RuleRow rule = ruleItem.getValue();
+            boolean ruleMatches_local = matchesSearchCriteria(rule, searchText);
+
+            List<TreeItem<RuleRow>> matchingChildren = new ArrayList<>();
+
+            // Check children (LEI, OENB_ID, ISIN entries)
+            for (TreeItem<RuleRow> child : ruleItem.getChildren()) {
+                if (matchesSearchCriteria(child.getValue(), searchText)) {
+                    matchingChildren.add(child);
+                    totalMatches++;
+                }
+            }
+
+            // If rule itself matches or has matching children, include it
+            if (ruleMatches_local || !matchingChildren.isEmpty()) {
+                TreeItem<RuleRow> filteredRuleItem = new TreeItem<>(rule);
+                filteredRuleItem.getChildren().addAll(matchingChildren);
+                filteredRuleItem.setExpanded(true); // Expand to show matches
+                filteredRoot.getChildren().add(filteredRuleItem);
+
+                if (ruleMatches_local) {
+                    ruleMatches++;
+                    totalMatches++;
+                }
+            }
+        }
+
+        accessRightTable.setRoot(filteredRoot);
+
+        // Update result label
+        if (totalMatches > 0) {
+            searchResultLabel.setText(totalMatches + " Treffer gefunden");
+            searchResultLabel.setStyle("-fx-text-fill: #2e7d32;");
+        } else {
+            searchResultLabel.setText("Keine Treffer");
+            searchResultLabel.setStyle("-fx-text-fill: #d32f2f;");
+        }
+    }
+
+    private boolean matchesSearchCriteria(RuleRow row, String searchText) {
+        if (row == null) return false;
+
+        return containsIgnoreCase(row.getId(), searchText) ||
+               containsIgnoreCase(row.getProfile(), searchText) ||
+               containsIgnoreCase(row.getContentType(), searchText) ||
+               containsIgnoreCase(row.getDataSupplierCreatorShort(), searchText) ||
+               containsIgnoreCase(row.getDataSupplierCreatorName(), searchText) ||
+               containsIgnoreCase(row.getCreationTime(), searchText) ||
+               containsIgnoreCase(row.getAccessDelayInDays(), searchText) ||
+               containsIgnoreCase(row.getDateFrom(), searchText) ||
+               containsIgnoreCase(row.getDateTo(), searchText) ||
+               containsIgnoreCase(row.getFrequency(), searchText) ||
+               containsBoolean(row.getCostsByDataSupplier(), searchText) ||
+               containsIgnoreCase(row.getLEI(), searchText) ||
+               containsIgnoreCase(row.getOENB_ID(), searchText) ||
+               containsIgnoreCase(row.getSHARECLASS_ISIN(), searchText) ||
+               containsIgnoreCase(row.getSEGMENT_ISIN(), searchText);
+    }
+
+    private boolean containsIgnoreCase(String value, String searchText) {
+        return value != null && value.toLowerCase().contains(searchText);
+    }
+
+    private boolean containsBoolean(Boolean value, String searchText) {
+        if (value == null) return false;
+        String boolStr = value.toString().toLowerCase();
+        return boolStr.contains(searchText);
     }
 
     @Override
@@ -76,7 +170,7 @@ public class AccessRightsReceived implements Initializable {
         AccesRights ar = new AccesRights();
         accessRule = ar.getAccesRightsRecievedFromOEKB();
 
-        TreeItem<RuleRow> root = new TreeItem<>();
+        rootData = new TreeItem<>();
 
         // Display user-friendly message if no data was retrieved
         if (accessRule == null || accessRule.isEmpty()) {
@@ -198,10 +292,10 @@ public class AccessRightsReceived implements Initializable {
             }
 
             ruleId.getChildren().addAll(rootTable);
-            root.getChildren().addAll(ruleId);
+            rootData.getChildren().addAll(ruleId);
         }
 
-        accessRightTable.setRoot(root);
+        accessRightTable.setRoot(rootData);
         accessRightTable.setShowRoot(false);
 
         TreeTableColumn<RuleRow, String> ruleIdCol = new TreeTableColumn<>("Rule ID");

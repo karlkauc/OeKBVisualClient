@@ -556,3 +556,133 @@
 .bg-gradient-accent {
     -fx-background-color: linear-gradient(to right, -accent-color, #fbbf24);
 }
+
+/* ============================================
+   SERVER STATUS BAR (Global - Top)
+   ============================================ */
+.server-status-bar {
+    -fx-background-color: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
+    -fx-border-color: transparent transparent #374151 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.server-status-label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 0;
+}
+
+.server-status-prod {
+    -fx-background-color: #991b1b;
+    -fx-background-radius: 3px;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 12;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.4), 6, 0.0, 0, 0);
+}
+
+.server-status-dev {
+    -fx-background-color: #065f46;
+    -fx-background-radius: 3px;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 12;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 6, 0.0, 0, 0);
+}
+
+.dds-status-label {
+    -fx-text-fill: #d1d5db;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+}
+
+/* ============================================
+   SERVER BUTTONS (Sidebar)
+   ============================================ */
+.server-button-prod {
+    -fx-background-color: linear-gradient(to bottom, #7f1d1d 0%, #991b1b 100%);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 3px;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+}
+
+.server-button-prod:hover {
+    -fx-background-color: linear-gradient(to bottom, #991b1b 0%, #b91c1c 100%);
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.5), 8, 0.0, 0, 2);
+}
+
+.server-button-prod.active {
+    -fx-background-color: linear-gradient(to bottom, #b91c1c 0%, #dc2626 100%);
+    -fx-border-color: #fca5a5;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.6), 10, 0.0, 0, 2);
+    -fx-scale-y: 1.05;
+}
+
+.server-button-dev {
+    -fx-background-color: linear-gradient(to bottom, #064e3b 0%, #065f46 100%);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 3px;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+}
+
+.server-button-dev:hover {
+    -fx-background-color: linear-gradient(to bottom, #065f46 0%, #047857 100%);
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.5), 8, 0.0, 0, 2);
+}
+
+.server-button-dev.active {
+    -fx-background-color: linear-gradient(to bottom, #047857 0%, #059669 100%);
+    -fx-border-color: #6ee7b7;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.6), 10, 0.0, 0, 2);
+    -fx-scale-y: 1.05;
+}
+
+.server-button-prod.inactive,
+.server-button-dev.inactive {
+    -fx-opacity: 0.6;
+}
+
+/* ============================================
+   SEARCH BAR & FIELD
+   ============================================ */
+.search-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-color: -border-color-light;
+    -fx-border-width: 1;
+    -fx-border-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0.0, 0, 1);
+}
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: -text-muted;
+    -fx-padding: 5 10;
+}
+
+.search-field:focused {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: -primary-color;
+    -fx-border-radius: 3px;
+}
+
+.search-result-label {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 5;
+}
