@@ -37,11 +37,6 @@
     -border-color: #dee2e6;
     -border-color-light: #e9ecef;
 
-    -shadow-small: 0 1px 2px rgba(0, 0, 0, 0.08);
-    -shadow-medium: 0 2px 4px rgba(0, 0, 0, 0.1);
-    -shadow-large: 0 4px 8px rgba(0, 0, 0, 0.12);
-    -shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.15);
-
     -fx-font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 14px;
     -fx-padding: 0;
