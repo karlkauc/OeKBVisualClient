@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.NewInformationController">
+    <content>
+        <VBox fx:id="newInformationPane" styleClass="mainPane" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Page Title -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="bi-bell-fill" iconSize="24" iconColor="#003d5c"/>
+                <Label text="New Information Notifications" styleClass="page-title-compact"/>
+            </HBox>
+
+            <!-- Filter Section -->
+            <VBox styleClass="card-compact" spacing="12">
+                <Label text="Filter Options" styleClass="card-title-compact"/>
+                <Separator/>
+
+                <GridPane hgap="12" vgap="10">
+                    <!-- First Row -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Content Date" styleClass="label-secondary-compact"/>
+                        <DatePicker fx:id="contentDatePicker" promptText="Select content date" prefWidth="180"/>
+                    </VBox>
+
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Upload From" styleClass="label-secondary-compact"/>
+                        <DatePicker fx:id="uploadFromPicker" promptText="Upload from date" prefWidth="180"/>
+                    </VBox>
+
+                    <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Upload To" styleClass="label-secondary-compact"/>
+                        <DatePicker fx:id="uploadToPicker" promptText="Upload to date" prefWidth="180"/>
+                    </VBox>
+
+                    <VBox spacing="4" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                        <Label text="Content Type" styleClass="label-secondary-compact"/>
+                        <ComboBox fx:id="contentTypeComboBox" promptText="All" prefWidth="150"/>
+                    </VBox>
+                </GridPane>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="Load Data" onAction="#loadNewInformation" styleClass="btn-primary-compact">
+                        <graphic>
+                            <FontIcon iconLiteral="bi-search" iconSize="14" iconColor="WHITE"/>
+                        </graphic>
+                    </Button>
+                    <Button text="Clear Filters" onAction="#clearFilters" styleClass="btn-secondary-compact">
+                        <graphic>
+                            <FontIcon iconLiteral="bi-x-circle" iconSize="14" iconColor="WHITE"/>
+                        </graphic>
+                    </Button>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="statusLabel" text="" styleClass="label-secondary-compact"/>
+                </HBox>
+            </VBox>
+
+            <!-- Search Section -->
+            <VBox styleClass="card-compact" spacing="8">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Search:" styleClass="label-secondary-compact"/>
+                    <TextField fx:id="searchField" promptText="Search in all columns..."
+                               prefWidth="400" styleClass="text-field-compact"/>
+                    <Button text="Clear" onAction="#clearSearch" styleClass="btn-secondary-compact">
+                        <graphic>
+                            <FontIcon iconLiteral="bi-x" iconSize="12" iconColor="WHITE"/>
+                        </graphic>
+                    </Button>
+                </HBox>
+            </VBox>
+
+            <!-- Results Table -->
+            <VBox styleClass="card-compact" spacing="8" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="New Information Entries" styleClass="card-title-compact"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="countLabel" text="0 entries" styleClass="label-secondary-compact"/>
+                </HBox>
+                <Separator/>
+
+                <TableView fx:id="newInformationTable" styleClass="newInformationTable"
+                           VBox.vgrow="ALWAYS" prefHeight="500">
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="10">
+                            <FontIcon iconLiteral="bi-inbox" iconSize="48" iconColor="#cccccc"/>
+                            <Label text="No new information available" styleClass="label-secondary-compact"/>
+                            <Label text="Click 'Load Data' to retrieve new information notifications"
+                                   styleClass="label-hint-compact"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </VBox>
+    </content>
+</ScrollPane>

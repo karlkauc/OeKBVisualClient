@@ -55,6 +55,12 @@
                         <FontIcon iconLiteral="bi-journal-text" iconSize="16" iconColor="WHITE"/>
                     </graphic>
                 </Button>
+                <Button id="changeToNewInformation" alignment="CENTER_RIGHT" onAction="#changeToNewInformation"
+                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToNewInformation" text="New Information">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-bell-fill" iconSize="16" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
                 <Button id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
                            prefHeight="45.0" prefWidth="160.0" styleClass="changeToDataUpload" text="Data Upload">
                     <graphic>

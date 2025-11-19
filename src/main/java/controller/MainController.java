@@ -193,6 +193,24 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void changeToNewInformation() {
+        log.debug("change to New Information");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageNewInformation.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading new information page", e);
+            }
+        }
+    }
+
+    @FXML
     private void changeToOFI() {
         log.debug("chenage to OFI");
 
