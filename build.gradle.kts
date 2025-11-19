@@ -51,10 +51,6 @@ dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.3.1")
 
-    // JAXB for Java 17+
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.6")
-
     // Apache Commons Codec for Base64
     implementation("commons-codec:commons-codec:1.20.0")
 
