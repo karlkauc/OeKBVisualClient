@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_Reply>
+    <DataSupplier>
+        <Short>AMP</Short>
+        <Name>Austrian Money Plus</Name>
+    </DataSupplier>
+
+    <AccessRules>
+        <AccessRule>
+            <RuleID>AR-AMP-3BA-2025-001</RuleID>
+            <ElementStatuses>
+                <ElementStatus>
+                    <Status>OK</Status>
+                    <Message>Access rule created successfully</Message>
+                </ElementStatus>
+                <ElementStatus>
+                    <Status>OK</Status>
+                    <Message>Grantee: 3BA - Dritte Bank AG</Message>
+                </ElementStatus>
+                <ElementStatus>
+                    <Status>OK</Status>
+                    <Message>Granted access to 5 ISINs</Message>
+                </ElementStatus>
+            </ElementStatuses>
+        </AccessRule>
+        <AccessRule>
+            <RuleID>AR-AMP-AIB-2025-002</RuleID>
+            <ElementStatuses>
+                <ElementStatus>
+                    <Status>OK</Status>
+                    <Message>Access rule created successfully</Message>
+                </ElementStatus>
+                <ElementStatus>
+                    <Status>OK_INFO</Status>
+                    <Message>Grantee: AIB - Austria Investment Bank</Message>
+                </ElementStatus>
+                <ElementStatus>
+                    <Status>OK_INFO</Status>
+                    <Message>Access limited to profile: NAV only</Message>
+                </ElementStatus>
+            </ElementStatuses>
+        </AccessRule>
+        <AccessRule>
+            <RuleID>AR-AMP-RZB-2025-003</RuleID>
+            <ElementStatuses>
+                <ElementStatus>
+                    <Status>ERROR</Status>
+                    <Message>Grantee not found in FDP system</Message>
+                </ElementStatus>
+                <ElementStatus>
+                    <Status>ERROR</Status>
+                    <Message>Data Supplier code 'INVALID' does not exist</Message>
+                </ElementStatus>
+            </ElementStatuses>
+        </AccessRule>
+    </AccessRules>
+
+    <OverallStatus>OK_INFOS</OverallStatus>
+    <AdditionalInformation>2 of 3 access rules created successfully. 1 rule failed validation.</AdditionalInformation>
+</FundsXML_Reply>

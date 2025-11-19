@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_DownloadedInformation>
+    <CreationTime>2025-11-19T14:30:00</CreationTime>
+
+    <Info type="INFO">Download statistics for period: 2025-10-20 to 2025-11-19</Info>
+
+    <!-- Downloaded by 3BA - with Access Rule -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <DownloadDateTime>2025-11-19T08:15:22</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>3BA</Short>
+                <Name>Dritte Bank AG</Name>
+                <Type>CB</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-3BA-2024-001</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>529900T8BM49AURSDO55</LEI>
+            <ISINs>
+                <ISIN>AT0000123456</ISIN>
+                <ISIN>AT0000123457</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by RZB - OWNER (own fund) -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <DownloadDateTime>2025-11-19T09:22:45</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>RZB</Short>
+                <Name>Raiffeisen Zentralbank</Name>
+                <Type>CB</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <Owner>OWNER</Owner>
+        <FundOrShareclass>
+            <LEI>529900RZBEMIR123456</LEI>
+            <OeNB_Identnr>12345678</OeNB_Identnr>
+            <ISINs>
+                <ISIN>AT0000REG001</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>NAV</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded Document by AIB -->
+    <DownloadedInformation>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-11-15</ContentDate>
+        <DownloadDateTime>2025-11-19T10:33:12</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>AIB</Short>
+                <Name>Austria Investment Bank</Name>
+                <Type>IC</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-AIB-2024-007</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>529900T8BM49AURSDO55</LEI>
+            <ISINs>
+                <ISIN>AT0000999888</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>Prospectus</ListedType>
+            </DocumentType>
+            <Language>de</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by UniCredit - Multiple ISINs -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <DownloadDateTime>2025-11-19T11:05:33</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>UniCredit</Short>
+                <Name>UniCredit Bank Austria AG</Name>
+                <Type>CB</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-UC-2024-012</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>549300UCPRIIPS12345</LEI>
+            <ISINs>
+                <ISIN>AT0000PRE001</ISIN>
+                <ISIN>AT0000PRE002</ISIN>
+                <ISIN>AT0000PRE003</ISIN>
+                <ISIN>AT0000PRE004</ISIN>
+                <ISIN>AT0000PRE005</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+            <Profile>PERFORMANCE</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded Regulatory by NOEVERS -->
+    <DownloadedInformation>
+        <ContentType>REG</ContentType>
+        <ContentDate>2025-11-17</ContentDate>
+        <DownloadDateTime>2025-11-19T12:18:45</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>NOEVERS</Short>
+                <Name>NÖ Versicherung</Name>
+                <Type>IC</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-NOE-2024-003</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>529900OEKBMASTER001</LEI>
+            <OeNB_Identnr>87654321</OeNB_Identnr>
+            <ISINs>
+                <ISIN>AT0000OEKB01</ISIN>
+                <ISIN>AT0000OEKB02</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <RegulatoryReportings>
+            <Type>EMIR</Type>
+        </RegulatoryReportings>
+        <Profiles>
+            <Profile>REG_FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by FactSet (Vendor) -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <DownloadDateTime>2025-11-19T13:42:10</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>FactSet</Short>
+                <Name>FactSet Research Systems Inc.</Name>
+                <Type>Vendor</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-FS-2024-BULK</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>549300ABCDEF123456XY</LEI>
+            <ISINs>
+                <ISIN>LU1234567890</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>VENDOR_FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded Document by CAP - Factsheet -->
+    <DownloadedInformation>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <DownloadDateTime>2025-11-19T14:15:28</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>CAP</Short>
+                <Name>Capital Asset Partners</Name>
+                <Type>IC</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-CAP-2024-DOC</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>529900QWERTY12345AB</LEI>
+            <ISINs>
+                <ISIN>AT0000A1B2C3</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>Factsheet</ListedType>
+            </DocumentType>
+            <Language>de</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_BASIC</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by BAI - with OeNB ID -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <DownloadDateTime>2025-11-18T16:22:33</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>BAI</Short>
+                <Name>Bank Austria Investment</Name>
+                <Type>CB</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-BAI-2024-005</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>529900QWERTY12345AB</LEI>
+            <OeNB_Identnr>11223344</OeNB_Identnr>
+            <ISINs>
+                <ISIN>AT0000A1B2C3</ISIN>
+                <ISIN>AT0000D4E5F6</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by EAM - Regulatory PRIIPS -->
+    <DownloadedInformation>
+        <ContentType>REG</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <DownloadDateTime>2025-11-18T15:05:15</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>EAM</Short>
+                <Name>European Asset Management</Name>
+                <Type>IC</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <AccessRuleID>AR-FUM-EAM-2024-REG</AccessRuleID>
+        <FundOrShareclass>
+            <LEI>549300EAMANNUAL2024</LEI>
+            <ISINs>
+                <ISIN>LU9876543210</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <RegulatoryReportings>
+            <Type>PRIIPS</Type>
+        </RegulatoryReportings>
+        <Profiles>
+            <Profile>REG_FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+
+    <!-- Downloaded by AMP - Own Data -->
+    <DownloadedInformation>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-17</ContentDate>
+        <DownloadDateTime>2025-11-18T14:30:50</DownloadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>AMP</Short>
+                <Name>Austrian Money Plus</Name>
+                <Type>IC</Type>
+            </DataSupplier>
+        </DataSuppliers>
+        <Owner>OWNER</Owner>
+        <FundOrShareclass>
+            <LEI>529900AMPMASTER0001</LEI>
+            <OeNB_Identnr>99887766</OeNB_Identnr>
+            <ISINs>
+                <ISIN>AT0000AMP001</ISIN>
+                <ISIN>AT0000AMP002</ISIN>
+                <ISIN>AT0000AMP003</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+        </Profiles>
+    </DownloadedInformation>
+</FundsXML_DownloadedInformation>

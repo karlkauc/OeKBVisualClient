@@ -17,6 +17,9 @@ gradle-app.setting
 .idea/
 *.xlsx
 backup/
+!backup/README.md
+!backup/MOCK_*.xml
+!backup/*_DOWNLOAD_*.xml
 logs/
 out/
 Test01.java

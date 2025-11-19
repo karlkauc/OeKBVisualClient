@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_AvailableData>
+    <CreationTime>2025-11-19T14:30:00</CreationTime>
+
+    <!-- Fund Data Entry 1 -->
+    <AvailableData>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <UploadDateTime>2025-11-19T08:30:15</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>FUM</Short>
+                <Name>Fund Management AG</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>529900T8BM49AURSDO55</LEI>
+            <ISINs>
+                <ISIN>AT0000123456</ISIN>
+                <ISIN>AT0000123457</ISIN>
+                <ISIN>AT0000123458</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+            <Profile>NAV</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Fund Data Entry 2 - Multiple Data Suppliers -->
+    <AvailableData>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <UploadDateTime>2025-11-19T09:45:22</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>3BA</Short>
+                <Name>Dritte Bank AG</Name>
+            </DataSupplier>
+            <DataSupplier>
+                <Short>AIB</Short>
+                <Name>Austria Investment Bank</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>549300XQFX5K3FNZ7U58</LEI>
+            <ISINs>
+                <ISIN>DE0005933931</ISIN>
+                <ISIN>DE0005933949</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>FULL</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Document Entry 1 - Prospectus -->
+    <AvailableData>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-11-15</ContentDate>
+        <UploadDateTime>2025-11-19T10:15:33</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>AMP</Short>
+                <Name>Austrian Money Plus</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>529900T8BM49AURSDO55</LEI>
+            <ISINs>
+                <ISIN>AT0000999888</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>Prospectus</ListedType>
+            </DocumentType>
+            <Language>de</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_FULL</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Document Entry 2 - KIID in English -->
+    <AvailableData>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <UploadDateTime>2025-11-19T11:22:45</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>CAP</Short>
+                <Name>Capital Asset Partners</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>549300ABCDEF123456XY</LEI>
+            <ISINs>
+                <ISIN>LU1234567890</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>KID</ListedType>
+            </DocumentType>
+            <Language>en</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_BASIC</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Document Entry 3 - Factsheet -->
+    <AvailableData>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <UploadDateTime>2025-11-19T12:05:10</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>BAI</Short>
+                <Name>Bank Austria Investment</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>529900QWERTY12345AB</LEI>
+            <ISINs>
+                <ISIN>AT0000A1B2C3</ISIN>
+                <ISIN>AT0000D4E5F6</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>Factsheet</ListedType>
+            </DocumentType>
+            <Language>de</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_FULL</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Regulatory Entry 1 - EMIR -->
+    <AvailableData>
+        <ContentType>REG</ContentType>
+        <ContentDate>2025-11-18</ContentDate>
+        <UploadDateTime>2025-11-19T13:30:00</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>RZB</Short>
+                <Name>Raiffeisen Zentralbank</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>529900RZBEMIR123456</LEI>
+            <ISINs>
+                <ISIN>AT0000REG001</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <RegulatoryReportings>
+            <Type>EMIR</Type>
+        </RegulatoryReportings>
+        <Profiles>
+            <Profile>REG_FULL</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Regulatory Entry 2 - PRIIPS -->
+    <AvailableData>
+        <ContentType>REG</ContentType>
+        <ContentDate>2025-11-19</ContentDate>
+        <UploadDateTime>2025-11-19T14:10:25</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>UniCredit</Short>
+                <Name>UniCredit Bank Austria AG</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>549300UCPRIIPS12345</LEI>
+            <ISINs>
+                <ISIN>AT0000PRE001</ISIN>
+                <ISIN>AT0000PRE002</ISIN>
+                <ISIN>AT0000PRE003</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <RegulatoryReportings>
+            <Type>PRIIPS</Type>
+        </RegulatoryReportings>
+        <Profiles>
+            <Profile>REG_BASIC</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Fund Data Entry 3 - OeKB -->
+    <AvailableData>
+        <ContentType>FUND</ContentType>
+        <ContentDate>2025-11-17</ContentDate>
+        <UploadDateTime>2025-11-19T07:00:00</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>OeKB</Short>
+                <Name>Oesterreichische Kontrollbank AG</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>529900OEKBMASTER001</LEI>
+            <ISINs>
+                <ISIN>AT0000OEKB01</ISIN>
+                <ISIN>AT0000OEKB02</ISIN>
+                <ISIN>AT0000OEKB03</ISIN>
+                <ISIN>AT0000OEKB04</ISIN>
+                <ISIN>AT0000OEKB05</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <Profiles>
+            <Profile>MASTER</Profile>
+            <Profile>FULL</Profile>
+        </Profiles>
+    </AvailableData>
+
+    <!-- Document Entry 4 - Annual Report -->
+    <AvailableData>
+        <ContentType>DOC</ContentType>
+        <ContentDate>2025-10-31</ContentDate>
+        <UploadDateTime>2025-11-19T08:45:50</UploadDateTime>
+        <DataSuppliers>
+            <DataSupplier>
+                <Short>EAM</Short>
+                <Name>European Asset Management</Name>
+            </DataSupplier>
+        </DataSuppliers>
+        <FundOrShareclass>
+            <LEI>549300EAMANNUAL2024</LEI>
+            <ISINs>
+                <ISIN>LU9876543210</ISIN>
+            </ISINs>
+        </FundOrShareclass>
+        <DocumentTypes>
+            <DocumentType>
+                <ListedType>AnnualReport</ListedType>
+            </DocumentType>
+            <Language>en</Language>
+            <Format>PDF</Format>
+        </DocumentTypes>
+        <Profiles>
+            <Profile>DOC_FULL</Profile>
+            <Profile>DOC_ARCHIVE</Profile>
+        </Profiles>
+    </AvailableData>
+</FundsXML_AvailableData>

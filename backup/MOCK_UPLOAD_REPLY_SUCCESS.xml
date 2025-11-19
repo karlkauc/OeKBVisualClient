@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_Reply>
+    <DataSupplier>
+        <Short>FUM</Short>
+        <Name>Fund Management AG</Name>
+    </DataSupplier>
+
+    <Document>
+        <ContentDate>2025-11-19</ContentDate>
+        <UniqueDocumentID>FUM_20251119_001</UniqueDocumentID>
+
+        <StatusInfos>
+            <StatusInfo>
+                <Status>OK</Status>
+                <Message>Fund data successfully processed</Message>
+                <Context>Fund: AT0000123456 - Austrian Equity Fund</Context>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>OK</Status>
+                <Message>NAV values validated and stored</Message>
+                <Context>3 share classes processed</Context>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>OK_INFO</Status>
+                <Message>Historical NAV updated</Message>
+                <Context>Previous NAV: 125.45 EUR, New NAV: 126.78 EUR (+1.06%)</Context>
+            </StatusInfo>
+        </StatusInfos>
+    </Document>
+
+    <OverallStatus>OK</OverallStatus>
+    <AdditionalInformation>All data processed successfully. 3 share classes updated, 45 data fields validated.</AdditionalInformation>
+</FundsXML_Reply>

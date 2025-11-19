@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_Reply>
+    <DataSupplier>
+        <Short>CAP</Short>
+        <Name>Capital Asset Partners</Name>
+    </DataSupplier>
+
+    <Document>
+        <ContentDate>2025-11-19</ContentDate>
+        <UniqueDocumentID>CAP_20251119_ERR</UniqueDocumentID>
+
+        <StatusInfos>
+            <StatusInfo>
+                <Status>ERROR</Status>
+                <Message>Invalid ISIN format</Message>
+                <Context>ISIN: AT000INVALID - Must be 12 characters following ISO 6166 standard</Context>
+                <Kategorie>VALIDATION</Kategorie>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>ERROR</Status>
+                <Message>NAV value out of range</Message>
+                <Context>NAV: -5.25 EUR - NAV cannot be negative</Context>
+                <Kategorie>VALIDATION</Kategorie>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>OK_INFO</Status>
+                <Message>Share class name updated</Message>
+                <Context>Previous: 'Class A', New: 'Class A EUR'</Context>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>ERROR</Status>
+                <Message>Missing required field</Message>
+                <Context>Field 'CurrencyCode' is mandatory for NAV reporting</Context>
+                <Kategorie>REQUIRED_FIELD</Kategorie>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>INFO</Status>
+                <Message>LEI code verification recommended</Message>
+                <Context>LEI: 549300ABCDEF123456XY - Not found in GLEIF database</Context>
+                <Kategorie>WARNING</Kategorie>
+            </StatusInfo>
+            <StatusInfo>
+                <Status>OK</Status>
+                <Message>Fund name validated</Message>
+                <Context>Fund: European Growth Fund</Context>
+            </StatusInfo>
+        </StatusInfos>
+    </Document>
+
+    <OverallStatus>ERROR</OverallStatus>
+    <AdditionalInformation>Upload could not be completed due to validation errors. Please correct the 3 ERROR items and re-upload.</AdditionalInformation>
+</FundsXML_Reply>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FundsXML_Journal>
+    <CreationTime>2025-11-19T14:30:00</CreationTime>
+
+    <!-- Upload Entry 1 -->
+    <JournalEntry>
+        <Action>UL</Action>
+        <Timestamp>2025-11-19T09:15:23</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>FUM</Short>
+            <Name>Fund Management AG</Name>
+        </DataSupplier>
+        <User>max.mustermann@fum.at</User>
+        <UniqueDocumentID>FUM_20251119_001</UniqueDocumentID>
+        <Details>Tägliche NAV-Daten hochgeladen</Details>
+    </JournalEntry>
+
+    <!-- Download Entry 1 -->
+    <JournalEntry>
+        <Action>DL</Action>
+        <Timestamp>2025-11-19T10:22:15</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>3BA</Short>
+            <Name>Dritte Bank AG</Name>
+        </DataSupplier>
+        <User>anna.schmidt@3ba.at</User>
+        <UniqueDocumentID>3BA_DL_20251119_001</UniqueDocumentID>
+        <Details>Download von FUM Fondsdaten</Details>
+    </JournalEntry>
+
+    <!-- Upload Entry 2 - Document -->
+    <JournalEntry>
+        <Action>UL</Action>
+        <Timestamp>2025-11-19T11:45:30</Timestamp>
+        <Type>DOC</Type>
+        <DataSupplier>
+            <Short>AIB</Short>
+            <Name>Austria Investment Bank</Name>
+        </DataSupplier>
+        <User>peter.wagner@aib.at</User>
+        <UniqueDocumentID>AIB_DOC_20251119_002</UniqueDocumentID>
+        <Details>Factsheet für Q4 2024 hochgeladen</Details>
+    </JournalEntry>
+
+    <!-- Download Entry 2 - Regulatory -->
+    <JournalEntry>
+        <Action>DL</Action>
+        <Timestamp>2025-11-19T12:33:45</Timestamp>
+        <Type>REG</Type>
+        <DataSupplier>
+            <Short>RZB</Short>
+            <Name>Raiffeisen Zentralbank</Name>
+        </DataSupplier>
+        <User>julia.meier@rzb.at</User>
+        <UniqueDocumentID>RZB_REG_DL_001</UniqueDocumentID>
+        <Details>EMIR Reporting Daten abgerufen</Details>
+    </JournalEntry>
+
+    <!-- Upload Entry 3 - Access Rules -->
+    <JournalEntry>
+        <Action>UL</Action>
+        <Timestamp>2025-11-19T13:10:12</Timestamp>
+        <Type>AR</Type>
+        <DataSupplier>
+            <Short>AMP</Short>
+            <Name>Austrian Money Plus</Name>
+        </DataSupplier>
+        <User>thomas.huber@amp.at</User>
+        <UniqueDocumentID>AMP_AR_20251119_001</UniqueDocumentID>
+        <Details>Neue Zugriffsrechte gewährt für 5 Fonds</Details>
+    </JournalEntry>
+
+    <!-- Download Entry 3 - Multiple ISINs -->
+    <JournalEntry>
+        <Action>DL</Action>
+        <Timestamp>2025-11-19T14:05:50</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>UniCredit</Short>
+            <Name>UniCredit Bank Austria AG</Name>
+        </DataSupplier>
+        <User>sarah.klein@unicredit.at</User>
+        <UniqueDocumentID>UC_DL_20251119_003</UniqueDocumentID>
+        <Details>Batch-Download: 25 ISINs</Details>
+    </JournalEntry>
+
+    <!-- Upload Entry 4 - OeKB -->
+    <JournalEntry>
+        <Action>UL</Action>
+        <Timestamp>2025-11-18T16:30:00</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>OeKB</Short>
+            <Name>Oesterreichische Kontrollbank AG</Name>
+        </DataSupplier>
+        <User>system@oekb.at</User>
+        <UniqueDocumentID>OEKB_SYSTEM_001</UniqueDocumentID>
+        <Details>Täglicher System-Import abgeschlossen</Details>
+    </JournalEntry>
+
+    <!-- Download Entry 4 - Vendor -->
+    <JournalEntry>
+        <Action>DL</Action>
+        <Timestamp>2025-11-18T15:20:33</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>FactSet</Short>
+            <Name>FactSet Research Systems Inc.</Name>
+        </DataSupplier>
+        <User>api.user@factset.com</User>
+        <UniqueDocumentID>FACTSET_API_DL_001</UniqueDocumentID>
+        <Details>API Bulk Download - 150 Fonds</Details>
+    </JournalEntry>
+
+    <!-- Upload Entry 5 - Error case -->
+    <JournalEntry>
+        <Action>UL</Action>
+        <Timestamp>2025-11-18T14:15:22</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>CAP</Short>
+            <Name>Capital Asset Partners</Name>
+        </DataSupplier>
+        <User>martin.fischer@cap.at</User>
+        <UniqueDocumentID>CAP_20251118_FAIL</UniqueDocumentID>
+        <Details>Upload fehlgeschlagen - Validierungsfehler</Details>
+    </JournalEntry>
+
+    <!-- Download Entry 5 - Empty download -->
+    <JournalEntry>
+        <Action>DL</Action>
+        <Timestamp>2025-11-18T13:05:10</Timestamp>
+        <Type>FXML_DATA</Type>
+        <DataSupplier>
+            <Short>NOEVERS</Short>
+            <Name>NÖ Versicherung</Name>
+        </DataSupplier>
+        <User>info@noevers.at</User>
+        <UniqueDocumentID>NOEVERS_DL_EMPTY</UniqueDocumentID>
+        <Details>Keine neuen Daten verfügbar</Details>
+    </JournalEntry>
+</FundsXML_Journal>
