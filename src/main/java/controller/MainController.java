@@ -175,6 +175,24 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void changeToJournal() {
+        log.debug("change to Activity Journal");
+
+        if (!hasValidSettings()) {
+            log.debug("no settings found");
+            changeToSettings();
+        } else {
+            try {
+                Pane tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageJournal.fxml"));
+                mainPane.getChildren().setAll(tempPane);
+                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+            } catch (IOException e) {
+                log.error("Error loading journal page", e);
+            }
+        }
+    }
+
+    @FXML
     private void changeToOFI() {
         log.debug("chenage to OFI");
 

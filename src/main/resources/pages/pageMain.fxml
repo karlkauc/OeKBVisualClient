@@ -49,6 +49,12 @@
                         <FontIcon iconLiteral="bi-people-fill" iconSize="16" iconColor="WHITE"/>
                     </graphic>
                 </Button>
+                <Button id="changeToJournal" alignment="CENTER_RIGHT" onAction="#changeToJournal"
+                           prefHeight="45.0" prefWidth="160.0" styleClass="changeToJournal" text="Activity Journal">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-journal-text" iconSize="16" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
                 <Button id="changeToDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
                            prefHeight="45.0" prefWidth="160.0" styleClass="changeToDataUpload" text="Data Upload">
                     <graphic>

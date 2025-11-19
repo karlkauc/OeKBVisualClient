@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="journalPane"
+      styleClass="mainPane" spacing="20"
+      AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+      AnchorPane.rightAnchor="0.0"
+      stylesheets="@../css/modern-theme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.JournalController">
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Page Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="Activity Journal" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Label fx:id="statusMessage"/>
+        <Button fx:id="refreshButton" onAction="#refreshJournal" text="Refresh">
+            <graphic>
+                <FontIcon iconLiteral="bi-arrow-clockwise" iconSize="18" iconColor="WHITE"/>
+            </graphic>
+        </Button>
+        <Button fx:id="exportButton" onAction="#exportToExcel" text="Export">
+            <graphic>
+                <FontIcon iconLiteral="bi-file-earmark-spreadsheet" iconSize="18" iconColor="WHITE"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Filter Controls -->
+    <VBox styleClass="card-compact" spacing="12">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+
+        <Label text="Filter" styleClass="section-title-compact"/>
+
+        <GridPane hgap="12" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="150" prefWidth="180" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="150" prefWidth="180" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="150" prefWidth="180" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="150" prefWidth="180" hgrow="SOMETIMES"/>
+            </columnConstraints>
+
+            <!-- Date From -->
+            <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label text="From Date" styleClass="label-secondary-compact"/>
+                <DatePicker fx:id="dateFromPicker" promptText="Select date" styleClass="date-picker-compact"/>
+            </VBox>
+
+            <!-- Date To -->
+            <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label text="To Date" styleClass="label-secondary-compact"/>
+                <DatePicker fx:id="dateToPicker" promptText="Select date" styleClass="date-picker-compact"/>
+            </VBox>
+
+            <!-- Action Filter -->
+            <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <Label text="Action" styleClass="label-secondary-compact"/>
+                <ComboBox fx:id="actionComboBox" promptText="All" styleClass="combo-box-compact" prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="All"/>
+                            <String fx:value="UL"/>
+                            <String fx:value="DL"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+            </VBox>
+
+            <!-- Type Filter -->
+            <VBox spacing="4" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                <Label text="Type" styleClass="label-secondary-compact"/>
+                <ComboBox fx:id="typeComboBox" promptText="All" styleClass="combo-box-compact" prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="All"/>
+                            <String fx:value="AR"/>
+                            <String fx:value="AR_RECEIVED"/>
+                            <String fx:value="AR_ASSIGNED"/>
+                            <String fx:value="FXML_DATA"/>
+                            <String fx:value="FXML_DOC"/>
+                            <String fx:value="FXML_REG"/>
+                            <String fx:value="OENB_AGG"/>
+                            <String fx:value="OENB_SEC"/>
+                            <String fx:value="OENB_CHECK"/>
+                            <String fx:value="JOURNAL"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+            </VBox>
+        </GridPane>
+
+        <!-- Filter Buttons -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button fx:id="applyFilterButton" onAction="#applyFilter" text="Apply Filter" styleClass="primary-button">
+                <graphic>
+                    <FontIcon iconLiteral="bi-funnel" iconSize="14" iconColor="WHITE"/>
+                </graphic>
+            </Button>
+            <Button fx:id="clearFilterButton" onAction="#clearFilter" text="Clear" styleClass="secondary-button">
+                <graphic>
+                    <FontIcon iconLiteral="bi-x-circle" iconSize="14" iconColor="#6c757d"/>
+                </graphic>
+            </Button>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="entriesCountLabel" text="0 entries"/>
+        </HBox>
+    </VBox>
+
+    <!-- Search Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="search-bar">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <FontIcon iconLiteral="bi-search" iconSize="18" iconColor="#6c757d"/>
+        <TextField fx:id="searchField" promptText="Search in all columns..."
+                   styleClass="search-field" HBox.hgrow="ALWAYS"
+                   onKeyReleased="#filterTable"/>
+        <Label fx:id="searchResultLabel" styleClass="search-result-label"/>
+    </HBox>
+
+    <!-- Table Card -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        <TableView fx:id="journalTable" styleClass="journalTable" VBox.vgrow="ALWAYS"/>
+    </VBox>
+</VBox>
