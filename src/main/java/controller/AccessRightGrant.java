@@ -19,21 +19,28 @@ import javafx.scene.control.Button;
 import dao.AccesRights;
 import dao.WriteXLS;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.AccessRule;
 import model.ApplicationSettings;
 import model.RuleRow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -229,6 +236,9 @@ public class AccessRightGrant implements Initializable {
         accessRightTable.setRoot(root);
         accessRightTable.setShowRoot(false);
 
+        // Store controller reference for ButtonCell
+        accessRightTable.setUserData(this);
+
         TreeTableColumn<RuleRow, String> ruleIdCol = new TreeTableColumn<>("Rule ID");
         ruleIdCol.setPrefWidth(150);
         ruleIdCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
@@ -236,7 +246,7 @@ public class AccessRightGrant implements Initializable {
 
         TreeTableColumn<RuleRow, Boolean> removeButton = new TreeTableColumn<>();
         removeButton.setCellFactory(param -> new ButtonCell());
-        removeButton.setPrefWidth(85);
+        removeButton.setPrefWidth(180); // Increased width to fit both Edit and Delete buttons
 
         TreeTableColumn<RuleRow, String> profile = new TreeTableColumn<>("Profile");
         profile.setPrefWidth(80);
@@ -389,221 +399,484 @@ public class AccessRightGrant implements Initializable {
     private boolean contains(String value, String searchText) {
         return value != null && value.toLowerCase().contains(searchText);
     }
+
+    /**
+     * Open edit dialog for an access rule
+     * @param ruleRow The rule row to edit
+     * @return true if changes were saved, false if cancelled
+     */
+    public boolean openEditDialog(RuleRow ruleRow) {
+        try {
+            // Find the AccessRule object from the rule ID
+            AccessRule ruleToEdit = accessRule.stream()
+                    .filter(ar -> ar.getId().equals(ruleRow.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (ruleToEdit == null) {
+                log.error("Could not find AccessRule with ID: {}", ruleRow.getId());
+                showError("Error", "Could not find access rule to edit");
+                return false;
+            }
+
+            // Load FXML
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("pages/dialogAccessRuleEdit.fxml"));
+            javafx.scene.Parent page = loader.load();
+
+            // Create dialog stage
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Access Rule: " + ruleToEdit.getId());
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(accessRightTable.getScene().getWindow());
+
+            // Set icon
+            try {
+                Image icon = new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop.png"));
+                dialogStage.getIcons().add(icon);
+            } catch (Exception e) {
+                log.warn("Could not load dialog icon", e);
+            }
+
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set access rule in controller
+            AccessRuleEditDialog controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setAccessRule(ruleToEdit);
+
+            // Show dialog and wait
+            dialogStage.showAndWait();
+
+            // Return whether save was clicked
+            return controller.isSaveClicked();
+
+        } catch (IOException e) {
+            log.error("Error loading edit dialog", e);
+            showError("Error", "Could not load edit dialog: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Reload access rights data and refresh table
+     */
+    public void refreshData() {
+        log.info("Refreshing access rights data");
+
+        // Clear existing data
+        root.getChildren().clear();
+
+        // Reload from server/file
+        accessRule = ar.getAccessRightsGivenFromOEKB();
+
+        if (accessRule == null || accessRule.isEmpty()) {
+            statusMessage.setText("No data available after refresh");
+            statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+            return;
+        }
+
+        // Rebuild tree
+        for (AccessRule rule : accessRule) {
+            String ddsGivenShort = String.join(";", rule.getDataSuppliersGivenShort());
+            List<TreeItem<RuleRow>> rootTable = new ArrayList<>();
+
+            TreeItem<RuleRow> ruleId = new TreeItem<>(
+                    new RuleRow(rule.getId(),
+                            rule.getContentType(),
+                            rule.getProfile(),
+                            rule.getDataSupplierCreatorShort(),
+                            rule.getDataSupplierCreatorName(),
+                            ddsGivenShort,
+                            rule.getCreationTime(),
+                            rule.getAccessDelayInDays(),
+                            rule.getDateFrom(),
+                            rule.getDateTo(),
+                            rule.getFrequency(),
+                            rule.getCostsByDataSupplier(),
+                            String.valueOf(rule.getLEI().stream().filter(s -> s != null && !s.isEmpty()).count()),
+                            String.valueOf(rule.getOENB_ID().stream().filter(s -> s != null && !s.isEmpty()).count()),
+                            String.valueOf(rule.getISIN_SHARECLASS().size()),
+                            String.valueOf(rule.getISIN_SEGMENT().size()),
+                            true
+                    )
+            );
+
+            // Add children (LEI, OENB_ID, ISINs)
+            for (String lei : rule.getLEI()) {
+                rootTable.add(new TreeItem<>(new RuleRow(rule.getId(), rule.getContentType(), rule.getProfile(),
+                        rule.getDataSupplierCreatorShort(), rule.getDataSupplierCreatorName(), ddsGivenShort,
+                        rule.getCreationTime(), rule.getAccessDelayInDays(), rule.getDateFrom(), rule.getDateTo(),
+                        rule.getFrequency(), rule.getCostsByDataSupplier(), lei, null, null, null, false)));
+            }
+
+            for (String oenbId : rule.getOENB_ID()) {
+                rootTable.add(new TreeItem<>(new RuleRow(rule.getId(), rule.getContentType(), rule.getProfile(),
+                        rule.getDataSupplierCreatorShort(), rule.getDataSupplierCreatorName(), ddsGivenShort,
+                        rule.getCreationTime(), rule.getAccessDelayInDays(), rule.getDateFrom(), rule.getDateTo(),
+                        rule.getFrequency(), rule.getCostsByDataSupplier(), null, oenbId, null, null, false)));
+            }
+
+            for (String isin : rule.getISIN_SHARECLASS()) {
+                rootTable.add(new TreeItem<>(new RuleRow(rule.getId(), rule.getContentType(), rule.getProfile(),
+                        rule.getDataSupplierCreatorShort(), rule.getDataSupplierCreatorName(), ddsGivenShort,
+                        rule.getCreationTime(), rule.getAccessDelayInDays(), rule.getDateFrom(), rule.getDateTo(),
+                        rule.getFrequency(), rule.getCostsByDataSupplier(), null, null, isin, null, false)));
+            }
+
+            for (String isin : rule.getISIN_SEGMENT()) {
+                rootTable.add(new TreeItem<>(new RuleRow(rule.getId(), rule.getContentType(), rule.getProfile(),
+                        rule.getDataSupplierCreatorShort(), rule.getDataSupplierCreatorName(), ddsGivenShort,
+                        rule.getCreationTime(), rule.getAccessDelayInDays(), rule.getDateFrom(), rule.getDateTo(),
+                        rule.getFrequency(), rule.getCostsByDataSupplier(), null, null, null, isin, false)));
+            }
+
+            ruleId.getChildren().addAll(rootTable);
+            root.getChildren().addAll(ruleId);
+        }
+
+        accessRightTable.setRoot(root);
+        statusMessage.setText("Data refreshed successfully - " + accessRule.size() + " rules loaded");
+        statusMessage.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
+    }
+
+    /**
+     * Show error alert
+     */
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(accessRightTable.getScene().getWindow());
+        alert.showAndWait();
+    }
+
+    /**
+     * Delete an entire access rule
+     * @param ruleRow The rule to delete
+     * @return true if deleted successfully
+     */
+    public boolean deleteRule(RuleRow ruleRow) {
+        // Find the AccessRule object
+        AccessRule ruleToDelete = accessRule.stream()
+                .filter(ar -> ar.getId().equals(ruleRow.getId()))
+                .findFirst()
+                .orElse(null);
+
+        if (ruleToDelete == null) {
+            log.error("Could not find AccessRule with ID: {}", ruleRow.getId());
+            showError("Error", "Could not find access rule to delete");
+            return false;
+        }
+
+        // Check FileSystem mode
+        ApplicationSettings settings = ApplicationSettings.getInstance();
+        boolean isFileSystemMode = settings.isFileSystem();
+
+        // Confirmation dialog
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.initOwner(accessRightTable.getScene().getWindow());
+        confirmAlert.setTitle("Confirm Delete");
+
+        if (isFileSystemMode) {
+            confirmAlert.setHeaderText("Delete Access Rule (OFFLINE MODE)");
+            confirmAlert.setContentText(
+                    "OFFLINE MODE - No server delete will be performed.\n\n" +
+                    "This will:\n" +
+                    "1. Log the DELETE XML\n" +
+                    "2. Remove from local display\n\n" +
+                    "Rule ID: " + ruleToDelete.getId() + "\n\n" +
+                    "Do you really want to delete this rule?");
+        } else {
+            confirmAlert.setHeaderText("Delete Access Rule");
+            confirmAlert.setContentText(
+                    "This will permanently delete the access rule from server.\n\n" +
+                    "Rule ID: " + ruleToDelete.getId() + "\n" +
+                    "Content Type: " + ruleToDelete.getContentType() + "\n" +
+                    "Profile: " + ruleToDelete.getProfile() + "\n\n" +
+                    "Do you really want to delete this rule?");
+        }
+
+        if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return false;
+        }
+
+        try {
+            // Generate DELETE XML
+            String deleteXml = AccesRights.deleteRule(ruleToDelete);
+            if (deleteXml == null || deleteXml.isEmpty()) {
+                throw new Exception("Failed to generate DELETE XML");
+            }
+
+            if (isFileSystemMode) {
+                // OFFLINE MODE: Just log
+                log.info("=== OFFLINE MODE: DELETE ENTIRE RULE ===");
+                log.info("Rule ID: {}", ruleToDelete.getId());
+                log.info(deleteXml);
+                log.info("=== END DELETE XML ===");
+
+                showSuccess("Success (Offline Mode)",
+                           "Access rule marked for deletion.\n\n" +
+                           "DELETE XML logged.\n" +
+                           "No server delete performed (FileSystem Mode).");
+            } else {
+                // Upload DELETE XML
+                log.info("Uploading DELETE XML for rule: {}", ruleToDelete.getId());
+                String result = AccesRights.uploadAccessRuleXml(deleteXml);
+
+                if (result.startsWith("ERROR")) {
+                    throw new Exception("Delete failed: " + result);
+                }
+
+                showSuccess("Success", "Access rule deleted successfully from server!");
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            log.error("Error deleting rule", e);
+            showError("Delete Failed", "Could not delete access rule:\n\n" + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Show success alert
+     */
+    private void showSuccess(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(accessRightTable.getScene().getWindow());
+        alert.showAndWait();
+    }
+
+    /**
+     * Create a new access rule
+     */
+    @FXML
+    public void createNewRule() {
+        log.info("Creating new access rule");
+
+        try {
+            // Create empty AccessRule
+            AccessRule newRule = new AccessRule();
+            newRule.setId("NEW_RULE_" + System.currentTimeMillis());
+            newRule.setContentType("FUND");
+            newRule.setProfile("all");
+            newRule.setDataSuppliersGivenShort(new ArrayList<>());
+            newRule.setLEI(new ArrayList<>());
+            newRule.setOENB_ID(new ArrayList<>());
+            newRule.setISIN_SEGMENT(new ArrayList<>());
+            newRule.setISIN_SHARECLASS(new ArrayList<>());
+            newRule.setFrequency("daily");
+            newRule.setAccessDelayInDays("0");
+            newRule.setDateFrom(LocalDate.now().toString());
+            newRule.setCostsByDataSupplier("false");
+            newRule.setDataSupplierCreatorShort(settingsData.getDataSupplierList());
+
+            // Load FXML
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("pages/dialogAccessRuleEdit.fxml"));
+            javafx.scene.Parent page = loader.load();
+
+            // Create dialog stage
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Create New Access Rule");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(accessRightTable.getScene().getWindow());
+
+            // Set icon
+            try {
+                Image icon = new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop.png"));
+                dialogStage.getIcons().add(icon);
+            } catch (Exception e) {
+                log.warn("Could not load dialog icon", e);
+            }
+
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set access rule in controller
+            AccessRuleEditDialog controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setAccessRule(newRule);
+
+            // Modify save behavior for new rule (no delete needed)
+            // We'll need to adjust the handleSave() method to check if it's a new rule
+
+            // Show dialog and wait
+            dialogStage.showAndWait();
+
+            // If saved, refresh
+            if (controller.isSaveClicked()) {
+                log.info("New rule created, refreshing data");
+                refreshData();
+            }
+
+        } catch (IOException e) {
+            log.error("Error loading create new rule dialog", e);
+            showError("Error", "Could not load dialog: " + e.getMessage());
+        }
+    }
 }
 
 
 class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
     private static final Logger logButton = LogManager.getLogger(ButtonCell.class);
-    private final Button cellButton = new Button("Remove");
+    private final HBox buttonBox = new HBox(5); // Container for buttons with 5px spacing
+    private final Button editButton = new Button("Edit");
+    private final Button deleteButton = new Button("Delete");
+    private final Button removeButton = new Button("Remove");
+    private AccessRightGrant parentController;
 
     public ButtonCell() {
-        cellButton.setOnAction(t -> {
+        // Apply modern styling and icons to the buttons
+        editButton.getStyleClass().addAll("button", "button-primary");
+        editButton.setMinWidth(70);
+        FontIcon editIcon = new FontIcon("bi-pencil-square");
+        editIcon.setIconSize(12);
+        editButton.setGraphic(editIcon);
+
+        deleteButton.getStyleClass().addAll("button", "button-danger");
+        deleteButton.setMinWidth(70);
+        FontIcon deleteIcon = new FontIcon("bi-trash");
+        deleteIcon.setIconSize(12);
+        deleteButton.setGraphic(deleteIcon);
+
+        removeButton.getStyleClass().addAll("button", "button-danger");
+        removeButton.setMinWidth(80);
+        FontIcon removeIcon = new FontIcon("bi-x-circle");
+        removeIcon.setIconSize(12);
+        removeButton.setGraphic(removeIcon);
+
+        // Edit button action - for root rows (entire rules)
+        editButton.setOnAction(e -> {
             TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow();
-            if (rule.getItem().isRootRow()) {
-                logButton.debug("Rule zum Löschen: " + rule.getItem());
+            logButton.debug("Edit button clicked for root row: " + rule.getItem());
 
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-
-                Image image = new Image("img/icons8-people-80.png");
-                ImageView imageView = new ImageView(image);
-                alert.setGraphic(imageView);
-
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                Image icon = new Image("img/connectdevelop.png");
-                if (icon == null) {
-                    logButton.error("ICON NULL");
-                } else {
-                    stage.getIcons().add(icon);
+            AccessRightGrant controller = findParentController();
+            if (controller != null) {
+                boolean saved = controller.openEditDialog(rule.getItem());
+                if (saved) {
+                    logButton.info("Rule was modified, refreshing data");
+                    controller.refreshData();
                 }
+            } else {
+                logButton.error("Could not find parent controller");
+            }
+        });
 
-                alert.setTitle("Modify Access Rights");
-                alert.setHeaderText("Access Rights from: " + rule.getItem().getDataSupplierCreatorShort());
+        // Delete button action - for root rows (entire rules)
+        deleteButton.setOnAction(e -> {
+            TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow();
+            logButton.debug("Delete button clicked for root row: " + rule.getItem());
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 30, 10, 20));
-
-                TextField ruleId = new TextField(rule.getItem().getId());
-
-                // Profile ComboBox with enumeration values from XSD
-                ComboBox<String> profile = new ComboBox<>();
-                profile.getItems().addAll("all", "PKG", "Vendor", "allOhneSegmente",
-                                         "VendorOhneShareClassPositions", "VendorMitShareClass");
-                profile.setValue(rule.getItem().getProfile());
-                profile.setEditable(false);
-
-                TextField toDDS = new TextField(rule.getItem().getDataSuppliersGivenShort());
-                TextField dateFrom = new TextField(rule.getItem().getDateFrom());
-                TextField dateTo = new TextField(rule.getItem().getDateTo());
-
-                // Frequency ComboBox with enumeration values from XSD
-                ComboBox<String> frequency = new ComboBox<>();
-                frequency.getItems().addAll("daily", "monthly");
-                frequency.setValue(rule.getItem().getFrequency());
-                frequency.setEditable(false);
-
-                TextField delay = new TextField(rule.getItem().getAccessDelayInDays());
-
-                CheckBox costsByDDS = new CheckBox();
-                costsByDDS.setSelected(rule.getItem().isCostsByDataSupplier());
-
-                TextField comment = new TextField("TBD");
-
-                // ContentType ComboBox with enumeration values from XSD
-                ComboBox<String> contentType = new ComboBox<>();
-                contentType.getItems().addAll("FUND", "DOC", "REG");
-                contentType.setValue(rule.getItem().getContentType());
-                contentType.setEditable(false);
-
-                TextField addLEI = new TextField();
-                TextField addOENB_ID = new TextField();
-                TextField addSHARECLASS_ISIN = new TextField();
-                TextField addSEGMENT_ISIN = new TextField();
-
-                grid.add(new Label("Rule ID:"), 0, 0);
-                grid.add(ruleId, 1, 0);
-                grid.add(new Label("Profile:"), 2, 0);
-                grid.add(profile, 3, 0);
-
-                grid.add(new Label("Datasupplier: "), 0, 1);
-                grid.add(toDDS, 1, 1);
-                grid.add(new Label("Costs by DDS: "), 2, 1);
-                grid.add(costsByDDS, 3, 1);
-
-                grid.add(new Label("From Date: "), 0, 2);
-                grid.add(dateFrom, 1, 2);
-                grid.add(new Label("To Date: "), 2, 2);
-                grid.add(dateTo, 3, 2);
-
-                grid.add(new Label("Freuency: "), 0, 3);
-                grid.add(frequency, 1, 3);
-                grid.add(new Label("Delay in days: "), 2, 3);
-                grid.add(delay, 3, 3);
-
-                grid.add(new Label("Description: "), 0, 4);
-                grid.add(comment, 1, 4);
-                grid.add(new Label("Content Type: "), 2, 4);
-                grid.add(contentType, 3, 4);
-
-                grid.add(new Label("Add LEI: "), 0, 5);
-                grid.add(addLEI, 1, 5);
-                grid.add(new Label("Add OeNB ID: "), 2, 5);
-                grid.add(addOENB_ID, 3, 5);
-
-                grid.add(new Label("Add ShareClass ISIN: "), 0, 6);
-                grid.add(addSHARECLASS_ISIN, 1, 6);
-                grid.add(new Label("Add Segement ISIN: "), 2, 6);
-                grid.add(addSEGMENT_ISIN, 3, 6);
-
-                alert.getDialogPane().setContent(grid);
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    logButton.debug("ALLES OK");
-
-                    if (!addLEI.getText().isEmpty() || !addOENB_ID.getText().isEmpty() ||
-                        !addSHARECLASS_ISIN.getText().isEmpty() || !addSEGMENT_ISIN.getText().isEmpty()) {
-                        logButton.info("have to add fund to rule....");
-                        logButton.debug("LEI: " + addLEI.getText());
-                        logButton.debug("OENB ID: " + addOENB_ID.getText());
-                        logButton.debug("ShareClass ISIN: " + addSHARECLASS_ISIN.getText());
-                        logButton.debug("Segment ISIN: " + addSEGMENT_ISIN.getText());
-
-                        logButton.debug(addLEI.getText().getClass());
-                    } else {
-                        logButton.debug("nichts zum dazufügen.");
-                    }
-
-                    RuleRow newRuleRow = new RuleRow(ruleId.getText(), contentType.getValue(), profile.getValue(),
-                            rule.getItem().getDataSupplierCreatorShort(), rule.getItem().getDataSupplierCreatorName(),
-                            toDDS.getText(),
-                            rule.getItem().getCreationTime(),
-                            delay.getText(),
-                            dateFrom.getText(), dateTo.getText(), frequency.getValue(), costsByDDS.isSelected(),
-                            rule.getItem().getLEI(), rule.getItem().getOENB_ID(),
-                            rule.getItem().getSHARECLASS_ISIN(), rule.getItem().getSEGMENT_ISIN(),
-                            rule.getItem().isRootRow());
-
-                    logButton.debug("old Rule: " + rule.getItem());
-                    logButton.debug("new Rule: " + newRuleRow);
-
-                    if (newRuleRow.equals(rule.getItem())) {
-                        logButton.debug("alles gleich");
-                    } else {
-                        logButton.debug("unterschiedlich");
-                    }
-
-                    // AccesRights ar = new AccesRights()
-                    //ar.deleteRule(rule.item)
-                } else {
-                    logButton.debug("WOLLTE DOCH NICHT");
+            AccessRightGrant controller = findParentController();
+            if (controller != null) {
+                boolean deleted = controller.deleteRule(rule.getItem());
+                if (deleted) {
+                    logButton.info("Rule was deleted, refreshing data");
+                    controller.refreshData();
                 }
+            } else {
+                logButton.error("Could not find parent controller");
+            }
+        });
+
+        // Remove button action - for child rows (fund entries)
+        removeButton.setOnAction(e -> {
+            TreeTableRow<RuleRow> rule = ButtonCell.this.getTreeTableRow();
+            logButton.debug("lösche ISIN aus rule: " + rule.getItem().getLEI() + "/" +
+                           rule.getItem().getOENB_ID() + "/" + rule.getItem().getSHARECLASS_ISIN() + "/" +
+                           rule.getItem().getSEGMENT_ISIN());
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete fund from rule");
+            alert.setHeaderText("Do you really want to delete the Fund?");
+
+            Image image = new Image("img/icons8-trash-40.png");
+            ImageView imageView = new ImageView(image);
+            alert.setGraphic(imageView);
+
+            String text = "delete ";
+            if (rule.getItem().getLEI() != null) {
+                text += "LEI [" + rule.getItem().getLEI() + "]";
+            }
+            if (rule.getItem().getOENB_ID() != null) {
+                text += "OENB ID [" + rule.getItem().getOENB_ID() + "]";
+            }
+            if (rule.getItem().getSHARECLASS_ISIN() != null) {
+                text += "Shareclass ISIN [" + rule.getItem().getSHARECLASS_ISIN() + "]";
+            }
+            if (rule.getItem().getSEGMENT_ISIN() != null) {
+                text += "Segment ISIN [" + rule.getItem().getSEGMENT_ISIN() + "]";
+            }
+            text += " from rule [" + rule.getItem().getId() + "]";
+
+            alert.setContentText(text);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                logButton.debug("ALLES OK");
+
+                AccesRights ar = new AccesRights();
+                ar.deleteFundFromRule(rule.getItem());
 
             } else {
-                logButton.debug("lösche ISIN aus rule: " + rule.getItem().getLEI() + "/" +
-                               rule.getItem().getOENB_ID() + "/" + rule.getItem().getSHARECLASS_ISIN() + "/" +
-                               rule.getItem().getSEGMENT_ISIN());
-                // ar.deleteFundFromRule(rule.item)
-
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Delete fund from rule");
-                alert.setHeaderText("Do you really want to delete the Fund?");
-
-                Image image = new Image("img/icons8-trash-40.png");
-                ImageView imageView = new ImageView(image);
-                alert.setGraphic(imageView);
-
-                String text = "delete ";
-                if (rule.getItem().getLEI() != null) {
-                    text += "LEI [" + rule.getItem().getLEI() + "]";
-                }
-                if (rule.getItem().getOENB_ID() != null) {
-                    text += "OENB ID [" + rule.getItem().getOENB_ID() + "]";
-                }
-                if (rule.getItem().getSHARECLASS_ISIN() != null) {
-                    text += "Shareclass ISIN [" + rule.getItem().getSHARECLASS_ISIN() + "]";
-                }
-                if (rule.getItem().getSEGMENT_ISIN() != null) {
-                    text += "Segment ISIN [" + rule.getItem().getSEGMENT_ISIN() + "]";
-                }
-                text += " from rule [" + rule.getItem().getId() + "]";
-
-                alert.setContentText(text);
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    logButton.debug("ALLES OK");
-
-                    AccesRights ar = new AccesRights();
-                    ar.deleteFundFromRule(rule.getItem());
-
-                } else {
-                    logButton.debug("WOLLTE DOCH NICHT");
-                }
+                logButton.debug("WOLLTE DOCH NICHT");
             }
         });
     }
 
-    // Display button if the row is not empty
+    // Display buttons based on row type
     @Override
     protected void updateItem(Boolean t, boolean empty) {
-        this.getTreeTableRow();
-        RuleRow current = this.getTreeTableRow().getItem();
-        logButton.debug("current: " + current);
-        if (current == null) {
-            cellButton.setText("NULL");
-        } else {
-            if (current.isRootRow()) {
-                cellButton.setText("EDIT");
-            } else {
-                cellButton.setText("REMOVE");
-            }
+        super.updateItem(t, empty);
+
+        if (empty || getTreeTableRow() == null || getTreeTableRow().getItem() == null) {
+            setGraphic(null);
+            return;
         }
 
-        super.updateItem(t, empty);
-        if (!empty) {
-            setGraphic(cellButton);
+        RuleRow current = getTreeTableRow().getItem();
+        logButton.debug("current: " + current);
+
+        if (current.isRootRow()) {
+            // Root row: Show Edit and Delete buttons side by side
+            buttonBox.getChildren().clear();
+            buttonBox.getChildren().addAll(editButton, deleteButton);
+            setGraphic(buttonBox);
+        } else {
+            // Child row: Show only Remove button
+            setGraphic(removeButton);
         }
+    }
+
+    /**
+     * Find the parent AccessRightGrant controller by traversing the scene graph
+     */
+    private AccessRightGrant findParentController() {
+        try {
+            // The controller is stored in the TreeTableView's properties during initialization
+            // We need to access it via the main controller
+            TreeTableView<RuleRow> table = getTreeTableView();
+            if (table != null) {
+                // Find the AccessRightGrant controller by traversing up the scene graph
+                javafx.scene.Node node = table;
+                while (node != null) {
+                    if (node.getUserData() instanceof AccessRightGrant) {
+                        return (AccessRightGrant) node.getUserData();
+                    }
+                    node = node.getParent();
+                }
+            }
+        } catch (Exception e) {
+            logButton.error("Error finding parent controller", e);
+        }
+        return null;
     }
 }

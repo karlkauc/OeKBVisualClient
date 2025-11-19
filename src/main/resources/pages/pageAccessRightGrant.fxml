@@ -24,18 +24,19 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="Access Rights Granted" styleClass="page-title" HBox.hgrow="ALWAYS"/>
         <Label fx:id="statusMessage"/>
-        <Button onAction="#exportToExcel">
+        <Button text="New Rule" onAction="#createNewRule" styleClass="button-success">
             <graphic>
-                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/icons8-create-40.png"/>
-                </ImageView>
+                <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
             </graphic>
         </Button>
-        <Button fx:id="exportToExcel" onAction="#exportToExcel">
+        <Button text="Refresh" onAction="#refreshData" styleClass="button-primary">
             <graphic>
-                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/ms_excel.png"/>
-                </ImageView>
+                <FontIcon iconLiteral="bi-arrow-clockwise" iconSize="12" iconColor="WHITE"/>
+            </graphic>
+        </Button>
+        <Button text="Export to Excel" onAction="#exportToExcel" styleClass="button-success">
+            <graphic>
+                <FontIcon iconLiteral="bi-file-earmark-spreadsheet" iconSize="12" iconColor="WHITE"/>
             </graphic>
         </Button>
     </HBox>
@@ -45,7 +46,7 @@
         <padding>
             <Insets top="12" right="15" bottom="12" left="15"/>
         </padding>
-        <FontIcon iconLiteral="bi-search" iconSize="16" iconColor="#666"/>
+        <FontIcon iconLiteral="bi-search" iconSize="12" iconColor="#666"/>
         <Label text="Search:" styleClass="label-secondary-compact"/>
         <TextField fx:id="searchField" promptText="Search in all columns..."
                    styleClass="text-field-compact" prefWidth="400" HBox.hgrow="ALWAYS"/>

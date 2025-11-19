@@ -97,16 +97,94 @@ public class OeKBHTTP {
 
     public static String uploadAccessRule(File file) {
         applicationSettings.readSettingsFromFile();
-        String output = "";
+        String outputString = "";
 
-        try {
-            String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-            saveToBackup(fileContent, file.getName());
-        } catch (Exception e) {
-            log.error("Error uploading access rule", e);
+        // Check if in FileSystem mode (offline mode)
+        if (applicationSettings.isFileSystem()) {
+            try {
+                String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+                saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_OFFLINE");
+                log.info("OFFLINE MODE: Access rule saved to backup instead of uploading to server");
+                return "SUCCESS (OFFLINE MODE)\n\nAccess rule saved to backup directory.\nNo actual upload to server performed.";
+            } catch (Exception e) {
+                log.error("Error saving access rule in offline mode", e);
+                return "ERROR: " + e.getMessage();
+            }
         }
 
-        return output;
+        // Real mode: HTTP POST to server
+        try (CloseableHttpClient httpClient = getOekbConnection()) {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build multipart entity
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody("mode", "UPLOAD_ACCESS_RULE");
+            builder.addTextBody("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+            builder.addTextBody("user", applicationSettings.getOekbUserName());
+            builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
+            builder.addTextBody("clientversion", "4.4.0");
+            builder.addTextBody("fileToUploadName", file.getName());
+            builder.addBinaryBody("fileToUpload", file);
+
+            HttpEntity multipart = builder.build();
+            httpPost.setEntity(multipart);
+
+            log.info("Uploading access rule to server: {}", file.getName());
+
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                log.debug("Server response status: {}", statusCode);
+
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (statusCode != 200) {
+                        log.warn("Server returned non-OK status code: {}. Response: {}",
+                            statusCode,
+                            outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        log.info("Access rule uploaded successfully");
+                    }
+                } else {
+                    log.warn("No response entity received from server");
+                    outputString = "ERROR: No response from server";
+                }
+            }
+
+            // Save backup of both request and response
+            String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+            saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_REQUEST");
+            if (!outputString.isEmpty()) {
+                saveToBackup(outputString, "ACCESS_RULE_UPLOAD_RESPONSE");
+            }
+
+        } catch (java.net.UnknownHostException e) {
+            log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+            outputString = "ERROR: Cannot reach server - " + e.getMessage();
+        } catch (java.net.ConnectException e) {
+            log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.", e.getMessage());
+            outputString = "ERROR: Connection refused - " + e.getMessage();
+        } catch (javax.net.ssl.SSLException e) {
+            log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+            outputString = "ERROR: SSL/TLS error - " + e.getMessage();
+        } catch (java.net.SocketTimeoutException e) {
+            log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+            outputString = "ERROR: Connection timeout - " + e.getMessage();
+        } catch (Exception e) {
+            log.error("Error uploading access rule: {}. Check credentials, proxy settings, and network connection.",
+                e.getMessage());
+            log.debug("Full exception details", e);
+            outputString = "ERROR: " + e.getMessage();
+        }
+
+        return outputString;
     }
 
     public static String uploadDataFile(File file) {

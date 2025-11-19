@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" stylesheets="@../css/modern-theme.css"
+            hbarPolicy="NEVER" pannable="true"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.About">
+    <content>
+        <VBox styleClass="mainPane" spacing="20">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <!-- Page Title -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontIcon iconLiteral="bi-info-circle-fill" iconSize="28" iconColor="#003d5c"/>
+                <Label text="About OeKB Visual Client" styleClass="page-title"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Application Information -->
+            <VBox styleClass="card" spacing="15">
+                <Label text="Application Information" styleClass="section-title"/>
+                <Separator/>
+
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Version:" styleClass="label-secondary" prefWidth="120"/>
+                        <Label fx:id="versionLabel" text="0.4" styleClass="label-primary"/>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Copyright:" styleClass="label-secondary" prefWidth="120"/>
+                        <Label text="© 2024 Karl Kauc" styleClass="label-primary"/>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Built with:" styleClass="label-secondary" prefWidth="120"/>
+                        <Label text="JavaFX 25, Java 17" styleClass="label-primary"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="Description" styleClass="label-secondary"/>
+                    <Label text="OeKB Visual Client is a desktop application for interacting with OeKB's Financial Data Platform (FDP). It provides a professional interface for financial institutions to manage access rights, upload data, download reports, and perform regulatory reporting tasks."
+                           wrapText="true" styleClass="label-hint"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="Key Features" styleClass="label-secondary"/>
+                    <VBox spacing="5" styleClass="label-hint">
+                        <Label text="• Access Rights Management - Grant and receive data access permissions" wrapText="true"/>
+                        <Label text="• Data Upload - Upload financial data to OeKB FDP" wrapText="true"/>
+                        <Label text="• Fund &amp; ShareClass Download - Download fund and share class information" wrapText="true"/>
+                        <Label text="• OeNB Reporting - Austrian National Bank regulatory reporting" wrapText="true"/>
+                        <Label text="• Document Management - Manage and download documents" wrapText="true"/>
+                        <Label text="• Download Statistics - View and export download history" wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+            <!-- License -->
+            <VBox styleClass="card" spacing="10">
+                <Label text="License" styleClass="section-title"/>
+                <Separator/>
+
+                <TitledPane text="Apache License 2.0" expanded="false" styleClass="titled-pane">
+                    <ScrollPane fitToWidth="true" prefHeight="300" hbarPolicy="NEVER">
+                        <TextArea fx:id="licenseText" editable="false" wrapText="true"
+                                  style="-fx-font-family: monospace; -fx-font-size: 11px;"/>
+                    </ScrollPane>
+                </TitledPane>
+
+                <Label text="This application is licensed under the Apache License 2.0"
+                       styleClass="label-hint" wrapText="true"/>
+            </VBox>
+
+            <!-- Third-Party Libraries -->
+            <VBox styleClass="card" spacing="15">
+                <Label text="Third-Party Libraries" styleClass="section-title"/>
+                <Separator/>
+
+                <Label text="This application uses the following open-source libraries:"
+                       styleClass="label-hint" wrapText="true"/>
+
+                <!-- JavaFX -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="JavaFX 25" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Modern Java UI framework for desktop applications" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="GPL v2 with Classpath Exception" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://openjfx.io/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Apache POI -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="Apache POI 5.5.0" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Java API for Microsoft documents (Excel file processing)" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Apache License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://poi.apache.org/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Apache HttpComponents -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="Apache HttpComponents Client 5.4.1" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="HTTP client library for Java" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Apache License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://hc.apache.org/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Apache Log4j -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="Apache Log4j 2.24.3" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Logging framework for Java applications" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Apache License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://logging.apache.org/log4j/2.x/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- SLF4J -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="SLF4J 2.0.16" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Simple Logging Facade for Java" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="MIT License" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://www.slf4j.org/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Apache Commons Codec -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="Apache Commons Codec 1.20.0" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Encoders and decoders for various formats (Base64)" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Apache License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://commons.apache.org/proper/commons-codec/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Ikonli -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="Ikonli 12.4.0" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Icon packs for JavaFX (Bootstrap Icons, FontAwesome, etc.)" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Apache License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://kordamp.org/ikonli/"/>
+                    </HBox>
+                </VBox>
+
+                <!-- JUnit -->
+                <VBox styleClass="card-compact" spacing="5">
+                    <Label text="JUnit 5.11.4" styleClass="label-secondary" style="-fx-font-weight: 600;"/>
+                    <Label text="Testing framework for Java applications" styleClass="label-hint" wrapText="true"/>
+                    <HBox spacing="5">
+                        <Label text="License:" styleClass="label-secondary"/>
+                        <Hyperlink text="Eclipse Public License 2.0" styleClass="hyperlink"
+                                   onAction="#openUrl" userData="https://junit.org/junit5/"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- Footer -->
+            <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20 0 0 0;">
+                <Separator/>
+                <Label text="For more information, please visit the project repository"
+                       styleClass="label-hint" style="-fx-font-size: 11px;"/>
+            </VBox>
+        </VBox>
+    </content>
+</ScrollPane>

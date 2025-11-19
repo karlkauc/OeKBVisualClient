@@ -3,165 +3,202 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane prefHeight="900.0" prefWidth="1600.0"
+<ScrollPane hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            pannable="true"
             stylesheets="@../css/modern-theme.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.MainController">
-    <top>
-        <HBox styleClass="server-status-bar" prefHeight="35.0" alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets top="5.0" right="15.0" bottom="5.0" left="15.0"/>
-            </padding>
-            <Label text="Server:" styleClass="server-status-label"/>
-            <Label fx:id="globalServerStatus" text="PRODUCTION SERVER" styleClass="server-status-prod"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="globalDdsStatus" text="" styleClass="dds-status-label"/>
-        </HBox>
-    </top>
-    <bottom>
-        <Pane prefHeight="20.0" prefWidth="1024.0" styleClass="bottom" BorderPane.alignment="CENTER">
-            <TextArea id="debugMessages" fx:id="debugMessages" prefHeight="84.0" prefWidth="1385.0"/>
-        </Pane>
-    </bottom>
-    <left>
-        <Pane prefHeight="200.0" prefWidth="160.0" styleClass="left" BorderPane.alignment="CENTER">
-            <VBox spacing="2.0">
-                <!-- Settings -->
-                <Button fx:id="btnSettings" alignment="CENTER_RIGHT" onAction="#changeToSettings" prefHeight="32.0"
-                           prefWidth="160.0" styleClass="menu-button" text="Settings">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-gear-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-
-                <!-- Separator -->
-                <Region prefHeight="8.0"/>
-
-                <!-- Access Rights Section -->
-                <Label text="ACCESS RIGHTS" styleClass="menu-section-header"/>
-                <Button fx:id="btnAccessRightsReceived" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsReceived"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Rights Received">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-key-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnAccessRightsGrant" alignment="CENTER_RIGHT" onAction="#changeToAccessRightsGrant"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Grant Rights">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-people-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-
-                <!-- Separator -->
-                <Region prefHeight="8.0"/>
-
-                <!-- Monitoring Section -->
-                <Label text="MONITORING" styleClass="menu-section-header"/>
-                <Button fx:id="btnJournal" alignment="CENTER_RIGHT" onAction="#changeToJournal"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Activity Journal">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-journal-text" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnNewInformation" alignment="CENTER_RIGHT" onAction="#changeToNewInformation"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="New Information">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-bell-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnAvailableData" alignment="CENTER_RIGHT" onAction="#changeToAvailableData"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Available Data">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnDownloadStats" alignment="CENTER_RIGHT" onAction="#changeToOwnDataDownloaded"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Download Stats">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-bar-chart-line-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-
-                <!-- Separator -->
-                <Region prefHeight="8.0"/>
-
-                <!-- Upload Section -->
-                <Label text="UPLOAD" styleClass="menu-section-header"/>
-                <Button fx:id="btnDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Data Upload">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-cloud-upload-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnOeNB" alignment="CENTER_RIGHT" onAction="#changeToOFI"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="OeNB Meldung">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-file-earmark-text-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-
-                <!-- Separator -->
-                <Region prefHeight="8.0"/>
-
-                <!-- Download Section -->
-                <Label text="DOWNLOAD" styleClass="menu-section-header"/>
-                <Button fx:id="btnFundDownload" alignment="CENTER_RIGHT" onAction="#changeToFundDownload"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Fund Data">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-cloud-download-fill" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnShareClassDownload" alignment="CENTER_RIGHT" onAction="#changeToShareClassDownload"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="ShareClass">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-download" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnDocumentDownload" alignment="CENTER_RIGHT" onAction="#changeToDocumentDownload"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Documents">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-files" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="btnRegulatoryReporting" alignment="CENTER_RIGHT" onAction="#changeToRegulatoryReporting"
-                           prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Regulatory">
-                    <graphic>
-                        <FontIcon iconLiteral="bi-clipboard-check" iconSize="14" iconColor="WHITE"/>
-                    </graphic>
-                </Button>
-
-                <!-- Separator -->
-                <Region prefHeight="12.0"/>
-
-                <!-- Server Selection -->
-                <VBox prefWidth="160.0" spacing="4.0" styleClass="server-section">
+    <content>
+        <BorderPane minWidth="1600.0" minHeight="900.0"
+                stylesheets="@../css/modern-theme.css">
+            <top>
+                <HBox styleClass="server-status-bar" prefHeight="35.0" alignment="CENTER_LEFT" spacing="10.0"
+                      BorderPane.alignment="CENTER">
                     <padding>
-                        <Insets top="8.0" bottom="8.0"/>
+                        <Insets top="5.0" right="15.0" bottom="5.0" left="15.0"/>
                     </padding>
-                    <Label text="SERVER ENVIRONMENT" styleClass="menu-section-header-important"/>
-                    <Button fx:id="prodServerButton" onAction="#changeToProdServer"
-                            styleClass="server-button-prod" text="PRODUCTION"
-                            prefHeight="28.0" prefWidth="160.0">
-                        <graphic>
-                            <FontIcon iconLiteral="bi-shield-fill-check" iconSize="12" iconColor="WHITE"/>
-                        </graphic>
-                    </Button>
-                    <Button fx:id="devServerButton" onAction="#changeToDevServer"
-                            styleClass="server-button-dev" text="DEVELOPMENT"
-                            prefHeight="28.0" prefWidth="160.0">
-                        <graphic>
-                            <FontIcon iconLiteral="bi-code-slash" iconSize="12" iconColor="WHITE"/>
-                        </graphic>
-                    </Button>
-                </VBox>
-            </VBox>
-        </Pane>
-    </left>
-    <center>
-        <AnchorPane id="mainPane" fx:id="mainPane" styleClass="mainPane"/>
-    </center>
-</BorderPane>
+                    <Label text="Server:" styleClass="server-status-label"/>
+                    <Label fx:id="globalServerStatus" text="PRODUCTION SERVER" styleClass="server-status-prod"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="globalDdsStatus" text="" styleClass="dds-status-label"/>
+                </HBox>
+            </top>
+            <bottom>
+                <Pane prefHeight="20.0" prefWidth="1024.0" styleClass="bottom" BorderPane.alignment="CENTER">
+                    <TextArea id="debugMessages" fx:id="debugMessages" prefHeight="84.0" prefWidth="1385.0"/>
+                </Pane>
+            </bottom>
+            <left>
+                <Pane prefHeight="200.0" prefWidth="160.0" styleClass="left" BorderPane.alignment="CENTER">
+                    <VBox spacing="2.0">
+                        <!-- Settings -->
+                        <Button fx:id="btnSettings" alignment="CENTER_RIGHT" onAction="#changeToSettings"
+                                prefHeight="32.0"
+                                prefWidth="160.0" styleClass="menu-button" text="Settings">
+                            <graphic>
+                                <FontIcon iconLiteral="bi-gear-fill" iconSize="14" iconColor="WHITE"/>
+                            </graphic>
+                        </Button>
+
+                        <!-- Separator -->
+                        <Region prefHeight="8.0"/>
+
+                        <!-- Access Rights Section -->
+                        <TitledPane text="ACCESS RIGHTS" expanded="true" collapsible="true" styleClass="menu-titled-pane">
+                            <VBox spacing="0">
+                                <Button fx:id="btnAccessRightsReceived" alignment="CENTER_RIGHT"
+                                        onAction="#changeToAccessRightsReceived"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Rights Received">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-key-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnAccessRightsGrant" alignment="CENTER_RIGHT"
+                                        onAction="#changeToAccessRightsGrant"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Grant Rights">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-people-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Separator -->
+                        <Region prefHeight="8.0"/>
+
+                        <!-- Monitoring Section -->
+                        <TitledPane text="MONITORING" expanded="true" collapsible="true" styleClass="menu-titled-pane">
+                            <VBox spacing="0">
+                                <Button fx:id="btnJournal" alignment="CENTER_RIGHT" onAction="#changeToJournal"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Activity Journal">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-journal-text" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnNewInformation" alignment="CENTER_RIGHT" onAction="#changeToNewInformation"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="New Information">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-bell-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnAvailableData" alignment="CENTER_RIGHT" onAction="#changeToAvailableData"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Available Data">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnDownloadStats" alignment="CENTER_RIGHT" onAction="#changeToOwnDataDownloaded"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Download Stats">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-bar-chart-line-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Separator -->
+                        <Region prefHeight="8.0"/>
+
+                        <!-- Upload Section -->
+                        <TitledPane text="UPLOAD" expanded="true" collapsible="true" styleClass="menu-titled-pane">
+                            <VBox spacing="0">
+                                <Button fx:id="btnDataUpload" alignment="CENTER_RIGHT" onAction="#changeToDataUpload"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Data Upload">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-cloud-upload-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnOeNB" alignment="CENTER_RIGHT" onAction="#changeToOFI"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="OeNB Meldung">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-file-earmark-text-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Separator -->
+                        <Region prefHeight="8.0"/>
+
+                        <!-- Download Section -->
+                        <TitledPane text="DOWNLOAD" expanded="true" collapsible="true" styleClass="menu-titled-pane">
+                            <VBox spacing="0">
+                                <Button fx:id="btnFundDownload" alignment="CENTER_RIGHT" onAction="#changeToFundDownload"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Fund Data">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-cloud-download-fill" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnShareClassDownload" alignment="CENTER_RIGHT"
+                                        onAction="#changeToShareClassDownload"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="ShareClass">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-download" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnDocumentDownload" alignment="CENTER_RIGHT"
+                                        onAction="#changeToDocumentDownload"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Documents">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-files" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnRegulatoryReporting" alignment="CENTER_RIGHT"
+                                        onAction="#changeToRegulatoryReporting"
+                                        prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="Regulatory">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-clipboard-check" iconSize="14" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Separator -->
+                        <Region prefHeight="12.0"/>
+
+                        <!-- About -->
+                        <Button fx:id="btnAbout" alignment="CENTER_RIGHT" onAction="#changeToAbout"
+                                prefHeight="32.0" prefWidth="160.0" styleClass="menu-button" text="About">
+                            <graphic>
+                                <FontIcon iconLiteral="bi-info-circle-fill" iconSize="14" iconColor="WHITE"/>
+                            </graphic>
+                        </Button>
+
+                        <!-- Separator -->
+                        <Region prefHeight="12.0"/>
+
+                        <!-- Server Selection -->
+                        <VBox prefWidth="160.0" spacing="4.0" styleClass="server-section">
+                            <padding>
+                                <Insets top="8.0" bottom="8.0"/>
+                            </padding>
+                            <Label text="SERVER ENVIRONMENT" styleClass="menu-section-header-important"/>
+                            <Button fx:id="prodServerButton" onAction="#changeToProdServer"
+                                    styleClass="server-button-prod" text="PRODUCTION"
+                                    prefHeight="28.0" prefWidth="160.0">
+                                <graphic>
+                                    <FontIcon iconLiteral="bi-shield-fill-check" iconSize="12" iconColor="WHITE"/>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="devServerButton" onAction="#changeToDevServer"
+                                    styleClass="server-button-dev" text="DEVELOPMENT"
+                                    prefHeight="28.0" prefWidth="160.0">
+                                <graphic>
+                                    <FontIcon iconLiteral="bi-code-slash" iconSize="12" iconColor="WHITE"/>
+                                </graphic>
+                            </Button>
+                        </VBox>
+                    </VBox>
+                </Pane>
+            </left>
+            <center>
+                <AnchorPane id="mainPane" fx:id="mainPane" styleClass="mainPane"/>
+            </center>
+        </BorderPane>
+    </content>
+</ScrollPane>

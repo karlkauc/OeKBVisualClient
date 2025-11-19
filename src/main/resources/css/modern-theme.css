@@ -119,6 +119,33 @@
     -fx-font-size: 13px;
 }
 
+/* Mandatory Field Labels - Visual indication for required fields */
+.label-mandatory,
+.label-required {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.label-hint {
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.label-hint-compact {
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+/* Required field marker (red asterisk) */
+.required-marker {
+    -fx-text-fill: -danger-color;
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
 /* ============================================
    COMPACT STYLES FOR SETTINGS PAGE
    ============================================ */
@@ -322,13 +349,20 @@
     -fx-background-radius: 3px;
     -fx-padding: 10 20;
     -fx-font-weight: 500;
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-cursor: hand;
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0.0, 0, 1);
 }
 
+/* Global icon size for all buttons */
+.button .ikonli-font-icon {
+    -fx-icon-size: 12;
+}
+
+/* Primary Button - Deep Blue */
 .btn-primary,
+.button-primary,
 .saveSetttings {
     -fx-background-color: -primary-color;
     -fx-text-fill: white;
@@ -337,44 +371,195 @@
 }
 
 .btn-primary:hover,
+.button-primary:hover,
 .saveSetttings:hover {
     -fx-background-color: -primary-dark;
     -fx-border-color: -primary-dark;
 }
 
 .btn-primary:pressed,
+.button-primary:pressed,
 .saveSetttings:pressed {
     -fx-background-color: #001f2e;
 }
 
-.btn-secondary {
-    -fx-background-color: -secondary-color;
+.btn-primary .ikonli-font-icon,
+.button-primary .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Secondary Button - Neutral Gray */
+.btn-secondary,
+.button-secondary {
+    -fx-background-color: #6c757d;
     -fx-text-fill: white;
-    -fx-border-color: -secondary-dark;
+    -fx-border-color: #5a6268;
 }
 
-.btn-secondary:hover {
-    -fx-background-color: -secondary-dark;
+.btn-secondary:hover,
+.button-secondary:hover {
+    -fx-background-color: #5a6268;
+    -fx-border-color: #545b62;
 }
 
-.btn-danger {
+.btn-secondary:pressed,
+.button-secondary:pressed {
+    -fx-background-color: #545b62;
+}
+
+.btn-secondary .ikonli-font-icon,
+.button-secondary .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Success Button - Green */
+.btn-success,
+.button-success {
+    -fx-background-color: -success-color;
+    -fx-text-fill: white;
+    -fx-border-color: #1b5e20;
+    -fx-font-weight: 600;
+}
+
+.btn-success:hover,
+.button-success:hover {
+    -fx-background-color: #1b5e20;
+    -fx-border-color: #1b5e20;
+}
+
+.btn-success:pressed,
+.button-success:pressed {
+    -fx-background-color: #155724;
+}
+
+.btn-success .ikonli-font-icon,
+.button-success .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Danger Button - Red */
+.btn-danger,
+.button-danger {
     -fx-background-color: -danger-color;
     -fx-text-fill: white;
     -fx-border-color: #c62828;
 }
 
-.btn-danger:hover {
+.btn-danger:hover,
+.button-danger:hover {
     -fx-background-color: #c62828;
+    -fx-border-color: #b71c1c;
 }
 
-.btn-info {
+.btn-danger:pressed,
+.button-danger:pressed {
+    -fx-background-color: #b71c1c;
+}
+
+.btn-danger .ikonli-font-icon,
+.button-danger .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Info Button - Blue */
+.btn-info,
+.button-info {
     -fx-background-color: -info-color;
     -fx-text-fill: white;
     -fx-border-color: #01579b;
 }
 
-.btn-info:hover {
+.btn-info:hover,
+.button-info:hover {
     -fx-background-color: #01579b;
+    -fx-border-color: #014a7f;
+}
+
+.btn-info:pressed,
+.button-info:pressed {
+    -fx-background-color: #014a7f;
+}
+
+.btn-info .ikonli-font-icon,
+.button-info .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Compact Button Variants - Smaller padding for tight layouts */
+.btn-primary-compact,
+.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+    -fx-border-color: -primary-dark;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16;
+    -fx-font-size: 12px;
+}
+
+.btn-primary-compact:hover,
+.primary-button:hover {
+    -fx-background-color: -primary-dark;
+    -fx-border-color: -primary-dark;
+}
+
+.btn-primary-compact:pressed,
+.primary-button:pressed {
+    -fx-background-color: #001f2e;
+}
+
+.btn-primary-compact .ikonli-font-icon,
+.primary-button .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.btn-secondary-compact,
+.secondary-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-border-color: #5a6268;
+    -fx-padding: 8 16;
+    -fx-font-size: 12px;
+}
+
+.btn-secondary-compact:hover,
+.secondary-button:hover {
+    -fx-background-color: #5a6268;
+    -fx-border-color: #545b62;
+}
+
+.btn-secondary-compact:pressed,
+.secondary-button:pressed {
+    -fx-background-color: #545b62;
+}
+
+.btn-secondary-compact .ikonli-font-icon,
+.secondary-button .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/* Warning/Danger Button for Delete Operations */
+.btn-delete,
+.button-delete {
+    -fx-background-color: -danger-color;
+    -fx-text-fill: white;
+    -fx-border-color: #c62828;
+    -fx-padding: 8 16;
+}
+
+.btn-delete:hover,
+.button-delete:hover {
+    -fx-background-color: #c62828;
+    -fx-border-color: #b71c1c;
+}
+
+.btn-delete:pressed,
+.button-delete:pressed {
+    -fx-background-color: #b71c1c;
+}
+
+.btn-delete .ikonli-font-icon,
+.button-delete .ikonli-font-icon {
+    -fx-icon-color: white;
 }
 
 /* ============================================
@@ -564,6 +749,23 @@
     -fx-text-fill: white;
 }
 
+/* Table cell alignment: left-center */
+.tree-table-view .tree-table-cell,
+.table-view .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 8 8;
+    -fx-font-size: 12px;
+}
+
+/* Tree disclosure node (expand/collapse arrows) alignment */
+.tree-table-view .tree-disclosure-node {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.tree-table-view .tree-table-row-cell .tree-disclosure-node .arrow {
+    -fx-alignment: CENTER;
+}
+
 /* ============================================
    SCROLLBAR
    ============================================ */
@@ -601,6 +803,102 @@
 .separator .line {
     -fx-border-color: -border-color-light;
     -fx-border-width: 1 0 0 0;
+}
+
+/* ============================================
+   TITLED PANE (Collapsible Sections)
+   ============================================ */
+.titled-pane {
+    -fx-background-color: -card-bg;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: -text-primary;
+    -fx-font-weight: 600;
+    -fx-font-size: 13px;
+    -fx-padding: 10 12;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.titled-pane > *.content {
+    -fx-background-color: -card-bg;
+    -fx-border-color: -border-color-light;
+    -fx-border-width: 0 1 1 1;
+    -fx-padding: 10;
+}
+
+/* Menu TitledPane Styling */
+.menu-titled-pane {
+    -fx-background-color: transparent;
+}
+
+.menu-titled-pane > .title {
+    -fx-background-color: transparent;
+    -fx-text-fill: white !important;
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-letter-spacing: 0.5px;
+    -fx-padding: 12 12 4 12;
+    -fx-cursor: hand;
+}
+
+.menu-titled-pane > .title > .text {
+    -fx-fill: white !important;
+}
+
+.menu-titled-pane > .title:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-text-fill: white !important;
+}
+
+.menu-titled-pane > .title:hover > .text {
+    -fx-fill: white !important;
+}
+
+.menu-titled-pane > *.content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+/* Hide the arrow/disclosure node */
+.menu-titled-pane > .title > .arrow-button {
+    -fx-padding: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+}
+
+.menu-titled-pane > .title > .arrow-button > .arrow {
+    -fx-padding: 0;
+    -fx-shape: null;
+    -fx-background-color: transparent;
+}
+
+/* ============================================
+   HYPERLINKS
+   ============================================ */
+.hyperlink {
+    -fx-text-fill: -primary-color;
+    -fx-underline: true;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: -primary-light;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: -secondary-color;
 }
 
 /* ============================================

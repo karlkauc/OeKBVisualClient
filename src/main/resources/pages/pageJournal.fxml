@@ -22,12 +22,12 @@
         <Label fx:id="statusMessage"/>
         <Button fx:id="refreshButton" onAction="#refreshJournal" text="Refresh">
             <graphic>
-                <FontIcon iconLiteral="bi-arrow-clockwise" iconSize="18" iconColor="WHITE"/>
+                <FontIcon iconLiteral="bi-arrow-clockwise" iconSize="12" iconColor="WHITE"/>
             </graphic>
         </Button>
         <Button fx:id="exportButton" onAction="#exportToExcel" text="Export">
             <graphic>
-                <FontIcon iconLiteral="bi-file-earmark-spreadsheet" iconSize="18" iconColor="WHITE"/>
+                <FontIcon iconLiteral="bi-file-earmark-spreadsheet" iconSize="12" iconColor="WHITE"/>
             </graphic>
         </Button>
     </HBox>
@@ -119,7 +119,7 @@
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
-        <FontIcon iconLiteral="bi-search" iconSize="18" iconColor="#6c757d"/>
+        <FontIcon iconLiteral="bi-search" iconSize="12" iconColor="#6c757d"/>
         <TextField fx:id="searchField" promptText="Search in all columns..."
                    styleClass="search-field" HBox.hgrow="ALWAYS"
                    onKeyReleased="#filterTable"/>

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.AccessRuleEditDialog"
+            prefHeight="700.0" prefWidth="900.0"
+            styleClass="mainPane"
+            stylesheets="@../css/modern-theme.css">
+
+    <VBox spacing="15.0" AnchorPane.topAnchor="15.0" AnchorPane.leftAnchor="15.0"
+          AnchorPane.rightAnchor="15.0" AnchorPane.bottomAnchor="15.0">
+
+        <!-- Header -->
+        <Label text="Edit Access Rule" styleClass="page-title"/>
+
+        <Separator/>
+
+        <!-- Tab Pane -->
+        <TabPane VBox.vgrow="ALWAYS" styleClass="tab-pane">
+
+            <!-- Tab 1: Basis-Daten -->
+            <Tab text="Basis-Daten" closable="false">
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                    <VBox spacing="15.0" style="-fx-padding: 15;">
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Rule Information" styleClass="section-title"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <HBox spacing="2" prefWidth="120">
+                                    <Label text="Rule ID:" styleClass="label-mandatory"/>
+                                    <Label text="*" styleClass="required-marker"/>
+                                </HBox>
+                                <TextField fx:id="ruleIdField" prefWidth="300" promptText="Enter unique rule ID"/>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <HBox spacing="2" prefWidth="120">
+                                    <Label text="Content Type:" styleClass="label-mandatory"/>
+                                    <Label text="*" styleClass="required-marker"/>
+                                </HBox>
+                                <ComboBox fx:id="contentTypeCombo" prefWidth="200" promptText="Select type"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox styleClass="card" spacing="10">
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="Data Suppliers (Recipients)" styleClass="section-title"/>
+                                <Label text="*" styleClass="required-marker"/>
+                            </HBox>
+                            <Label text="At least one data supplier must be specified" styleClass="label-hint"/>
+                            <ListView fx:id="dataSuppliersListView" prefHeight="120"/>
+                            <HBox spacing="10">
+                                <TextField fx:id="newDataSupplierField" promptText="Enter data supplier code"
+                                          HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddDataSupplier"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveDataSupplier"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <VBox styleClass="card" spacing="10">
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="Profiles" styleClass="section-title"/>
+                                <Label text="*" styleClass="required-marker"/>
+                            </HBox>
+                            <Label text="At least one profile must be specified" styleClass="label-hint"/>
+                            <ListView fx:id="profilesListView" prefHeight="120"/>
+                            <HBox spacing="10">
+                                <ComboBox fx:id="newProfileCombo" promptText="Select profile"
+                                         HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddProfile"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveProfile"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Additional Information" styleClass="section-title"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Usage:" prefWidth="120"/>
+                                <TextField fx:id="usageField" prefWidth="300"/>
+                            </HBox>
+
+                            <VBox spacing="5">
+                                <CheckBox fx:id="costsByDataSupplierCheckBox"
+                                         text="Costs paid by Data Supplier"
+                                         wrapText="true"/>
+                                <Label text="Enable if costs for downloading the data are covered by the fund company"
+                                       styleClass="label-hint" wrapText="true"/>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 2: Access Objects -->
+            <Tab text="Access Objects" closable="false">
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                    <VBox spacing="15.0" style="-fx-padding: 15;">
+                        <!-- Mandatory notice for Access Objects -->
+                        <VBox styleClass="card-compact" spacing="5" style="-fx-background-color: #fff3cd; -fx-border-color: #ffc107;">
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="⚠ At least ONE Access Object is required" styleClass="label-mandatory" style="-fx-text-fill: #856404; -fx-font-size: 14px;"/>
+                            </HBox>
+                            <Label text="You must specify at least one: LEI, OeNB-ID, Segment ISIN, or ShareClass ISIN"
+                                   styleClass="label-hint" style="-fx-text-fill: #856404;"/>
+                        </VBox>
+
+                        <!-- LEI (Fund level) -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="LEI (Fund Level Access)" styleClass="section-title"/>
+                            <TableView fx:id="leiTableView" prefHeight="150">
+                                <columns>
+                                    <TableColumn fx:id="leiColumn" text="LEI" prefWidth="700"/>
+                                </columns>
+                            </TableView>
+                            <HBox spacing="10">
+                                <TextField fx:id="newLeiField" promptText="Enter LEI"
+                                          HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddLei"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveLei"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <!-- OeNB-ID (Fund level) -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="OeNB-ID (Fund Level Access)" styleClass="section-title"/>
+                            <TableView fx:id="oenbIdTableView" prefHeight="150">
+                                <columns>
+                                    <TableColumn fx:id="oenbIdColumn" text="OeNB-ID" prefWidth="700"/>
+                                </columns>
+                            </TableView>
+                            <HBox spacing="10">
+                                <TextField fx:id="newOenbIdField" promptText="Enter OeNB-ID"
+                                          HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddOenbId"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveOenbId"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Segment ISIN -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Segment ISIN" styleClass="section-title"/>
+                            <TableView fx:id="segmentIsinTableView" prefHeight="150">
+                                <columns>
+                                    <TableColumn fx:id="segmentIsinColumn" text="ISIN" prefWidth="700"/>
+                                </columns>
+                            </TableView>
+                            <HBox spacing="10">
+                                <TextField fx:id="newSegmentIsinField" promptText="Enter Segment ISIN"
+                                          HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddSegmentIsin"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveSegmentIsin"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <!-- ShareClass ISIN -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="ShareClass ISIN" styleClass="section-title"/>
+                            <TableView fx:id="shareclassIsinTableView" prefHeight="150">
+                                <columns>
+                                    <TableColumn fx:id="shareclassIsinColumn" text="ISIN" prefWidth="700"/>
+                                </columns>
+                            </TableView>
+                            <HBox spacing="10">
+                                <TextField fx:id="newShareclassIsinField" promptText="Enter ShareClass ISIN"
+                                          HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddShareclassIsin"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveShareclassIsin"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 3: Schedule -->
+            <Tab text="Schedule" closable="false">
+                <VBox spacing="15.0" style="-fx-padding: 15;">
+                    <VBox styleClass="card" spacing="10">
+                        <Label text="Validity Period" styleClass="section-title"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Date From:" prefWidth="120"/>
+                            <DatePicker fx:id="dateFromPicker" prefWidth="200"/>
+                        </HBox>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Date To:" prefWidth="120"/>
+                            <DatePicker fx:id="dateToPicker" prefWidth="200"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="card" spacing="10">
+                        <Label text="Access Settings" styleClass="section-title"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Frequency:" prefWidth="120"/>
+                            <ComboBox fx:id="frequencyCombo" prefWidth="200"/>
+                        </HBox>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Access Delay (Days):" prefWidth="120"/>
+                            <Spinner fx:id="accessDelaySpinner" prefWidth="150" editable="true"
+                                     min="0" max="365" initialValue="0" amountToStepBy="1"/>
+                            <Label text="(0-365 days)" styleClass="label-hint"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- Tab 4: Advanced -->
+            <Tab text="Advanced" closable="false">
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                    <VBox spacing="15.0" style="-fx-padding: 15;">
+                        <Label text="These options are only applicable for specific ContentTypes"
+                               style="-fx-font-style: italic; -fx-text-fill: #666;"/>
+
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Document Types (for ContentType=DOC)" styleClass="section-title"/>
+                            <ListView fx:id="documentTypesListView" prefHeight="150"/>
+                            <HBox spacing="10">
+                                <ComboBox fx:id="newDocumentTypeCombo" promptText="Select document type"
+                                         HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddDocumentType"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveDocumentType"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Regulatory Reportings (for ContentType=REG)" styleClass="section-title"/>
+                            <ListView fx:id="regulatoryReportingsListView" prefHeight="150"/>
+                            <HBox spacing="10">
+                                <ComboBox fx:id="newRegulatoryReportingCombo" promptText="Select regulatory reporting"
+                                         HBox.hgrow="ALWAYS"/>
+                                <Button text="Add" onAction="#handleAddRegulatoryReporting"
+                                       styleClass="button-primary">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-plus-circle" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Remove" onAction="#handleRemoveRegulatoryReporting"
+                                       styleClass="button-danger">
+                                    <graphic>
+                                        <FontIcon iconLiteral="bi-trash" iconSize="12" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+
+        <!-- Dialog Buttons -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"
+                   styleClass="button-secondary" prefWidth="100">
+                <graphic>
+                    <FontIcon iconLiteral="bi-x-circle" iconSize="12"/>
+                </graphic>
+            </Button>
+            <Button fx:id="saveButton" text="Save &amp; Upload" onAction="#handleSave"
+                   styleClass="button-success" prefWidth="150">
+                <graphic>
+                    <FontIcon iconLiteral="bi-check-circle" iconSize="12" iconColor="WHITE"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</AnchorPane>

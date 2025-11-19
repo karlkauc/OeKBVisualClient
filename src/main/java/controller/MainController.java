@@ -96,6 +96,9 @@ public class MainController implements Initializable {
     @FXML
     private Button btnRegulatoryReporting;
 
+    @FXML
+    private Button btnAbout;
+
     /**
      * Updates the active menu button styling
      */
@@ -105,7 +108,7 @@ public class MainController implements Initializable {
             btnSettings, btnAccessRightsReceived, btnAccessRightsGrant,
             btnJournal, btnNewInformation, btnAvailableData, btnDownloadStats,
             btnDataUpload, btnOeNB, btnFundDownload, btnShareClassDownload,
-            btnDocumentDownload, btnRegulatoryReporting
+            btnDocumentDownload, btnRegulatoryReporting, btnAbout
         };
 
         for (Button btn : allMenuButtons) {
@@ -416,6 +419,20 @@ public class MainController implements Initializable {
             } catch (IOException e) {
                 log.error("Error loading regulatory reporting page", e);
             }
+        }
+    }
+
+    @FXML
+    private void changeToAbout() {
+        setActiveMenuButton(btnAbout);
+        log.debug("change to About");
+
+        try {
+            javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageAbout.fxml"));
+            mainPane.getChildren().setAll(tempPane);
+            mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+        } catch (IOException e) {
+            log.error("Error loading about page", e);
         }
     }
 

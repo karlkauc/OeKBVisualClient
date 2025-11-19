@@ -466,4 +466,58 @@ public class AccesRights {
             log.error("Error modifying new rule", e);
         }
     }
+
+    /**
+     * Upload access rule XML string to server
+     * Creates a temporary file from the XML string and uploads it
+     *
+     * @param xmlContent XML string to upload
+     * @return Server response or success/error message
+     */
+    public static String uploadAccessRuleXml(String xmlContent) {
+        if (xmlContent == null || xmlContent.trim().isEmpty()) {
+            log.error("Cannot upload empty XML content");
+            return "ERROR: XML content is empty";
+        }
+
+        File tempFile = null;
+        try {
+            // Create temporary file with timestamp to ensure uniqueness
+            String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            tempFile = File.createTempFile("access_rule_" + timestamp + "_", ".xml");
+
+            // Write XML content to file
+            java.nio.file.Files.write(tempFile.toPath(),
+                    xmlContent.getBytes(StandardCharsets.UTF_8));
+
+            log.info("Created temporary file for upload: {}", tempFile.getAbsolutePath());
+
+            // Upload the file
+            String result = OeKBHTTP.uploadAccessRule(tempFile);
+
+            // Check if upload was successful
+            if (result != null && (result.contains("SUCCESS") || result.contains("OK"))) {
+                log.info("Access rule uploaded successfully");
+            } else if (result != null && result.startsWith("ERROR")) {
+                log.error("Upload failed: {}", result);
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            log.error("Error uploading access rule XML", e);
+            return "ERROR: " + e.getMessage();
+        } finally {
+            // Clean up temporary file
+            if (tempFile != null && tempFile.exists()) {
+                try {
+                    tempFile.delete();
+                    log.debug("Deleted temporary file: {}", tempFile.getAbsolutePath());
+                } catch (Exception e) {
+                    log.warn("Could not delete temporary file: {}", tempFile.getAbsolutePath());
+                }
+            }
+        }
+    }
 }

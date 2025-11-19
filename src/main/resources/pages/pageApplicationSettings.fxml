@@ -16,6 +16,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <ScrollPane fitToWidth="true" stylesheets="@../css/modern-theme.css"
             hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true"
@@ -135,9 +136,7 @@
                            styleClass="saveSetttings"
                            text="Save Settings">
                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../img/save.png"/>
-                        </ImageView>
+                        <FontIcon iconLiteral="bi-check-circle-fill" iconSize="12" iconColor="WHITE"/>
                     </graphic>
                 </Button>
             </HBox>

@@ -25,11 +25,9 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <Label text="Access Rights Received" styleClass="page-title" HBox.hgrow="ALWAYS"/>
         <Label fx:id="statusMessage"/>
-        <Button fx:id="exportToExcel" onAction="#exportToExcel">
+        <Button fx:id="exportToExcel" text="Export to Excel" onAction="#exportToExcel" styleClass="button-success">
             <graphic>
-                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/ms_excel.png"/>
-                </ImageView>
+                <FontIcon iconLiteral="bi-file-earmark-spreadsheet" iconSize="16" iconColor="WHITE"/>
             </graphic>
         </Button>
     </HBox>
@@ -39,7 +37,7 @@
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
-        <FontIcon iconLiteral="bi-search" iconSize="18" iconColor="#6c757d"/>
+        <FontIcon iconLiteral="bi-search" iconSize="12" iconColor="#6c757d"/>
         <TextField fx:id="searchField" promptText="Suche in allen Spalten..."
                    styleClass="search-field" HBox.hgrow="ALWAYS"
                    onKeyReleased="#filterTable"/>
