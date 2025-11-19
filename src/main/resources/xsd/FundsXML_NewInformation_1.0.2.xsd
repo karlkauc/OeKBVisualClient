@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<!-- Mit XMLSpy v2013 (http://www.altova.com) von Oesterreichische Kontrollbank AG (Oesterreichische Kontrollbank AG) bearbeitet -->
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by OeKB (Oesterreichische Kontrollbank AG) -->
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by OeKB (Oesterreichische Kontrollbank AG) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2,0">
+	<xs:element name="FundsXML_NewInformation">
+		<xs:annotation>
+			<xs:documentation>Das Root. Element. Dieses Element dient zur zur Darstellung der Information, welche neuen Daten zur Verfügung stehen..</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CreationTime" type="xs:dateTime">
+					<xs:annotation>
+						<xs:documentation>Timestamp der Dokumenterstellung</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Info" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Information (zB: wenn für diesen Zeitraum keine Neuen Informationen vorhanden sind)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="type" type="xs:string"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="NewInformation" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Neu zur Verfügung stehende Informationen</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence minOccurs="0">
+							<xs:element name="ContentType">
+								<xs:annotation>
+									<xs:documentation>FUND, DOC, REG</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="FUND"/>
+										<xs:enumeration value="DOC"/>
+										<xs:enumeration value="REG"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ContentDate" type="xs:date">
+								<xs:annotation>
+									<xs:documentation>ContentDate</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="UploadDateTime" type="xs:dateTime">
+								<xs:annotation>
+									<xs:documentation>Datetime of Information Upload</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="DataSuppliers">
+								<xs:annotation>
+									<xs:documentation>Dieses Element definiert für welchen User dieses Zugriffsregel definiert wird.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="DataSupplier" type="NewInformationDataSupplierType" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>DataSupplier</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FundOrShareclass" type="FundOrShareClassIdentifiersType">
+								<xs:annotation>
+									<xs:documentation>Identifieres for Fund or Sharclass</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:choice minOccurs="0">
+								<xs:element name="DocumentTypes" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="DocumentType" maxOccurs="unbounded">
+												<xs:annotation>
+													<xs:documentation>Type of document</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:choice>
+														<xs:element name="ListedType">
+															<xs:annotation>
+																<xs:documentation>Document Type with enumeration:
+AIFMD
+AnnualReport
+AuditReport
+Factsheet
+FPP
+KID
+Prospectus
+PRIIPS</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:enumeration value="AIFMD"/>
+																	<xs:enumeration value="AnnualReport"/>
+																	<xs:enumeration value="AuditReport"/>
+																	<xs:enumeration value="Factsheet"/>
+																	<xs:enumeration value="FPP"/>
+																	<xs:enumeration value="KID"/>
+																	<xs:enumeration value="Prospectus"/>
+																	<xs:enumeration value="PRIIPS"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="UnlistedType">
+															<xs:annotation>
+																<xs:documentation>Description of other document types</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:minLength value="1"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Language" type="xs:language" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Language of document</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Format" type="Text256Type" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Technical format of document:
+PDF, XML, Excel, Word, Image, ...</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="RegulatoryReportings" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="Type" maxOccurs="unbounded">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:enumeration value="EMIR"/>
+														<xs:enumeration value="KIID"/>
+														<xs:enumeration value="EMT"/>
+														<xs:enumeration value="TPTSolvencyII"/>
+														<xs:enumeration value="PRIIPS"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+							<xs:element name="Profiles" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Profile für die die Zugriffsregel definiert wird.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Profile" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Ein Profil legt fest, welche Konten- und Datenelemente zur Vefügung gestellt werden sollen.</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:enumeration value="all"/>
+													<xs:enumeration value="PKG"/>
+													<xs:enumeration value="Vendor"/>
+													<xs:enumeration value="allOhneSegmente"/>
+													<xs:enumeration value="VendorOhneShareClassPositions"/>
+													<xs:enumeration value="VendorMitShareClass"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="NewInformationDataSupplierType">
+		<xs:annotation>
+			<xs:documentation>Der DataSupplierTyp enthält die Daten eines Datenlieferanten bzw. -beziehers.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SystemCountry" type="ISOCountryCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Country of authority defining the list of valid data suppliers (e.g. AT, DE, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Short">
+				<xs:annotation>
+					<xs:documentation>Code of supplier (unique per country); wenn das Upload-File nicht valide ist wird OeKB angegeben.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="Text64Type">
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Name" type="Text256Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of data supplier</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="Text64Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of data supplier (e.g. IC, CB, NB, Vendor, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Contact" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact details (name, phone, email)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Name" type="Text256Type" minOccurs="0"/>
+						<xs:element name="Phone" type="Text64Type" minOccurs="0"/>
+						<xs:element name="Email" type="Text256Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FundOrShareClassIdentifiersType">
+		<xs:sequence>
+			<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legal Entity Identifier of fund</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ISINs" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>List of ISINs for share classes</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ISIN" type="ISINType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>ISIN of share class</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SecurityCodesType">
+		<xs:annotation>
+			<xs:documentation xml:lang="de">Kennnummern des Fonds: Mit den Kennnummern werden nationale und internationale sowie nichtoffizielle (von Finanzinformationsgesellschaften stammenden) Fondsidentifizierungen definiert.</xs:documentation>
+			<xs:documentation xml:lang="en">National, international as well as non-official codes associated with the fund.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ISIN" nillable="true">
+				<xs:annotation>
+					<xs:documentation xml:lang="de">Die ISIN ist die Internationale Wertpapierkennnummer des Fonds.</xs:documentation>
+					<xs:documentation xml:lang="en">International ISIN security code of the fund.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[A-Z]{2}[A-Z0-9]{10}"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountrySecurityCode" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="de">Landeskennnummer: Unterhalb der Landeskennnummer kann die fuer das Land spezifische Wertpapierkennnummer angegeben werden.</xs:documentation>
+					<xs:documentation xml:lang="en">Funds country code: all country-specific codes can be entered here.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CountryCode" type="ISOCountryCodeType">
+							<xs:annotation>
+								<xs:documentation xml:lang="de">Das Landeskennzeichen des Landes fuer das diese Wertpapierkennnummer gueltig ist als ISO-Code</xs:documentation>
+								<xs:documentation xml:lang="en">The country code in the form of an ISO-Code related to the security code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SecurityNumber" type="xs:string">
+							<xs:annotation>
+								<xs:documentation xml:lang="de">Die landesspezifische Kennnummer des Fonds.</xs:documentation>
+								<xs:documentation xml:lang="en">The value of the security code for the country specified.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OtherSecurityCodes" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation xml:lang="de">Weitere Kennnummern: Hier kann man weitere nicht offizielle Kennnummern angeben wie z.B. die eindeutige Nummer von Reuters oder Bloomberg.</xs:documentation>
+					<xs:documentation xml:lang="en">Other non-official codes can be entered here i.e. unique numbers from Reuters or Bloomberg.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Name" type="xs:string">
+							<xs:annotation>
+								<xs:documentation xml:lang="de">Name der Kennnummer. Hiermit wird angegeben, nach welcher Klassifizierung diese Kennnummer angegeben wird. </xs:documentation>
+								<xs:documentation xml:lang="en">The Name of the classification used to specify security code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SecurityNumber" type="xs:string">
+							<xs:annotation>
+								<xs:documentation xml:lang="de">Die eigentliche Kennnummer auf die Klassifizierung bezogen.</xs:documentation>
+								<xs:documentation xml:lang="en">The value of the security code related to its classification.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ISOCountryCodeType">
+		<xs:annotation>
+			<xs:documentation xml:lang="de">Der ISOCountryCodeType stellt einen einfachen Typ zur Verarbeitung von ISO-Laendercodes bereit. Verwendet werden die zweistelligen ISO-Waehrungscodes (ISO 3166-1alpha-2). Er ist vom Typ string und hat eine Laenge von zwei Zeichen.</xs:documentation>
+			<xs:documentation xml:lang="en">The ISOCountryCodeType is a type for decoding ISO-CountryCodes. It is used the two-letter ISO-CountryCodes (ISO 3166-1alpha-2). It is of the type string and has a length from exactly two letters.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2"/>
+			<xs:minLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LEICodeType">
+		<xs:annotation>
+			<xs:documentation>Legal Entity Identifier (LEI) (ISO 17442 standard) of the Entity  or if not available the Interim Entity Identifier (IEI):
+Characters 1-4: A four character prefix allocated uniquely to each LOU.
+Characters 5-6: Two reserved characters set to zero.
+Characters 7-18: Entity - specific part of the code generated and assigned by LOUs according to transparent, sound and robust allocation policies.
+Characters 19-20: Two check digits</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="20"/>
+			<xs:maxLength value="20"/>
+			<xs:pattern value="([0-9a-zA-Z]{18}[0-9]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ISINType">
+		<xs:annotation>
+			<xs:documentation>ISIN Code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+			<xs:minLength value="12"/>
+			<xs:pattern value="[A-Z]{2}[A-Z0-9]{9}[0-9]{1}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentnummerType" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Identnummer der Oesterreichischen Nationalbank: maximal 8 stellig nummerisch mit Prüfziffer</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="8"/>
+			<xs:minLength value="2"/>
+			<xs:pattern value="[0-9]{2,8}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text64Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 64 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text256Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 256 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

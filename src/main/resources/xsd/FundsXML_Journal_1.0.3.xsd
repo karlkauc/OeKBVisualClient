@@ -1,0 +1,1549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2013 (http://www.altova.com) von Oesterreichische Kontrollbank AG (Oesterreichische Kontrollbank AG) bearbeitet -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:element name="FundsXMLJournal">
+		<xs:annotation>
+			<xs:documentation>FundsXML Journal
+Versionsdatum: 2017.07.27</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CreationTime" type="xs:dateTime">
+					<xs:annotation>
+						<xs:documentation>Timestamp der Dokumenterstellung</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="QueryCriteria">
+					<xs:annotation>
+						<xs:documentation>Abfragekriterien für die Erstellung des Journals</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TimeFrom" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Startzeitpunkt für den die Aktionen im Journal ausgegeben werden</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="TimeTo" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Endzeitpunkt für den die Aktionen im Journal ausgegeben werden</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="DataSupplier" type="JournalDataSupplierType" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Das Element bezeichnet den Namen der Gesellschaft, für den diese Aktion durchgeführt wurde.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="User" type="Text64Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>User-ID mit der der Upload/Download der Daten erfolgt ist</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Action" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>UL - Upload
+DL - Download</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="UL"/>
+										<xs:enumeration value="DL"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>AR - AccessRules
+AR_RECEIVED - erhaltene Berechtigungen
+AR_ASSIGNED - vergebene Berechtigungen
+FXML_DATA - FundsXML Daten
+FXML_REG - FundsXML Regulatory Reporting
+FXML_DOC - FundsXML Documents
+OENB_AGG - OeNB OFI Meldung (Aggregierung)
+OENB_SEC - OeNB Sec-by-Sec-Meldung
+OENB_CHECK - OeNB Aggregierungscheck
+JOURNAL - Fondsdaten Portal Journal Download
+AUSW_DOWNLOAD - Wer hat meine Fonds heruntergeladen?
+DATEN_VORH - Welche Daten stehen für mich bereit?</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="AR"/>
+										<xs:enumeration value="AR_RECEIVED"/>
+										<xs:enumeration value="AR_ASSIGNED"/>
+										<xs:enumeration value="FXML_DATA"/>
+										<xs:enumeration value="FXML_DOC"/>
+										<xs:enumeration value="FXML_REG"/>
+										<xs:enumeration value="OENB_AGG"/>
+										<xs:enumeration value="OENB_SEC"/>
+										<xs:enumeration value="OENB_CHECK"/>
+										<xs:enumeration value="JOURNAL"/>
+										<xs:enumeration value="AUSW_DOWNLOAD"/>
+										<xs:enumeration value="DATEN_VORH"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="UniqueDocumentID" type="Text128Type" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+									<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ExcludeEmptyDataDownloads" type="xs:boolean" default="true" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Flag (true-default, false), das steuert, ob bei den Journal Downlload leere FXML-Daten-Downloads ignoriert werden.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="JournalEntries" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Journaleintraege</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="JournalEntry" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>JournalEintrag</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Action">
+											<xs:annotation>
+												<xs:documentation>UL - Upload
+DL - Download</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="UL"/>
+													<xs:enumeration value="DL"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Type">
+											<xs:annotation>
+												<xs:documentation>AR - AccessRules
+AR_RECEIVED - erhaltene Berechtigungen
+AR_ASSIGNED - vergebene Berechtigungen
+FXML_DATA - FundsXML Daten
+FXML_REG - FundsXML Regulatory Reporting
+FXML_DOC - FundsXML Documents
+OENB_AGG - OeNB OFI Meldung (Aggregierung)
+OENB_SEC - OeNB Sec-by-Sec-Meldung
+OENB_CHECK - OeNB Aggregierungscheck
+JOURNAL - Fondsdaten Portal Journal Download
+AUSW_DOWNLOAD - Wer hat meine Fonds heruntergeladen?
+DATEN_VORH - Welche Daten stehen für mich bereit?</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="AR"/>
+													<xs:enumeration value="AR_RECEIVED"/>
+													<xs:enumeration value="AR_ASSIGNED"/>
+													<xs:enumeration value="FXML_DATA"/>
+													<xs:enumeration value="FXML_DOC"/>
+													<xs:enumeration value="FXML_REG"/>
+													<xs:enumeration value="OENB_AGG"/>
+													<xs:enumeration value="OENB_SEC"/>
+													<xs:enumeration value="OENB_CHECK"/>
+													<xs:enumeration value="JOURNAL"/>
+													<xs:enumeration value="AUSW_DOWNLOAD"/>
+													<xs:enumeration value="DATEN_VORH"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="DataSupplier" type="JournalDataSupplierType">
+											<xs:annotation>
+												<xs:documentation>Das Element bezeichnet den Namen der Gesellschaft, die dieses Dokument erstellt hat.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="User" type="Text64Type">
+											<xs:annotation>
+												<xs:documentation>User-ID mid der der Upload/Download der Daten erfolgt ist</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ActionTime" type="xs:dateTime">
+											<xs:annotation>
+												<xs:documentation>Timestamp der Aktion</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="FileNameArchive" minOccurs="0" maxOccurs="2">
+											<xs:annotation>
+												<xs:documentation>Name und Pfad im Archiv der OeKB (bei einem Upload wird das Reply File als DOWNLOAD gespeichert)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="Type">
+															<xs:annotation>
+																<xs:documentation>UPLOAD oder DOWNLOAD</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:enumeration value="UPLOAD"/>
+																	<xs:enumeration value="DOWNLOAD"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:choice minOccurs="0">
+											<xs:element name="Upload">
+												<xs:annotation>
+													<xs:documentation>Upload</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="Status" nillable="true">
+															<xs:annotation>
+																<xs:documentation>Enthält den Status der gesamten Datenlieferung:
+OK: Es wurden alle Datenelemente korrekt verarbeitet.
+OK_INFOS: Es wurden alle Datenelemente korrekt verarbeitet; bitte die Hinweise berücksichtigen.
+ERRORS: Es sind Fehler aufgetreten; Datenelemente (möglicherweise alle) konnten nicht verarbeitet werden.
+FILE NOT PROCESSED: Das gesamte Datenfile konnte wegen eines globalen Fehlers (zB: falscher DataSupplier) nicht verarbeitet werden.</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:enumeration value="OK"/>
+																	<xs:enumeration value="OK_INFOS"/>
+																	<xs:enumeration value="ERROR"/>
+																	<xs:enumeration value="FILE NOT PROCESSED"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:choice minOccurs="0">
+															<xs:element name="Data">
+																<xs:annotation>
+																	<xs:documentation>FundsXML Daten</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="DataOperation">
+																			<xs:annotation>
+																				<xs:documentation>INITIAL, AMEND, DELETE</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="5"/>
+																					<xs:maxLength value="7"/>
+																					<xs:enumeration value="INITIAL"/>
+																					<xs:enumeration value="AMEND"/>
+																					<xs:enumeration value="DELETE"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:element>
+																		<xs:element name="FundDataPortalContent" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Valid options defined in documentation of fund data portal by OeKB</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="UniqueDocumentID" type="Text128Type">
+																			<xs:annotation>
+																				<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																				<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="ContentDate" type="xs:date">
+																			<xs:annotation>
+																				<xs:documentation>Main date for content, </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="RelatedDocumentIDs" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Identifiers of related documents for non-initial data deliveries</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="RelatedDocumentID" type="Text128Type" maxOccurs="unbounded">
+																						<xs:annotation>
+																							<xs:documentation>Related DocumentID</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="Fund" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Fonds</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>LEI</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="Subfund" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Subfonds</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>LEI</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="Segment" minOccurs="0" maxOccurs="unbounded">
+																			<xs:annotation>
+																				<xs:documentation>Segment</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="ISIN" type="ISINType">
+																						<xs:annotation>
+																							<xs:documentation>ISIN</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="ShareClass" minOccurs="0" maxOccurs="unbounded">
+																			<xs:annotation>
+																				<xs:documentation>ShareClass</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="ISIN" type="ISINType">
+																						<xs:annotation>
+																							<xs:documentation>ISIN</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="FileName" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Dateiname des Upload Files </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="RegulatoryReportings">
+																<xs:annotation>
+																	<xs:documentation>REG - Regulatory Reporting</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="DataOperation">
+																			<xs:annotation>
+																				<xs:documentation>INITIAL, AMEND, DELETE</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="5"/>
+																					<xs:maxLength value="7"/>
+																					<xs:enumeration value="INITIAL"/>
+																					<xs:enumeration value="AMEND"/>
+																					<xs:enumeration value="DELETE"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:element>
+																		<xs:element name="FundDataPortalContent" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Valid options defined in documentation of fund data portal by OeKB</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="UniqueDocumentID" type="Text128Type">
+																			<xs:annotation>
+																				<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																				<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="ContentDate" type="xs:date">
+																			<xs:annotation>
+																				<xs:documentation>Main date for content, </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="RelatedDocumentIDs" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Identifiers of related documents for non-initial data deliveries</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="RelatedDocumentID" type="Text128Type" maxOccurs="unbounded">
+																						<xs:annotation>
+																							<xs:documentation>Related DocumentID</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="FileName" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Dateiname des Upload Files </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="RegulatoryReporting" minOccurs="0" maxOccurs="unbounded">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="Type">
+																						<xs:annotation>
+																							<xs:documentation>Type of Regulatory Reporting</xs:documentation>
+																						</xs:annotation>
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:enumeration value="EMIR"/>
+																								<xs:enumeration value="KIID"/>
+																								<xs:enumeration value="EMT"/>
+																								<xs:enumeration value="TPTSolvencyII"/>
+																								<xs:enumeration value="PRIIPS"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="FundOrShareClassIdentifiers" type="FundOrShareClassIdentifiersType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Fund or share class identifiers for Regulatory Reporting</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="Documents">
+																<xs:annotation>
+																	<xs:documentation>DOC - Documents</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="FundDataPortalContent" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Valid options defined in documentation of fund data portal by OeKB</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="UniqueDocumentID" type="Text128Type">
+																			<xs:annotation>
+																				<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																				<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="ContentDate" type="xs:date">
+																			<xs:annotation>
+																				<xs:documentation>Main date for content, </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="RelatedDocumentIDs" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Identifiers of related documents for non-initial data deliveries</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="RelatedDocumentID" type="Text128Type" maxOccurs="unbounded">
+																						<xs:annotation>
+																							<xs:documentation>Related DocumentID</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="FileName" type="xs:string">
+																			<xs:annotation>
+																				<xs:documentation>Dateiname des Upload Files </xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																		<xs:element name="Document" minOccurs="0" maxOccurs="unbounded">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="Type">
+																						<xs:annotation>
+																							<xs:documentation>Type of document</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:choice>
+																								<xs:element name="ListedType">
+																									<xs:annotation>
+																										<xs:documentation>Document Type with enumeration:
+AIFMD
+AnnualReport
+AuditReport
+Factsheet
+KID
+Prospectus
+PRIIPS-KID</xs:documentation>
+																									</xs:annotation>
+																									<xs:simpleType>
+																										<xs:restriction base="xs:string">
+																											<xs:minLength value="3"/>
+																											<xs:maxLength value="12"/>
+																											<xs:enumeration value="AIFMD"/>
+																											<xs:enumeration value="AnnualReport"/>
+																											<xs:enumeration value="AuditReport"/>
+																											<xs:enumeration value="Factsheet"/>
+																											<xs:enumeration value="KID"/>
+																											<xs:enumeration value="Prospectus"/>
+																											<xs:enumeration value="PRIIPS-KID"/>
+																										</xs:restriction>
+																									</xs:simpleType>
+																								</xs:element>
+																								<xs:element name="UnlistedType">
+																									<xs:annotation>
+																										<xs:documentation>Description of other document types</xs:documentation>
+																									</xs:annotation>
+																									<xs:simpleType>
+																										<xs:restriction base="Text128Type">
+																											<xs:minLength value="1"/>
+																										</xs:restriction>
+																									</xs:simpleType>
+																								</xs:element>
+																							</xs:choice>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="Fund" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Fonds</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>LEI</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																								<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="Subfund" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Subfonds</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>LEI</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																								<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="ShareClass" minOccurs="0" maxOccurs="unbounded">
+																						<xs:annotation>
+																							<xs:documentation>ShareClass</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="ISIN" type="ISINType">
+																									<xs:annotation>
+																										<xs:documentation>ISIN</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="Format" type="Text256Type" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Technical format of document:
+PDF, XML, Excel, Word, Image, ...</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="Language" type="xs:language" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Language of document</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="DataOperation">
+																			<xs:annotation>
+																				<xs:documentation>INITIAL, AMEND, DELETE</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="5"/>
+																					<xs:maxLength value="7"/>
+																					<xs:enumeration value="INITIAL"/>
+																					<xs:enumeration value="AMEND"/>
+																					<xs:enumeration value="DELETE"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="AccessRules">
+																<xs:annotation>
+																	<xs:documentation>Access Rules</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="AccessRule" maxOccurs="unbounded">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="Task">
+																						<xs:annotation>
+																							<xs:documentation>Legt fest, ob es sich um ein Import-File oder ein Delete-File handelt:  import, delete</xs:documentation>
+																						</xs:annotation>
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:enumeration value="import"/>
+																								<xs:enumeration value="delete"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="AccessRuleID" type="xs:string">
+																						<xs:annotation>
+																							<xs:documentation>../AccessRule/id </xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="ContentType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>FUND, DOC, REG</xs:documentation>
+																						</xs:annotation>
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:enumeration value="FUND"/>
+																								<xs:enumeration value="DOC"/>
+																								<xs:enumeration value="REG"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="AuthorizedDataSuppliers" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Dieses Element definiert für welchen User dieses Zugriffsregel definiert wird.</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="DataSupplier" type="JournalDataSupplierType" maxOccurs="unbounded">
+																									<xs:annotation>
+																										<xs:documentation>DataSupplier</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="Usage" type="xs:string" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Diese Feld kann verwendet werden, um einen optionalen Kommentar für den Verwendungszweck (Freitext) anzugeben. Dieser muß nicht 1:1 dem Profil entsprechen.</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="Profiles" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Profile für die die Zugriffsregel definiert wird.</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="Profile" maxOccurs="unbounded">
+																									<xs:annotation>
+																										<xs:documentation>Ein Profil legt fest, welche Konten- und Datenelemente zur Vefügung gestellt werden sollen.</xs:documentation>
+																									</xs:annotation>
+																									<xs:simpleType>
+																										<xs:restriction base="xs:string"/>
+																									</xs:simpleType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="AccessObjects" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Zugriffsberechtigung</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="AccessObject" maxOccurs="unbounded">
+																									<xs:annotation>
+																										<xs:documentation>Definition der Zugriffsberechtigungen</xs:documentation>
+																									</xs:annotation>
+																									<xs:complexType>
+																										<xs:choice>
+																											<xs:element name="Fund">
+																												<xs:annotation>
+																													<xs:documentation>Berechtigte Fonds</xs:documentation>
+																												</xs:annotation>
+																												<xs:complexType>
+																													<xs:choice>
+																														<xs:element name="LEI" type="LEICodeType">
+																															<xs:annotation>
+																																<xs:documentation>LEI</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																														<xs:element name="OeNB_Identnr" type="IdentnummerType">
+																															<xs:annotation>
+																																<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																													</xs:choice>
+																												</xs:complexType>
+																											</xs:element>
+																											<xs:element name="Subfund">
+																												<xs:annotation>
+																													<xs:documentation>Subfonds</xs:documentation>
+																												</xs:annotation>
+																												<xs:complexType>
+																													<xs:choice>
+																														<xs:element name="LEI" type="LEICodeType">
+																															<xs:annotation>
+																																<xs:documentation>LEI</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																														<xs:element name="OeNB_Identnr" type="IdentnummerType">
+																															<xs:annotation>
+																																<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																													</xs:choice>
+																												</xs:complexType>
+																											</xs:element>
+																											<xs:element name="Segment">
+																												<xs:annotation>
+																													<xs:documentation>Segment</xs:documentation>
+																												</xs:annotation>
+																												<xs:complexType>
+																													<xs:sequence>
+																														<xs:element name="ISIN" type="ISINType">
+																															<xs:annotation>
+																																<xs:documentation>ISIN</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																													</xs:sequence>
+																												</xs:complexType>
+																											</xs:element>
+																											<xs:element name="ShareClass">
+																												<xs:annotation>
+																													<xs:documentation>ShareClass</xs:documentation>
+																												</xs:annotation>
+																												<xs:complexType>
+																													<xs:sequence>
+																														<xs:element name="ISIN" type="ISINType">
+																															<xs:annotation>
+																																<xs:documentation>ISIN</xs:documentation>
+																															</xs:annotation>
+																														</xs:element>
+																													</xs:sequence>
+																												</xs:complexType>
+																											</xs:element>
+																										</xs:choice>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:choice minOccurs="0">
+																						<xs:element name="DocumentTypes" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="DocumentType" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>Type of document</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:choice>
+																												<xs:element name="ListedType">
+																													<xs:annotation>
+																														<xs:documentation>Document Type with enumeration:
+AIFMD
+AnnualReport
+AuditReport
+Factsheet
+FPP
+KID
+Prospectus
+PRIIPS</xs:documentation>
+																													</xs:annotation>
+																													<xs:simpleType>
+																														<xs:restriction base="xs:string">
+																															<xs:enumeration value="AIFMD"/>
+																															<xs:enumeration value="AnnualReport"/>
+																															<xs:enumeration value="AuditReport"/>
+																															<xs:enumeration value="Factsheet"/>
+																															<xs:enumeration value="FPP"/>
+																															<xs:enumeration value="KID"/>
+																															<xs:enumeration value="Prospectus"/>
+																															<xs:enumeration value="PRIIPS"/>
+																														</xs:restriction>
+																													</xs:simpleType>
+																												</xs:element>
+																												<xs:element name="UnlistedType">
+																													<xs:annotation>
+																														<xs:documentation>Description of other document types</xs:documentation>
+																													</xs:annotation>
+																													<xs:simpleType>
+																														<xs:restriction base="xs:string">
+																															<xs:minLength value="1"/>
+																														</xs:restriction>
+																													</xs:simpleType>
+																												</xs:element>
+																											</xs:choice>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="RegulatoryReportings" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Type" maxOccurs="unbounded">
+																										<xs:simpleType>
+																											<xs:restriction base="xs:string">
+																												<xs:enumeration value="EMIR"/>
+																												<xs:enumeration value="KIID"/>
+																												<xs:enumeration value="EMT"/>
+																												<xs:enumeration value="TPTSolvencyII"/>
+																												<xs:enumeration value="PRIIPS"/>
+																											</xs:restriction>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:choice>
+																					<xs:element name="Schedule" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Zeitliche Komponente der Zugriffregel.</xs:documentation>
+																						</xs:annotation>
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="AccessDelayInDays" type="xs:long" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>Enthält die Anzahl der Tage, nach denen der hiermit definierte Zugriff gueltig werden soll (Embargo-Frist).</xs:documentation>
+																									</xs:annotation>
+																								</xs:element>
+																								<xs:element name="DataAccessRange" minOccurs="0">
+																									<xs:annotation>
+																										<xs:documentation>Definiert einen Gültigkeitsbereich für den Zugriff auf die Daten.</xs:documentation>
+																									</xs:annotation>
+																									<xs:complexType>
+																										<xs:sequence>
+																											<xs:element name="DateFrom" type="xs:date" minOccurs="0">
+																												<xs:annotation>
+																													<xs:documentation>Startdatum des Zugriffs.</xs:documentation>
+																												</xs:annotation>
+																											</xs:element>
+																											<xs:element name="DateTo" type="xs:date" minOccurs="0">
+																												<xs:annotation>
+																													<xs:documentation>Enddatum des Zugriffs.</xs:documentation>
+																												</xs:annotation>
+																											</xs:element>
+																											<xs:element name="Frequency" minOccurs="0">
+																												<xs:annotation>
+																													<xs:documentation>angeforderte Freuquenz für die Freischaltung (Ultimo- Börsetag):
+daily
+monthly</xs:documentation>
+																												</xs:annotation>
+																												<xs:simpleType>
+																													<xs:restriction base="xs:string">
+																														<xs:enumeration value="daily"/>
+																														<xs:enumeration value="monthly"/>
+																													</xs:restriction>
+																												</xs:simpleType>
+																											</xs:element>
+																										</xs:sequence>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="CostsByDataSupplier" type="xs:boolean" default="false" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Flag, ob die Kosten für den Download der Daten von der Fondsgesellschaft übernommen werden. Default: false</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="FileName" type="xs:string">
+																						<xs:annotation>
+																							<xs:documentation>Dateiname des Upload Files </xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+														</xs:choice>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Download">
+												<xs:annotation>
+													<xs:documentation>Download</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:choice minOccurs="0">
+														<xs:element name="Data" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>FundsXML Daten</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="UniqueDocumentID" type="Text128Type">
+																		<xs:annotation>
+																			<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																			<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="ContentDate" type="xs:date">
+																		<xs:annotation>
+																			<xs:documentation>Main date for content, if not specified different within section</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="DataObjects" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Heruntergeladeren Datenobjekte</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="DataObject" maxOccurs="10">
+																					<xs:annotation>
+																						<xs:documentation>Definition der Heruntergeladeren Datenobjekte</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:sequence>
+																							<xs:element name="Fund" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Heruntergeladener Fonds. Dieses Element wird auch dann befüllt, wenn nach einer ISIN gesucht wurde.</xs:documentation>
+																								</xs:annotation>
+																								<xs:complexType>
+																									<xs:sequence>
+																										<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																											<xs:annotation>
+																												<xs:documentation>LEI</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																										<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																											<xs:annotation>
+																												<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																									</xs:sequence>
+																								</xs:complexType>
+																							</xs:element>
+																							<xs:element name="Subfund" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Heruntergeladener Subfonds</xs:documentation>
+																								</xs:annotation>
+																								<xs:complexType>
+																									<xs:sequence>
+																										<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																											<xs:annotation>
+																												<xs:documentation>LEI</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																										<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																											<xs:annotation>
+																												<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																									</xs:sequence>
+																								</xs:complexType>
+																							</xs:element>
+																							<xs:element name="Segment" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Heruntergeladenes Segment.
+Dieses Element wird nur dann befüllt, wenn nach der ISIN des Segments gesucht wurde. Ist dieses Element und das Element ShareClass nicht vorhanden, wurde der gesamte Fonds (oder Subfonds) heruntergelanden.</xs:documentation>
+																								</xs:annotation>
+																								<xs:complexType>
+																									<xs:sequence>
+																										<xs:element name="ISIN" type="ISINType">
+																											<xs:annotation>
+																												<xs:documentation>ISIN</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																									</xs:sequence>
+																								</xs:complexType>
+																							</xs:element>
+																							<xs:element name="ShareClass" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Heruntergeladene ShareClass. Dieses Element wird nur dann befüllt, wenn nach der ISIN der ShareClass gesucht wurde. Ist dieses Element und das Element Segment nicht vorhanden, wurde der gesamte Fonds (oder Subfonds) heruntergelanden.</xs:documentation>
+																								</xs:annotation>
+																								<xs:complexType>
+																									<xs:sequence>
+																										<xs:element name="ISIN" type="ISINType">
+																											<xs:annotation>
+																												<xs:documentation>ISIN</xs:documentation>
+																											</xs:annotation>
+																										</xs:element>
+																									</xs:sequence>
+																								</xs:complexType>
+																							</xs:element>
+																							<xs:element name="AccessRule" type="xs:string" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>../AccessRule/id (wenn eigene Fonds downgeloadet werden oder die OeNB downloaded, dann kein Eintrag, sonst genau einer)</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																							<xs:element name="Profile" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Profil, das beim Download zur Anwendung kam.</xs:documentation>
+																								</xs:annotation>
+																								<xs:simpleType>
+																									<xs:restriction base="xs:string"/>
+																								</xs:simpleType>
+																							</xs:element>
+																							<xs:element name="CostsByDataSupplier" type="xs:boolean" default="false">
+																								<xs:annotation>
+																									<xs:documentation>Flag, ob die Kosten für den Download der Daten von der Fondsgesellschaft übernommen werden. Default: false</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																						</xs:sequence>
+																					</xs:complexType>
+																				</xs:element>
+																			</xs:sequence>
+																		</xs:complexType>
+																	</xs:element>
+																	<xs:element name="QueryParameters" maxOccurs="10">
+																		<xs:complexType>
+																			<xs:choice>
+																				<xs:element name="LEI" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>LEI</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="OeNB_Identnr" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="ISIN" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>ISIN</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:choice>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="OeNBReporting" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>OeNB Download: OFI oder sec-by-sec</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="Type">
+																		<xs:annotation>
+																			<xs:documentation>OFI - OFI Meldung
+SEC - Seb-by-sec Meldung</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:enumeration value="OFI"/>
+																				<xs:enumeration value="SEC"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="UniqueDocumentID" type="Text128Type" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																			<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="ContentDate" type="xs:date">
+																		<xs:annotation>
+																			<xs:documentation>Main date for content.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="Fund" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Berechtigte Fonds</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:choice>
+																				<xs:element name="LEI" type="LEICodeType">
+																					<xs:annotation>
+																						<xs:documentation>LEI</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="OeNB_Identnr" type="IdentnummerType">
+																					<xs:annotation>
+																						<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:choice>
+																		</xs:complexType>
+																	</xs:element>
+																	<xs:element name="ExcludeInvalide" type="xs:boolean" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Flag (true/false) um den  Download ungültige OeNB Reportings auszuschöiessen.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="OeNBUploadCheck" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>OeNB Aggregierungscheck</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="ReferenceDate" type="xs:date">
+																		<xs:annotation>
+																			<xs:documentation>Stichtag </xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="Valid" type="xs:boolean" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Einschränkung der Abfrage auf valide oder nicht valide Melduingen </xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="PermissionsReceived" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Erhaltene Berechtigungen</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="ContentDate" type="xs:date" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Stichtag für den abgefragt wird (ContentDate) </xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="QueryDate" type="xs:date" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Stichtag an dem abgefragt wird</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="PermissionsAssigned" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Vergebene Berechtigungen</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="ContentDate" type="xs:date" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Stichtag für den abgefragt wird (ContentDate) </xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="QueryDate" type="xs:date" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Stichtag an dem abgefragt wird</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="RegulatoryReportings" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Regulatory Reporting</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="UniqueDocumentID" type="Text128Type">
+																		<xs:annotation>
+																			<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																			<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="ContentDate" type="xs:date">
+																		<xs:annotation>
+																			<xs:documentation>Main date for content, if not specified different within section</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="RegulatoryReporting" minOccurs="0" maxOccurs="unbounded">
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="Type">
+																					<xs:annotation>
+																						<xs:documentation>Type of Regulatory Reporting</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:enumeration value="EMIR"/>
+																							<xs:enumeration value="KIID"/>
+																							<xs:enumeration value="EMT"/>
+																							<xs:enumeration value="TPTSolvencyII"/>
+																							<xs:enumeration value="PRIIPS"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:element>
+																				<xs:element name="FundOrShareClassIdentifiers" type="FundOrShareClassIdentifiersType" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Fund or share class identifiers for Regulatory Reporting</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="AccessRule" type="xs:string" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>../AccessRule/id (wenn eigene Fonds downgeloadet werden oder die OeNB downloaded, dann kein Eintrag, sonst genau einer)</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="Profile" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Profil, das beim Download zur Anwendung kam.</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string"/>
+																					</xs:simpleType>
+																				</xs:element>
+																				<xs:element name="CostsByDataSupplier" type="xs:boolean" default="false">
+																					<xs:annotation>
+																						<xs:documentation>Flag, ob die Kosten für den Download der Daten von der Fondsgesellschaft übernommen werden. Default: false</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:sequence>
+																		</xs:complexType>
+																	</xs:element>
+																	<xs:element name="QueryParameters" maxOccurs="10">
+																		<xs:complexType>
+																			<xs:choice>
+																				<xs:element name="LEI" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>LEI</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="OeNB_Identnr" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="ISIN" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>ISIN</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:choice>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="Documents" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>DOC - Documents</xs:documentation>
+															</xs:annotation>
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="UniqueDocumentID" type="Text128Type">
+																		<xs:annotation>
+																			<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation des  Upload - Dokuments.</xs:documentation>
+																			<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="ContentDate" type="xs:date">
+																		<xs:annotation>
+																			<xs:documentation>Main date for content, if not specified different within section</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="Document" minOccurs="0" maxOccurs="unbounded">
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="Type">
+																					<xs:annotation>
+																						<xs:documentation>Type of document</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:choice>
+																							<xs:element name="ListedType">
+																								<xs:annotation>
+																									<xs:documentation>Document Type with enumeration:
+AIFMD
+AnnualReport
+AuditReport
+Factsheet
+KID
+Prospectus
+PRIIPS-KID</xs:documentation>
+																								</xs:annotation>
+																								<xs:simpleType>
+																									<xs:restriction base="xs:string">
+																										<xs:minLength value="3"/>
+																										<xs:maxLength value="12"/>
+																										<xs:enumeration value="AIFMD"/>
+																										<xs:enumeration value="AnnualReport"/>
+																										<xs:enumeration value="AuditReport"/>
+																										<xs:enumeration value="Factsheet"/>
+																										<xs:enumeration value="KID"/>
+																										<xs:enumeration value="Prospectus"/>
+																										<xs:enumeration value="PRIIPS-KID"/>
+																									</xs:restriction>
+																								</xs:simpleType>
+																							</xs:element>
+																							<xs:element name="UnlistedType">
+																								<xs:annotation>
+																									<xs:documentation>Description of other document types</xs:documentation>
+																								</xs:annotation>
+																								<xs:simpleType>
+																									<xs:restriction base="Text128Type">
+																										<xs:minLength value="1"/>
+																									</xs:restriction>
+																								</xs:simpleType>
+																							</xs:element>
+																						</xs:choice>
+																					</xs:complexType>
+																				</xs:element>
+																				<xs:element name="Fund" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Fonds</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:sequence>
+																							<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>LEI</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																							<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																						</xs:sequence>
+																					</xs:complexType>
+																				</xs:element>
+																				<xs:element name="Subfund" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Subfonds</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:sequence>
+																							<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>LEI</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																							<xs:element name="OeNB_Identnr" type="IdentnummerType" minOccurs="0">
+																								<xs:annotation>
+																									<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																						</xs:sequence>
+																					</xs:complexType>
+																				</xs:element>
+																				<xs:element name="ShareClass" minOccurs="0" maxOccurs="unbounded">
+																					<xs:annotation>
+																						<xs:documentation>ShareClass</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:sequence>
+																							<xs:element name="ISIN" type="ISINType">
+																								<xs:annotation>
+																									<xs:documentation>ISIN</xs:documentation>
+																								</xs:annotation>
+																							</xs:element>
+																						</xs:sequence>
+																					</xs:complexType>
+																				</xs:element>
+																				<xs:element name="Format" type="Text256Type" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Technical format of document:
+PDF, XML, Excel, Word, Image, ...</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="Language" type="xs:language" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Language of document</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="AccessRule" type="xs:string" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>../AccessRule/id (wenn eigene Fonds downgeloadet werden oder die OeNB downloaded, dann kein Eintrag, sonst genau einer)</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="Profile" minOccurs="0">
+																					<xs:annotation>
+																						<xs:documentation>Profil, das beim Download zur Anwendung kam.</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string"/>
+																					</xs:simpleType>
+																				</xs:element>
+																				<xs:element name="CostsByDataSupplier" type="xs:boolean" default="false">
+																					<xs:annotation>
+																						<xs:documentation>Flag, ob die Kosten für den Download der Daten von der Fondsgesellschaft übernommen werden. Default: false</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:sequence>
+																		</xs:complexType>
+																	</xs:element>
+																	<xs:element name="QueryParameters" maxOccurs="10">
+																		<xs:complexType>
+																			<xs:choice>
+																				<xs:element name="LEI" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>LEI</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="OeNB_Identnr" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>Identnummer der Oesterreichischen Nationalbank</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																				<xs:element name="ISIN" type="xs:string">
+																					<xs:annotation>
+																						<xs:documentation>ISIN</xs:documentation>
+																					</xs:annotation>
+																				</xs:element>
+																			</xs:choice>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="JournalDataSupplierType">
+		<xs:annotation>
+			<xs:documentation>Der DataSupplierTyp enthält die Daten eines Datenlieferanten bzw. -beziehers.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SystemCountry" type="ISOCountryCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Country of authority defining the list of valid data suppliers (e.g. AT, DE, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Short" type="Text64Type">
+				<xs:annotation>
+					<xs:documentation>Code of supplier (unique per country); wenn das Upload-File nicht valide ist, wird OeKB angegeben.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Text256Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of data supplier</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="Text64Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of data supplier (e.g. IC, CB, NB, Vendor, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Contact" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact details (name, phone, email)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Name" type="Text256Type" minOccurs="0"/>
+						<xs:element name="Phone" type="Text64Type" minOccurs="0"/>
+						<xs:element name="Email" type="Text256Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FundOrShareClassIdentifiersType">
+		<xs:sequence>
+			<xs:element name="LEI" type="LEICodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legal Entity Identifier of fund</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ISINs" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>List of ISINs for share classes</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ISIN" type="ISINType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>ISIN of share class</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ISOCountryCodeType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The ISOCountryCodeType is a type for decoding ISO-CountryCodes. It is used the two-letter ISO-CountryCodes (ISO 3166-1alpha-2). It is of the type string and has a length from exactly two letters.</xs:documentation>
+			<xs:documentation xml:lang="de">Der ISOCountryCodeType stellt einen einfachen Typ zur Verarbeitung von ISO-Laendercodes bereit. Verwendet werden die zweistelligen ISO-Waehrungscodes (ISO 3166-1alpha-2). Er ist vom Typ string und hat eine Laenge von zwei Zeichen.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2"/>
+			<xs:minLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text64Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 64 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text128Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 128 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text256Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 256 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LEICodeType">
+		<xs:annotation>
+			<xs:documentation>Legal Entity Identifier (LEI) (ISO 17442 standard) of the Entity  or if not available the Interim Entity Identifier (IEI):
+Characters 1-4: A four character prefix allocated uniquely to each LOU.
+Characters 5-6: Two reserved characters set to zero.
+Characters 7-18: Entity - specific part of the code generated and assigned by LOUs according to transparent, sound and robust allocation policies.
+Characters 19-20: Two check digits</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="20"/>
+			<xs:maxLength value="20"/>
+			<xs:pattern value="([0-9a-zA-Z]{18}[0-9]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ISINType">
+		<xs:annotation>
+			<xs:documentation>ISIN Code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+			<xs:pattern value="[A-Z]{2}[A-Z0-9]{9}[0-9]{1}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentnummerType" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Identnummer der Oesterreichischen Nationalbank: maximal 8 stellig nummerisch mit Prüfziffer</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="8"/>
+			<xs:minLength value="2"/>
+			<xs:pattern value="[0-9]{2,8}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

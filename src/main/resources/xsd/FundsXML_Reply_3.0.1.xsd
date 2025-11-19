@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2013 (http://www.altova.com) von Oesterreichische Kontrollbank AG (Oesterreichische Kontrollbank AG) bearbeitet -->
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by OeKB (Oesterreichische Kontrollbank AG) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<xs:element name="FundsXML_Reply">
+		<xs:annotation>
+			<xs:documentation>Root Element der FundsXML_Austria Reply Struktur - Verarbeiitungsinformationen.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DataSupplier" type="RetryDataSupplierType">
+					<xs:annotation>
+						<xs:documentation xml:lang="de">Das Element bezeichnet den Namen der Gesellschaft, die das hinaufgeladene Dokument erstellt hat.</xs:documentation>
+						<xs:documentation xml:lang="en">This element contains the Name of the Investment Company that has produced this document </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DocumentProcessed" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Beinhaltet Informationen bezüglich der upgeloadeten und vom System verarbeiteten Datei; Kann nicht befüllt werden, wenn das File nicht verarbeitet werden kann.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="FundsXML">
+								<xs:annotation>
+									<xs:documentation>Wird geliefert, wenn ein FundsXML Datenfile hinaufgeladen wurde</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ContentDate" type="xs:date">
+											<xs:annotation>
+												<xs:documentation xml:lang="de">Das Element bezeichnet das Datum, zu dem die Daten dieses Dokumentes gueltig sind. </xs:documentation>
+												<xs:documentation xml:lang="en">The element marks the date to that the data of this document is valid.  It is not equivalent to the date of preparation of the document file.  </xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="UniqueDocumentID" type="Text128Type">
+											<xs:annotation>
+												<xs:documentation xml:lang="de">Dieses Element definiert die eindeutige Identifikation dieses Dokument.für dieses Datum und den Datensupplier. </xs:documentation>
+												<xs:documentation xml:lang="en">This Element contains the unique identication of this document for this data and this datasupplier.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="StatusInfo" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Status">
+														<xs:annotation>
+															<xs:documentation>Info oder Error-Meldung:
+INFO oder ERROR</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="ERROR"/>
+																<xs:enumeration value="INFO"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Message" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Errortext oder Info</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Context" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Kontext in dem der Fehler oder die Info aufgetreten ist.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="Kategorie" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Kennzeichnung für spezielle Meldungen iZsh mit der OeNB-Meldung:
+OFI_SUMMEN, SUMMENABGLEICH_Schuldverschreibungen, SUMMENABGLEICH_Anteilswerte</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AccessRule" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Spezifiziert die hinaufgeladenen und bearbeiteten AccessRule Elemente</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ElementStatus" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="StatusType">
+														<xs:sequence>
+															<xs:element name="Status">
+																<xs:annotation>
+																	<xs:documentation>Status der Verarbeitung dieses Datenelements:
+OK, OK_INFO oder ERROR</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:enumeration value="OK"/>
+																		<xs:enumeration value="OK_INFO"/>
+																		<xs:enumeration value="ERROR"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="Message" type="xs:string" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Errortext oder Info</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="id" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation>ID</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="OverallStatus">
+					<xs:annotation>
+						<xs:documentation>Gesamtstatus des Files</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Status">
+								<xs:annotation>
+									<xs:documentation>Enthält den Status der gesamten Datenlieferung:
+OK: es wurden alle Datenelemente korrekt verarbeitet.
+OK_INFOS: es wurden alle Datenelemente korrekt verarbeitet; bitte die Hinweise berücksichtigen.
+ERRORS: es sind Fehler aufgetreten; Datenelemente (möglicherweise alle) konnten nicht verarbeitet werden.
+FILE NOT PROCESSED: das gesamte Datenfile konnte wegen eines globalen Fehlers (zB: falscher DataSupplier) nicht verarbeitet werden.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="OK"/>
+										<xs:enumeration value="OK_INFOS"/>
+										<xs:enumeration value="ERROR"/>
+										<xs:enumeration value="FILE NOT PROCESSED"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="AdditionalInformation" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Zusatzinformation bei Fehler oder Info .</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Version" type="xs:string" use="optional" default="3.0"/>
+			<xs:attribute name="LastModified" type="xs:date" use="optional" default="2017-02-22"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="StatusType">
+		<xs:annotation>
+			<xs:documentation>Element enthält die Statusinformationen für das einzelne Datenelement auf 1. Ebene </xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="RetryDataSupplierType">
+		<xs:annotation>
+			<xs:documentation>Der DataSupplierTyp enthält die Daten eines Datenlieferanten bzw. -beziehers.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SystemCountry" type="ISOCountryCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Country of authority defining the list of valid data suppliers (e.g. AT, DE, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Short" type="Text64Type">
+				<xs:annotation>
+					<xs:documentation>Code of supplier (unique per country); wenn das Upload-File nicht valide ist wird OeKB angegeben.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="Text256Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of data supplier</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="Text64Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of data supplier (e.g. IC, CB, NB, Vendor, ...)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Contact" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact details (name, phone, email)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Name" type="Text256Type" minOccurs="0"/>
+						<xs:element name="Phone" type="Text64Type" minOccurs="0"/>
+						<xs:element name="Email" type="Text256Type" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ISOCountryCodeType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">The ISOCountryCodeType is a type for decoding ISO-CountryCodes. It is used the two-letter ISO-CountryCodes (ISO 3166-1alpha-2). It is of the type string and has a length from exactly two letters.</xs:documentation>
+			<xs:documentation xml:lang="de">Der ISOCountryCodeType stellt einen einfachen Typ zur Verarbeitung von ISO-Laendercodes bereit. Verwendet werden die zweistelligen ISO-Waehrungscodes (ISO 3166-1alpha-2). Er ist vom Typ string und hat eine Laenge von zwei Zeichen.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2"/>
+			<xs:minLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text256Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 256 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text128Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 128 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Text64Type">
+		<xs:annotation>
+			<xs:documentation>Text (max. 64 characters)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
