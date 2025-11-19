@@ -4,7 +4,8 @@ plugins {
     // id("edu.sc.seis.launch4j") version "2.4.4"  // Commented out for now
     // JavaFX plugin not needed with Liberica JDK+FX
     // id("org.openjfx.javafxplugin") version "0.1.0"
-    id("org.beryx.jlink") version "3.0.1"
+    // Using native jlink and jpackage instead of plugin
+    // id("org.beryx.jlink") version "3.0.1"
     java
     application
     idea
@@ -175,94 +176,164 @@ tasks.register<Copy>("copyFiles") {
 // }
 
 /* ============================================
-   JLINK & JPACKAGE CONFIGURATION
+   NATIVE JLINK & JPACKAGE TASKS
    ============================================ */
 
-jlink {
-    // Image name
-    imageName.set("OeKBVisualClient")
+val appName = "OeKBVisualClient"
+val appVersion = project.version.toString()
+val mainClassName = application.mainClass.get()
 
-    // Main module (since we don't use modules, we use the launcher)
-    launcher {
-        name = "OeKBVisualClient"
-        jvmArgs = listOf(
-            "--enable-native-access=javafx.graphics"
-        )
-    }
+// Prepare dependencies
+tasks.register<Copy>("prepareDependencies") {
+    group = "distribution"
+    description = "Copies all dependencies to build/jars"
 
-    // JVM options for the runtime
-    options.set(listOf(
-        "--strip-debug",
-        "--compress", "2",
-        "--no-header-files",
-        "--no-man-pages"
-    ))
+    from(configurations.runtimeClasspath)
+    into(layout.buildDirectory.dir("jars"))
 
-    // Force merge of module info (we're not using modules)
-    forceMerge("log4j-api", "log4j-core")
+    dependsOn("jar")
 
-    // JPackage configuration
-    jpackage {
-        imageName = "OeKBVisualClient"
-        installerName = "OeKBVisualClient"
-
-        // Basic installer options
-        val baseInstallerOptions = mutableListOf(
-            "--vendor", "Karl Kauc",
-            "--copyright", "Copyright © 2024 Karl Kauc",
-            "--license-file", file("LICENSE").absolutePath,
-            "--win-per-user-install",  // Install per user (no admin rights needed)
-            "--win-dir-chooser",        // Allow user to choose installation directory
-            "--win-menu",               // Add to start menu
-            "--win-shortcut",           // Create desktop shortcut
-            "--win-shortcut-prompt"     // Ask user if they want shortcuts
-        )
-
-        // Set icon if available
-        val iconFile = file("src/main/resources/img/connectdevelop.ico")
-        if (iconFile.exists()) {
-            imageOptions = listOf("--icon", iconFile.absolutePath)
-            baseInstallerOptions.addAll(listOf("--icon", iconFile.absolutePath))
-        }
-
-        installerOptions = baseInstallerOptions
-
-        // Installer types - for Windows: msi
-        if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
-            installerType = "msi"  // MSI installer (can also be "exe")
+    doLast {
+        copy {
+            from(tasks.jar.get().archiveFile)
+            into(layout.buildDirectory.dir("jars"))
         }
     }
 }
 
-// Task to create runtime image with jlink
-tasks.register("createRuntimeImage") {
+// Native jlink task
+tasks.register<Exec>("jlink") {
     group = "distribution"
     description = "Creates a custom runtime image using jlink"
-    dependsOn("jlink")
+    dependsOn("prepareDependencies")
+
+    val outputDir = layout.buildDirectory.dir("image").get().asFile
+    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
+
+    doFirst {
+        outputDir.deleteRecursively()
+        outputDir.mkdirs()
+
+        val modulePath = jarsDir.absolutePath
+        val javaHome = System.getProperty("java.home")
+
+        commandLine(
+            "$javaHome/bin/jlink",
+            "--module-path", "$javaHome/jmods${File.pathSeparator}$modulePath",
+            "--add-modules", "java.base,java.desktop,java.logging,java.sql,java.xml,jdk.unsupported",
+            "--add-modules", "javafx.controls,javafx.fxml,javafx.graphics,javafx.base",
+            "--add-modules", "java.management,java.naming,java.prefs",
+            "--strip-debug",
+            "--no-header-files",
+            "--no-man-pages",
+            "--compress=2",
+            "--output", outputDir.absolutePath
+        )
+    }
 }
 
-// Task to create Windows installer with jpackage
-tasks.register("createWindowsInstaller") {
+// Native jpackage task - App Image only
+tasks.register<Exec>("jpackageImage") {
     group = "distribution"
-    description = "Creates a Windows installer using jpackage"
-    dependsOn("jpackage")
+    description = "Creates an application image (no installer) using jpackage"
+    dependsOn("prepareDependencies")
+
+    val outputDir = layout.buildDirectory.dir("jpackage").get().asFile
+    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
+    val resourceDir = file("src/main/resources")
+
+    doFirst {
+        outputDir.mkdirs()
+
+        val javaHome = System.getProperty("java.home")
+        val classpath = fileTree(jarsDir).files.joinToString(File.pathSeparator) { it.absolutePath }
+
+        val args = mutableListOf(
+            "$javaHome/bin/jpackage",
+            "--type", "app-image",
+            "--name", appName,
+            "--app-version", appVersion,
+            "--vendor", "Karl Kauc",
+            "--copyright", "Copyright © 2024 Karl Kauc",
+            "--description", "OeKB Visual Client",
+            "--input", jarsDir.absolutePath,
+            "--main-jar", tasks.jar.get().archiveFileName.get(),
+            "--main-class", mainClassName,
+            "--java-options", "--enable-native-access=javafx.graphics",
+            "--dest", outputDir.absolutePath,
+            "--resource-dir", resourceDir.absolutePath
+        )
+
+        // Add icon if available
+        val iconFile = file("src/main/resources/img/connectdevelop.ico")
+        if (iconFile.exists()) {
+            args.addAll(listOf("--icon", iconFile.absolutePath))
+        }
+
+        commandLine(args)
+    }
 }
 
-// Task to create portable app image (no installer)
-tasks.register("createAppImage") {
+// Native jpackage task - MSI Installer
+tasks.register<Exec>("jpackage") {
     group = "distribution"
-    description = "Creates a portable application image (no installer)"
-    dependsOn("jpackageImage")
+    description = "Creates a Windows MSI installer using jpackage"
+    dependsOn("prepareDependencies")
+
+    val outputDir = layout.buildDirectory.dir("jpackage").get().asFile
+    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
+    val resourceDir = file("src/main/resources")
+    val licenseFile = file("LICENSE")
+
+    doFirst {
+        outputDir.mkdirs()
+
+        val javaHome = System.getProperty("java.home")
+
+        val args = mutableListOf(
+            "$javaHome/bin/jpackage",
+            "--type", "msi",
+            "--name", appName,
+            "--app-version", appVersion,
+            "--vendor", "Karl Kauc",
+            "--copyright", "Copyright © 2024 Karl Kauc",
+            "--description", "OeKB Visual Client for Financial Data Platform",
+            "--input", jarsDir.absolutePath,
+            "--main-jar", tasks.jar.get().archiveFileName.get(),
+            "--main-class", mainClassName,
+            "--java-options", "--enable-native-access=javafx.graphics",
+            "--dest", outputDir.absolutePath,
+            "--resource-dir", resourceDir.absolutePath,
+            "--win-per-user-install",
+            "--win-dir-chooser",
+            "--win-menu",
+            "--win-shortcut",
+            "--win-shortcut-prompt"
+        )
+
+        // Add license if available
+        if (licenseFile.exists()) {
+            args.addAll(listOf("--license-file", licenseFile.absolutePath))
+        }
+
+        // Add icon if available
+        val iconFile = file("src/main/resources/img/connectdevelop.ico")
+        if (iconFile.exists()) {
+            args.addAll(listOf("--icon", iconFile.absolutePath))
+        }
+
+        commandLine(args)
+    }
 }
 
-// Task to create ZIP from app image
+// Task to create portable ZIP from app image
 tasks.register<Zip>("createPortableZip") {
     group = "distribution"
     description = "Creates a portable ZIP package of the application"
     dependsOn("jpackageImage")
 
-    from(layout.buildDirectory.dir("jpackage/OeKBVisualClient"))
-    archiveFileName.set("OeKBVisualClient-${project.version}-windows-x64.zip")
+    from(layout.buildDirectory.dir("jpackage/$appName"))
+    archiveFileName.set("$appName-$appVersion-windows-x64.zip")
     destinationDirectory.set(layout.buildDirectory.dir("jpackage"))
 
     doFirst {
@@ -270,9 +341,30 @@ tasks.register<Zip>("createPortableZip") {
     }
 }
 
+// Task to create runtime image
+tasks.register("createRuntimeImage") {
+    group = "distribution"
+    description = "Creates a custom runtime image using jlink"
+    dependsOn("jlink")
+}
+
+// Task to create Windows installer
+tasks.register("createWindowsInstaller") {
+    group = "distribution"
+    description = "Creates a Windows MSI installer using jpackage"
+    dependsOn("jpackage")
+}
+
+// Task to create app image
+tasks.register("createAppImage") {
+    group = "distribution"
+    description = "Creates a portable application image (no installer)"
+    dependsOn("jpackageImage")
+}
+
 // Task to build all distribution packages
 tasks.register("buildDistribution") {
     group = "distribution"
-    description = "Builds complete distribution with runtime image, installers, and portable ZIP"
-    dependsOn("createRuntimeImage", "createWindowsInstaller", "createPortableZip")
+    description = "Builds complete distribution with runtime image, installer, and portable ZIP"
+    dependsOn("jpackage", "createPortableZip")
 }

@@ -30,27 +30,17 @@ jobs:
         run: ./gradlew build
         shell: bash
 
-      - name: Create Runtime Image with jlink
-        run: ./gradlew jlink
+      - name: Prepare Dependencies
+        run: ./gradlew prepareDependencies
         shell: bash
 
       - name: Create Windows Installer with jpackage
         run: ./gradlew jpackage
         shell: bash
 
-      - name: Create Windows App Image (portable)
-        run: ./gradlew jpackageImage
+      - name: Create Portable ZIP
+        run: ./gradlew createPortableZip
         shell: bash
-
-      - name: Create ZIP from App Image
-        run: |
-          cd build/jpackage
-          if (Test-Path "OeKBVisualClient") {
-            Compress-Archive -Path "OeKBVisualClient" -DestinationPath "OeKBVisualClient-0.4-windows-x64.zip" -Force
-            echo "ZIP_CREATED=true" >> $env:GITHUB_OUTPUT
-          }
-        shell: pwsh
-        id: create-zip
 
       - name: Find installer files
         id: find-installer
@@ -89,15 +79,25 @@ jobs:
           asset_name: ${{ steps.find-installer.outputs.EXE_NAME }}
           asset_content_type: application/x-msdownload
 
+      - name: Find ZIP file
+        id: find-zip
+        run: |
+          $zipFile = Get-ChildItem -Path build\jpackage -Filter *-windows-x64.zip | Select-Object -First 1
+          if ($zipFile) {
+            echo "ZIP_PATH=$($zipFile.FullName)" >> $env:GITHUB_OUTPUT
+            echo "ZIP_NAME=$($zipFile.Name)" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+
       - name: Upload ZIP (Portable App Image) to Release
-        if: steps.create-zip.outputs.ZIP_CREATED == 'true'
+        if: steps.find-zip.outputs.ZIP_PATH
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: build/jpackage/OeKBVisualClient-0.4-windows-x64.zip
-          asset_name: OeKBVisualClient-0.4-windows-x64.zip
+          asset_path: ${{ steps.find-zip.outputs.ZIP_PATH }}
+          asset_name: ${{ steps.find-zip.outputs.ZIP_NAME }}
           asset_content_type: application/zip
 
       - name: Upload build artifacts
