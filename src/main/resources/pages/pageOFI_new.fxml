@@ -123,13 +123,13 @@
                     <VBox spacing="10.0">
                         <Label text="Filter:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
                         <HBox spacing="15.0">
-                            <JFXRadioButton fx:id="validAll" text="Alle">
+                            <RadioButton fx:id="validAll" text="Alle">
                                 <toggleGroup>
                                     <ToggleGroup fx:id="validGroup"/>
                                 </toggleGroup>
-                            </JFXRadioButton>
-                            <JFXRadioButton fx:id="validTrue" text="Nur valide" toggleGroup="$validGroup"/>
-                            <JFXRadioButton fx:id="validFalse" text="Nur invalide" toggleGroup="$validGroup"/>
+                            </RadioButton>
+                            <RadioButton fx:id="validTrue" text="Nur valide" toggleGroup="$validGroup"/>
+                            <RadioButton fx:id="validFalse" text="Nur invalide" toggleGroup="$validGroup"/>
                         </HBox>
                     </VBox>
 
