@@ -16,7 +16,6 @@
 package controller;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,9 +33,6 @@ public class MainController implements Initializable {
     private static final Logger log = LogManager.getLogger(MainController.class);
 
     private ApplicationSettings settingsData;
-
-    @FXML
-    private TextArea debugMessages;
 
     @FXML
     private Button prodServerButton;

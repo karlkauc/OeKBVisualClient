@@ -59,6 +59,29 @@
     -fx-border-width: 0 1 0 0;
 }
 
+/* Menu ScrollPane - transparent to show sidebar background */
+.menu-scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.menu-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.menu-scroll-pane > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.menu-scroll-pane > .scroll-bar:vertical > .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 4px;
+}
+
+.menu-scroll-pane > .scroll-bar:vertical > .thumb:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
 .bottom {
     -fx-background-color: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
     -fx-padding: 8 24;
