@@ -189,7 +189,7 @@ public class FundDownload implements Initializable {
                     return;
                 }
 
-                String result = OeKBHTTP.downloadFund(params);
+                String result = new OeKBHTTP().downloadFund(params);
 
                 Platform.runLater(() -> {
                     resultTextArea.setText(result);

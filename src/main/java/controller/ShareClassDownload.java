@@ -188,7 +188,7 @@ public class ShareClassDownload implements Initializable {
                 }
 
                 log.info("Downloading shareclass data for {} ISINs", isins.size());
-                String result = OeKBHTTP.downloadShareClass(params);
+                String result = new OeKBHTTP().downloadShareClass(params);
 
                 Platform.runLater(() -> {
                     resultTextArea.setText(result);

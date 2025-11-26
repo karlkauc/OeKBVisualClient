@@ -110,7 +110,7 @@ public class DataUpload implements Initializable {
                 String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
                 XMLHelper.FileTypes fileType = XMLHelper.getFileType(fileContent);
 
-                String responseFile = OeKBHTTP.uploadDataFile(file);
+                String responseFile = new OeKBHTTP().uploadDataFile(file);
                 if (fileType == XMLHelper.FileTypes.OFI) {
                     text.append("OFI File gefunden ").append(System.lineSeparator());
                     log.debug("OFI FIle.. Summen Checken... ");

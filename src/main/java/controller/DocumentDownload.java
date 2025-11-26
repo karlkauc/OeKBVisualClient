@@ -240,7 +240,7 @@ public class DocumentDownload implements Initializable {
                 }
 
                 log.info("Downloading documents for {} IDs, type: {}", ids.size(), docType);
-                String result = OeKBHTTP.downloadDocuments(params, docType);
+                String result = new OeKBHTTP().downloadDocuments(params, docType);
 
                 Platform.runLater(() -> {
                     resultTextArea.setText(result);

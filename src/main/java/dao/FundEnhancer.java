@@ -63,43 +63,58 @@ public class FundEnhancer {
             return;
         }
 
-        File file;
-        String filePfad = "resources" + File.separator + "isinlei.csv";
+        String filePath = "resources" + File.separator + "isinlei.csv";
+        File file = new File(filePath);
 
-        try {
-            file = new File(filePfad);
-            if (file.exists()) {
-                log.debug("ISIN-LEI File [" + file.getAbsolutePath() + "] will be loaded");
-
-                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                    String line;
-                    int recordCount = 0;
-                    while ((line = br.readLine()) != null) {
-                        String[] parts = line.split(";");
-                        if (parts.length >= 8) {
-                            FundEnhancerData fed = new FundEnhancerData();
-                            fed.setISIN(parts[0]);
-                            fed.setFondsbezeichnung(parts[1].trim());
-                            fed.setKAG(parts[2].trim());
-                            fed.setOENB_ID(parts[3].trim());
-                            fed.setLEI(parts[4].trim());
-                            fed.setLEIStatus(parts[5].trim());
-                            fed.setWRAPPER(parts[6].trim());
-                            fed.setISINStatus(parts[7].trim());
-                            data.add(fed);
-                            recordCount++;
-                        }
-                    }
-                    log.debug("ISIN-LEI File [" + file.getAbsolutePath() + "] loaded with " + recordCount + " records");
-                    dataLoaded = true;
-                }
-            } else {
-                log.info("ISINLEI CSV File not found under 'resources' folder");
+        if (file.exists()) {
+            log.debug("ISIN-LEI File [{}] will be loaded", file.getAbsolutePath());
+            try (FileReader fileReader = new FileReader(file);
+                 BufferedReader br = new BufferedReader(fileReader)) {
+                loadDataFromReader(br);
+            } catch (IOException e) {
+                log.error("Error reading ISIN LEI file", e);
             }
-        } catch (FileNotFoundException e) {
-            log.info("internal ISIN LEI FILE NOT FOUND");
-        } catch (IOException e) {
-            log.error("Error reading ISIN LEI file", e);
+        } else {
+            log.info("ISIN-LEI CSV File not found under 'resources' folder: {}", file.getAbsolutePath());
+        }
+    }
+
+    // Made public for testing purposes
+    public synchronized void loadDataFromReader(BufferedReader br) throws IOException {
+        if (dataLoaded) {
+            return;
+        }
+        
+        String line;
+        int recordCount = 0;
+        while ((line = br.readLine()) != null) {
+            String[] parts = line.split(";");
+            if (parts.length >= 8) {
+                FundEnhancerData fed = new FundEnhancerData();
+                fed.setISIN(parts[0]);
+                fed.setFondsbezeichnung(parts[1].trim());
+                fed.setKAG(parts[2].trim());
+                fed.setOENB_ID(parts[3].trim());
+                fed.setLEI(parts[4].trim());
+                fed.setLEIStatus(parts[5].trim());
+                fed.setWRAPPER(parts[6].trim());
+                fed.setISINStatus(parts[7].trim());
+                data.add(fed);
+                recordCount++;
+            }
+        }
+        log.debug("Loaded {} records from reader", recordCount);
+        dataLoaded = true;
+    }
+
+    /**
+     * Resets the singleton instance. Used for testing.
+     */
+    public static synchronized void reset() {
+        if (instance != null) {
+            instance.data.clear();
+            instance.fundNameCache.clear();
+            instance.dataLoaded = false;
         }
     }
 

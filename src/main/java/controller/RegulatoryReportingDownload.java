@@ -215,7 +215,7 @@ public class RegulatoryReportingDownload implements Initializable {
                 }
 
                 log.info("Downloading regulatory reportings for {} IDs, type: {}", ids.size(), reportingType);
-                String result = OeKBHTTP.downloadRegulatoryReportings(params, reportingType);
+                String result = new OeKBHTTP().downloadRegulatoryReportings(params, reportingType);
 
                 Platform.runLater(() -> {
                     resultTextArea.setText(result);

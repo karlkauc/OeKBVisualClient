@@ -87,7 +87,7 @@ public class Journal {
             }
         } else {
             log.debug("Downloading journal from OeKB server");
-            xmlString = OeKBHTTP.downloadJournal(timeFrom, timeTo, action, type, null, null, excludeEmptyDownloads);
+            xmlString = new OeKBHTTP().downloadJournal(timeFrom, timeTo, action, type, null, null, excludeEmptyDownloads);
         }
 
         return parseJournalXml(xmlString);

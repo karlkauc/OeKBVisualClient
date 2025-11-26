@@ -23,10 +23,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.JournalEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -269,10 +272,41 @@ public class JournalController implements Initializable {
     @FXML
     void exportToExcel() {
         log.debug("Exporting journal to Excel");
-        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_journal.xlsx";
 
-        // TODO: Implement WriteXLS.writeJournal() method
-        statusMessage.setText("Export not yet implemented");
+        if (filteredEntries.isEmpty()) {
+            statusMessage.setText("No data to export");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Journal Export");
+        fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + "_journal.xlsx");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+
+        // Get the current stage to show the file chooser
+        Stage stage = (Stage) journalTable.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                statusMessage.setText("Exporting to " + file.getName() + "...");
+                WriteXLS.writeJournal(file.getAbsolutePath(), filteredEntries);
+                statusMessage.setText("Successfully exported " + filteredEntries.size() + " entries.");
+                log.info("Journal exported successfully to {}", file.getAbsolutePath());
+            } catch (Exception e) {
+                log.error("Failed to export journal to Excel", e);
+                statusMessage.setText("Error during export.");
+                // Optionally, show an error dialog
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Export Error");
+                alert.setHeaderText("Could not save the Excel file.");
+                alert.setContentText("An error occurred while writing the journal data to the selected file:\n" + e.getMessage());
+                alert.showAndWait();
+            }
+        } else {
+            log.debug("Excel export cancelled by user.");
+            statusMessage.setText("Export cancelled.");
+        }
     }
 
     /**

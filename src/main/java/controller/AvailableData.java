@@ -174,7 +174,7 @@ public class AvailableData implements Initializable {
                     return;
                 }
 
-                String result = OeKBHTTP.downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, fdpContent, params);
+                String result = new OeKBHTTP().downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, fdpContent, params);
 
                 Platform.runLater(() -> {
                     resultTextArea.setText(result);

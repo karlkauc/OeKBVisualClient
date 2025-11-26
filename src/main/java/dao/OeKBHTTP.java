@@ -56,9 +56,26 @@ import java.util.HashMap;
 
 public class OeKBHTTP {
     private static final Logger log = LogManager.getLogger(OeKBHTTP.class);
-    private static ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private static final ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
-    private static CloseableHttpClient getOekbConnection() {
+    private final CloseableHttpClient httpClient;
+
+    /**
+     * Public constructor for application use. Creates a real HTTP client.
+     */
+    public OeKBHTTP() {
+        this.httpClient = getOekbConnection();
+    }
+
+    /**
+     * Package-private constructor for testing purposes. Allows injecting a mock client.
+     * @param httpClient The HTTP client to use (real or mock).
+     */
+    OeKBHTTP(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    private CloseableHttpClient getOekbConnection() {
         applicationSettings.readSettingsFromFile();
 
         String proxyHost = "";
@@ -95,7 +112,7 @@ public class OeKBHTTP {
         }
     }
 
-    public static String uploadAccessRule(File file) {
+    public String uploadAccessRule(File file) {
         applicationSettings.readSettingsFromFile();
         String outputString = "";
 
@@ -113,7 +130,7 @@ public class OeKBHTTP {
         }
 
         // Real mode: HTTP POST to server
-        try (CloseableHttpClient httpClient = getOekbConnection()) {
+        try {
             HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
 
             // Set headers
@@ -137,7 +154,7 @@ public class OeKBHTTP {
 
             log.info("Uploading access rule to server: {}", file.getName());
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
                 int statusCode = response.getCode();
                 log.debug("Server response status: {}", statusCode);
 
@@ -187,11 +204,11 @@ public class OeKBHTTP {
         return outputString;
     }
 
-    public static String uploadDataFile(File file) {
+    public String uploadDataFile(File file) {
         applicationSettings.readSettingsFromFile();
         String outputString = "";
 
-        try (CloseableHttpClient httpClient = getOekbConnection()) {
+        try {
             HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
 
             // Set headers
@@ -214,7 +231,7 @@ public class OeKBHTTP {
             HttpEntity multipart = builder.build();
             httpPost.setEntity(multipart);
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
                 HttpEntity responseEntity = response.getEntity();
                 if (responseEntity != null) {
                     outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
@@ -232,11 +249,11 @@ public class OeKBHTTP {
         return outputString;
     }
 
-    public static String downloadAccessRules() {
+    public String downloadAccessRules() {
         applicationSettings.readSettingsFromFile();
         String outputString = "";
 
-        try (CloseableHttpClient httpClient = getOekbConnection()) {
+        try {
             HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
 
             // Set headers
@@ -257,7 +274,7 @@ public class OeKBHTTP {
 
             log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
                 int statusCode = response.getCode();
                 log.debug("Server response status: {}", statusCode);
 
@@ -300,11 +317,11 @@ public class OeKBHTTP {
         return outputString;
     }
 
-    public static String downloadGivenAccessRules() {
+    public String downloadGivenAccessRules() {
         applicationSettings.readSettingsFromFile();
         String outputString = "";
 
-        try (CloseableHttpClient httpClient = getOekbConnection()) {
+        try {
             HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
 
             // Set headers
@@ -325,7 +342,7 @@ public class OeKBHTTP {
 
             log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
                 int statusCode = response.getCode();
                 log.debug("Server response status: {}", statusCode);
 
@@ -409,11 +426,11 @@ public class OeKBHTTP {
      * @param params Download parameters
      * @return XML response as string
      */
-    private static String genericDownload(Map<String, String> params) {
+    private String genericDownload(Map<String, String> params) {
         applicationSettings.readSettingsFromFile();
         String outputString = "";
 
-        try (CloseableHttpClient httpClient = getOekbConnection()) {
+        try {
             HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
 
             // Set headers
@@ -432,7 +449,7 @@ public class OeKBHTTP {
 
             httpPost.setEntity(new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8));
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
                 HttpEntity responseEntity = response.getEntity();
                 if (responseEntity != null) {
                     outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
@@ -455,7 +472,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_FUND - Download fund data by LEI or OeNB-ID
      */
-    public static String downloadFund(DownloadParameters params) {
+    public String downloadFund(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_FUND");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -486,7 +503,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_SHARECLASS_SEGMENT - Download shareclass/segment data by ISIN
      */
-    public static String downloadShareClass(DownloadParameters params) {
+    public String downloadShareClass(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_SHARECLASS_SEGMENT");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -517,7 +534,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_OENB_AGGREGIERUNG - Download OeNB aggregated data
      */
-    public static String downloadOeNBAggregierung(DownloadParameters params) {
+    public String downloadOeNBAggregierung(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_AGGREGIERUNG");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -544,7 +561,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_OENB_SECBYSEC - Download OeNB Security-by-Security data
      */
-    public static String downloadOeNBSecBySec(DownloadParameters params) {
+    public String downloadOeNBSecBySec(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_SECBYSEC");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -571,7 +588,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_OENB_CHECK - Download OeNB aggregation check
      */
-    public static String downloadOeNBCheck(LocalDate date, String validFilter) {
+    public String downloadOeNBCheck(LocalDate date, String validFilter) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_CHECK");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -593,7 +610,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_JOURNAL - Download journal entries
      */
-    public static String downloadJournal(LocalDateTime timeFrom, LocalDateTime timeTo,
+    public String downloadJournal(LocalDateTime timeFrom, LocalDateTime timeTo,
                                         String action, String type, String userJournal,
                                         String uniqueId, boolean excludeEmptyDownloads) {
         Map<String, String> requestParams = new HashMap<>();
@@ -637,7 +654,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_DOCUMENTS - Download documents
      */
-    public static String downloadDocuments(DownloadParameters params, String documentType) {
+    public String downloadDocuments(DownloadParameters params, String documentType) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_DOCUMENTS");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -677,7 +694,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_REG_REPORTINGS - Download regulatory reportings
      */
-    public static String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
+    public String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_REG_REPORTINGS");
         requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
@@ -712,7 +729,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_AVAILABLE_DATA - Download available data information
      */
-    public static String downloadAvailableData(LocalDate contentDate, LocalDateTime uploadTimeFrom,
+    public String downloadAvailableData(LocalDate contentDate, LocalDateTime uploadTimeFrom,
                                                LocalDateTime uploadTimeTo, String fdpContent,
                                                DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
@@ -756,7 +773,7 @@ public class OeKBHTTP {
     /**
      * DOWNLOAD_OWN_DATA_DOWNLOADED - Download information about own data downloaded by others
      */
-    public static String downloadOwnDataDownloaded(LocalDate dateFrom, LocalDate dateTo,
+    public String downloadOwnDataDownloaded(LocalDate dateFrom, LocalDate dateTo,
                                                    String fdpContent, DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OWN_DATA_DOWNLOADED");
@@ -803,7 +820,7 @@ public class OeKBHTTP {
     /**
      * Batch upload multiple files
      */
-    public static List<String> uploadDataFiles(List<File> files) {
+    public List<String> uploadDataFiles(List<File> files) {
         List<String> results = new ArrayList<>();
 
         for (File file : files) {

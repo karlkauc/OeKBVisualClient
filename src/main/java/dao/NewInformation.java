@@ -87,7 +87,7 @@ public class NewInformation {
             }
         } else {
             log.debug("Downloading new information from OeKB server");
-            xmlString = OeKBHTTP.downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, null, null);
+            xmlString = new OeKBHTTP().downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, null, null);
         }
 
         return parseNewInformationXml(xmlString);

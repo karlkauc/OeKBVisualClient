@@ -199,7 +199,7 @@ public class OFI implements Initializable {
                 }
 
                 log.info("Downloading OeNB Aggregierung for {} IDs", ids.size());
-                String result = OeKBHTTP.downloadOeNBAggregierung(params);
+                String result = new OeKBHTTP().downloadOeNBAggregierung(params);
 
                 Platform.runLater(() -> {
                     resultAggTextArea.setText(result);
@@ -258,7 +258,7 @@ public class OFI implements Initializable {
                 }
 
                 log.info("Downloading OeNB SecBySec for {} IDs", ids.size());
-                String result = OeKBHTTP.downloadOeNBSecBySec(params);
+                String result = new OeKBHTTP().downloadOeNBSecBySec(params);
 
                 Platform.runLater(() -> {
                     resultSecTextArea.setText(result);
@@ -311,7 +311,7 @@ public class OFI implements Initializable {
                 }
 
                 log.info("Downloading OeNB Check for date {}", date);
-                String result = OeKBHTTP.downloadOeNBCheck(date, validFilter);
+                String result = new OeKBHTTP().downloadOeNBCheck(date, validFilter);
 
                 Platform.runLater(() -> {
                     resultCheckTextArea.setText(result);

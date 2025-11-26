@@ -90,7 +90,7 @@ public class DownloadedInformation {
             }
         } else {
             log.debug("Downloading own data downloaded information from OeKB server");
-            xmlString = OeKBHTTP.downloadOwnDataDownloaded(dateFrom, dateTo, fdpContent, params);
+            xmlString = new OeKBHTTP().downloadOwnDataDownloaded(dateFrom, dateTo, fdpContent, params);
         }
 
         return parseDownloadedInformationXml(xmlString);

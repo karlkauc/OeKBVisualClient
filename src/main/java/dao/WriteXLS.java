@@ -137,4 +137,57 @@ public class WriteXLS {
             cell.setCellValue(new XSSFRichTextString(value.toString()));
         }
     }
+
+    public static void writeJournal(String filename, List<model.JournalEntry> journalEntries) {
+        log.debug("writing " + journalEntries.size() + " journal entries to excel file");
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Journal");
+            int rowNum = 0;
+
+            // Header row
+            Row headerRow = sheet.createRow(rowNum++);
+            String[] headers = {"Timestamp", "Action", "Type", "Username", "Data Supplier", "Unique ID", "Details", "Is Empty"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(new XSSFRichTextString(headers[i]));
+            }
+
+            // Data rows
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            for (model.JournalEntry entry : journalEntries) {
+                Row row = sheet.createRow(rowNum++);
+                int col = 0;
+                setCellValue(row.createCell(col++), entry.getTimestamp() != null ? entry.getTimestamp().format(formatter) : null);
+                setCellValue(row.createCell(col++), entry.getAction() != null ? entry.getAction().getDescription() : null);
+                setCellValue(row.createCell(col++), entry.getType() != null ? entry.getType().getDescription() : null);
+                setCellValue(row.createCell(col++), entry.getUserName());
+                setCellValue(row.createCell(col++), entry.getDataSupplier());
+                setCellValue(row.createCell(col++), entry.getUniqueId());
+                setCellValue(row.createCell(col++), entry.getDetails());
+                setCellValue(row.createCell(col++), entry.isEmpty());
+            }
+
+            // Save file
+            String finalFilename = filename;
+            if (finalFilename == null || finalFilename.isEmpty()) {
+                log.warn("kein filename gesetzt!");
+                finalFilename = ApplicationSettings.getInstance().getBackupDirectory() + File.separator +
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "_journal_export.xlsx";
+            }
+
+            File file = new File(finalFilename);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                workbook.write(out);
+            }
+
+            log.debug("schreiben fertig");
+        } catch (IOException e) {
+            log.error("Error writing Excel file", e);
+        }
+    }
 }

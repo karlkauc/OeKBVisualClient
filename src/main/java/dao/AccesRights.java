@@ -74,7 +74,7 @@ public class AccesRights {
             }
         } else {
             log.debug("lese von OeKB Server");
-            outputString = OeKBHTTP.downloadAccessRules();
+            outputString = new OeKBHTTP().downloadAccessRules();
         }
 
         return parseAccessRules(outputString, false);
@@ -108,7 +108,7 @@ public class AccesRights {
                 return new ArrayList<>();
             }
         } else {
-            outputString = OeKBHTTP.downloadGivenAccessRules();
+            outputString = new OeKBHTTP().downloadGivenAccessRules();
         }
 
         return parseAccessRules(outputString, true);
@@ -494,7 +494,7 @@ public class AccesRights {
             log.info("Created temporary file for upload: {}", tempFile.getAbsolutePath());
 
             // Upload the file
-            String result = OeKBHTTP.uploadAccessRule(tempFile);
+            String result = new OeKBHTTP().uploadAccessRule(tempFile);
 
             // Check if upload was successful
             if (result != null && (result.contains("SUCCESS") || result.contains("OK"))) {
