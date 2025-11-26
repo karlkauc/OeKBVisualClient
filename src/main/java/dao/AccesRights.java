@@ -181,7 +181,17 @@ public class AccesRights {
                 AccessRule rule = new AccessRule();
                 rule.setId(ruleElement.getAttribute("id"));
                 rule.setContentType(getElementText(ruleElement, "ContentType"));
-                rule.setProfile(getElementText(ruleElement, "Profile"));
+
+                // Parse multiple profiles
+                List<String> profileList = new ArrayList<>();
+                NodeList profileNodes = ruleElement.getElementsByTagName("Profile");
+                for (int j = 0; j < profileNodes.getLength(); j++) {
+                    String profileText = profileNodes.item(j).getTextContent();
+                    if (profileText != null && !profileText.isEmpty()) {
+                        profileList.add(profileText);
+                    }
+                }
+                rule.setProfiles(profileList);
 
                 String dataSupplierCreatorShort = getNestedElementText(ruleElement, "DataSupplier_Creator", "Short");
                 String dataSupplierCreatorName = getNestedElementText(ruleElement, "DataSupplier_Creator", "Name");
@@ -201,6 +211,28 @@ public class AccesRights {
                 rule.setOENB_ID(oenbIdList);
                 rule.setISIN_SEGMENT(isinSegmentList);
                 rule.setISIN_SHARECLASS(isinShareClassList);
+
+                // Parse document types (for ContentType=DOC)
+                List<String> docTypeList = new ArrayList<>();
+                NodeList docTypeNodes = ruleElement.getElementsByTagName("DocumentType");
+                for (int j = 0; j < docTypeNodes.getLength(); j++) {
+                    String docType = docTypeNodes.item(j).getTextContent();
+                    if (docType != null && !docType.isEmpty()) {
+                        docTypeList.add(docType);
+                    }
+                }
+                rule.setDocumentTypes(docTypeList);
+
+                // Parse regulatory reportings (for ContentType=REG)
+                List<String> regRepList = new ArrayList<>();
+                NodeList regRepNodes = ruleElement.getElementsByTagName("RegulatoryReporting");
+                for (int j = 0; j < regRepNodes.getLength(); j++) {
+                    String regRep = regRepNodes.item(j).getTextContent();
+                    if (regRep != null && !regRep.isEmpty()) {
+                        regRepList.add(regRep);
+                    }
+                }
+                rule.setRegulatoryReportings(regRepList);
 
                 if (includeDataSuppliers) {
                     List<String> kagShort = new ArrayList<>();
@@ -318,9 +350,23 @@ public class AccesRights {
             Element profiles = doc.createElement("Profiles");
             accessRule.appendChild(profiles);
 
-            Element profile = doc.createElement("Profile");
-            profile.setTextContent(rule.getProfile());
-            profiles.appendChild(profile);
+            // Support multiple profiles
+            List<String> profileList = rule.getProfiles();
+            if (profileList != null && !profileList.isEmpty()) {
+                for (String profileName : profileList) {
+                    Element profile = doc.createElement("Profile");
+                    profile.setTextContent(profileName);
+                    profiles.appendChild(profile);
+                }
+            } else {
+                // Fallback to single profile for backwards compatibility
+                String singleProfile = rule.getProfile();
+                if (singleProfile != null && !singleProfile.isEmpty()) {
+                    Element profile = doc.createElement("Profile");
+                    profile.setTextContent(singleProfile);
+                    profiles.appendChild(profile);
+                }
+            }
 
             Element accessObjects = doc.createElement("AccessObjects");
             accessRule.appendChild(accessObjects);
@@ -371,6 +417,30 @@ public class AccesRights {
                 Element isinElem = doc.createElement("ISIN");
                 isinElem.setTextContent(isinShareClass);
                 shareClass.appendChild(isinElem);
+            }
+
+            // Document Types (for ContentType=DOC)
+            List<String> docTypes = rule.getDocumentTypes();
+            if (docTypes != null && !docTypes.isEmpty()) {
+                Element documentTypesElem = doc.createElement("DocumentTypes");
+                accessRule.appendChild(documentTypesElem);
+                for (String docType : docTypes) {
+                    Element docTypeElem = doc.createElement("DocumentType");
+                    docTypeElem.setTextContent(docType);
+                    documentTypesElem.appendChild(docTypeElem);
+                }
+            }
+
+            // Regulatory Reportings (for ContentType=REG)
+            List<String> regReps = rule.getRegulatoryReportings();
+            if (regReps != null && !regReps.isEmpty()) {
+                Element regulatoryReportingsElem = doc.createElement("RegulatoryReportings");
+                accessRule.appendChild(regulatoryReportingsElem);
+                for (String regRep : regReps) {
+                    Element regRepElem = doc.createElement("RegulatoryReporting");
+                    regRepElem.setTextContent(regRep);
+                    regulatoryReportingsElem.appendChild(regRepElem);
+                }
             }
 
             Element schedule = doc.createElement("Schedule");

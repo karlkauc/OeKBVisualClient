@@ -51,11 +51,11 @@ public class FundEnhancer {
     public static void main(String[] args) {
         getInstance().readData();
 
-        System.out.println("LEI: " + getFundNameByID("529900RNEPM2AX88SJ32"));
-        System.out.println("ISIN: " + getFundNameByID("AT0000A20FX4"));
-        System.out.println(getInstance().getAllFundDataByID("529900RNEPM2AX88SJ32").get(0).getFondsbezeichnung());
-        System.out.println(getInstance().getAllFundDataByID("AT0000A20FX4").get(0).getFondsbezeichnung());
-        System.out.println(getInstance().getAllFundDataByID("529900S56OD7UE7H1V04").get(0).getFondsbezeichnung());
+        log.debug("LEI: {}", getFundNameByID("529900RNEPM2AX88SJ32"));
+        log.debug("ISIN: {}", getFundNameByID("AT0000A20FX4"));
+        log.debug("Fund name by LEI: {}", getInstance().getAllFundDataByID("529900RNEPM2AX88SJ32").get(0).getFondsbezeichnung());
+        log.debug("Fund name by ISIN: {}", getInstance().getAllFundDataByID("AT0000A20FX4").get(0).getFondsbezeichnung());
+        log.debug("Fund name by LEI: {}", getInstance().getAllFundDataByID("529900S56OD7UE7H1V04").get(0).getFondsbezeichnung());
     }
 
     public synchronized void readData() {

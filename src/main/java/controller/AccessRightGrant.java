@@ -78,7 +78,7 @@ public class AccessRightGrant implements Initializable {
     @FXML
     void dumpData() {
         for (AccessRule rule : accessRule) {
-            System.out.println(rule);
+            log.debug("Rule: {}", rule);
         }
     }
 

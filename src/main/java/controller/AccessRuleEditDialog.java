@@ -253,9 +253,9 @@ public class AccessRuleEditDialog implements Initializable {
             dataSuppliers.setAll(accessRule.getDataSuppliersGivenShort());
         }
 
-        // Note: AccessRule currently only stores one profile, but UI supports multiple
-        if (accessRule.getProfile() != null && !accessRule.getProfile().isEmpty()) {
-            profiles.add(accessRule.getProfile());
+        // Load all profiles from the access rule
+        if (accessRule.getProfiles() != null && !accessRule.getProfiles().isEmpty()) {
+            profiles.setAll(accessRule.getProfiles());
         }
 
         usageField.setText(""); // Not in current model
@@ -315,7 +315,12 @@ public class AccessRuleEditDialog implements Initializable {
         }
 
         // Tab 4: Advanced
-        // DocumentTypes and RegulatoryReportings will be added to model later
+        if (accessRule.getDocumentTypes() != null && !accessRule.getDocumentTypes().isEmpty()) {
+            documentTypes.setAll(accessRule.getDocumentTypes());
+        }
+        if (accessRule.getRegulatoryReportings() != null && !accessRule.getRegulatoryReportings().isEmpty()) {
+            regulatoryReportings.setAll(accessRule.getRegulatoryReportings());
+        }
     }
 
     /**
@@ -327,10 +332,8 @@ public class AccessRuleEditDialog implements Initializable {
         accessRule.setContentType(contentTypeCombo.getValue());
         accessRule.setDataSuppliersGivenShort(new ArrayList<>(dataSuppliers));
 
-        // For now, store first profile (model needs update to support multiple)
-        if (!profiles.isEmpty()) {
-            accessRule.setProfile(profiles.get(0));
-        }
+        // Save all profiles to the access rule
+        accessRule.setProfiles(new ArrayList<>(profiles));
 
         // Save checkbox value as boolean string
         accessRule.setCostsByDataSupplier(String.valueOf(costsByDataSupplierCheckBox.isSelected()));
@@ -352,7 +355,8 @@ public class AccessRuleEditDialog implements Initializable {
         accessRule.setAccessDelayInDays(String.valueOf(accessDelaySpinner.getValue()));
 
         // Tab 4: Advanced
-        // Will be implemented when model is updated
+        accessRule.setDocumentTypes(new ArrayList<>(documentTypes));
+        accessRule.setRegulatoryReportings(new ArrayList<>(regulatoryReportings));
     }
 
     // ========== Event Handlers - Tab 1: Basis-Daten ==========

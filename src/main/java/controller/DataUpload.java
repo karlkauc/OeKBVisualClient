@@ -30,6 +30,13 @@ import javafx.scene.layout.StackPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,12 +84,80 @@ public class DataUpload implements Initializable {
         }
     }
 
-    public static void checkForNextActions(String stringData) {
-        // String xmlData = new XmlSlurper().parseText(stringData)
+    /**
+     * Analyzes the server response for errors and triggers appropriate next actions.
+     * Checks for:
+     * - Error responses (e.g., "ID already exists")
+     * - OFI-specific responses
+     * - Access Rights responses
+     *
+     * @param responseData The XML response from the server
+     */
+    public static void checkForNextActions(String responseData) {
+        if (responseData == null || responseData.isEmpty()) {
+            log.warn("Empty response from server, no next actions to process");
+            return;
+        }
 
-        // fehler: id schon vorhanden
-        // ofi meldung
-        // access rights
+        // Check if response starts with ERROR (from our improved error handling)
+        if (responseData.startsWith("ERROR:")) {
+            log.warn("Server returned error: {}", responseData);
+            return;
+        }
+
+        try {
+            // Parse XML response
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // Disable external entities for security
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new ByteArrayInputStream(
+                responseData.getBytes(StandardCharsets.UTF_8)));
+
+            // Check for error elements
+            NodeList errorNodes = doc.getElementsByTagName("Error");
+            if (errorNodes.getLength() > 0) {
+                for (int i = 0; i < errorNodes.getLength(); i++) {
+                    Element error = (Element) errorNodes.item(i);
+                    String errorCode = error.getAttribute("code");
+                    String errorMsg = error.getTextContent();
+
+                    if ("ID_EXISTS".equals(errorCode) || errorMsg.contains("id schon vorhanden")) {
+                        log.warn("Upload failed - ID already exists: {}", errorMsg);
+                    } else {
+                        log.warn("Server error [{}]: {}", errorCode, errorMsg);
+                    }
+                }
+            }
+
+            // Check for OFI-specific response
+            NodeList ofiNodes = doc.getElementsByTagName("OFI_Response");
+            if (ofiNodes.getLength() > 0) {
+                log.info("OFI response detected in server reply");
+                // OFI sum checking is already handled in dataUploadDropped() via XMLHelper.isOfiResponseOk()
+            }
+
+            // Check for Access Rights response
+            NodeList arNodes = doc.getElementsByTagName("AccessRuleResponse");
+            if (arNodes.getLength() > 0) {
+                log.info("Access rule response detected in server reply");
+                // Could trigger UI update or notification here if needed
+            }
+
+            // Check for success indicators
+            NodeList successNodes = doc.getElementsByTagName("Success");
+            if (successNodes.getLength() > 0) {
+                log.info("Upload completed successfully");
+            }
+
+        } catch (Exception e) {
+            log.error("Error parsing server response for next actions: {}", e.getMessage());
+            log.debug("Response content that failed to parse: {}",
+                responseData.length() > 500 ? responseData.substring(0, 500) + "..." : responseData);
+        }
     }
 
     // hier wird das file verarbeitet
@@ -143,7 +218,7 @@ public class DataUpload implements Initializable {
             // Only get the first file from the list
             final File file = db.getFiles().get(0);
             Platform.runLater(() -> {
-                System.out.println(file.getAbsolutePath());
+                log.debug("Processing file: {}", file.getAbsolutePath());
                 try {
                     if (!dataUpload.getChildren().isEmpty()) {
                         dataUpload.getChildren().remove(0);

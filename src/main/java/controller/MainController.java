@@ -214,7 +214,7 @@ public class MainController implements Initializable {
     @FXML
     private void changeToAccessRightsGrant() {
         setActiveMenuButton(btnAccessRightsGrant);
-        System.out.println("bin jetzt im access rights GRANT");
+        log.debug("bin jetzt im access rights GRANT");
 
         if (!hasValidSettings()) {
             log.debug("no settings found");
@@ -302,42 +302,6 @@ public class MainController implements Initializable {
                 mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
             } catch (IOException e) {
                 log.error("Error loading data upload page", e);
-            }
-        }
-    }
-
-    @FXML
-    private void changeToHistory() {
-        log.debug("bin jetzt in changeToHistory");
-
-        if (!hasValidSettings()) {
-            log.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageHistory.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                log.error("Error loading history page", e);
-            }
-        }
-    }
-
-    @FXML
-    private void changeToDataDownload() {
-        log.debug("bin jetzt in changeToDataDownload");
-
-        if (!hasValidSettings()) {
-            log.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getClassLoader().getResource("pages/pageDataDownload.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                log.error("Error loading data download page", e);
             }
         }
     }

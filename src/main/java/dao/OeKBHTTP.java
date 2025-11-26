@@ -16,6 +16,7 @@
 package dao;
 
 import model.ApplicationSettings;
+import model.IApplicationSettings;
 import model.DownloadParameters;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -56,22 +57,35 @@ import java.util.HashMap;
 
 public class OeKBHTTP {
     private static final Logger log = LogManager.getLogger(OeKBHTTP.class);
-    private static final ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+
+    /** Client version sent to OeKB server */
+    private static final String CLIENT_VERSION = "4.4.0";
 
     private final CloseableHttpClient httpClient;
+    private final IApplicationSettings applicationSettings;
+
+    /**
+     * Get the server parameter based on settings (prod or test).
+     */
+    private String getServerParam() {
+        return applicationSettings.isUseProdServer() ? "prod" : "test";
+    }
 
     /**
      * Public constructor for application use. Creates a real HTTP client.
      */
     public OeKBHTTP() {
+        this.applicationSettings = ApplicationSettings.getInstance();
         this.httpClient = getOekbConnection();
     }
 
     /**
-     * Package-private constructor for testing purposes. Allows injecting a mock client.
+     * Package-private constructor for testing purposes. Allows injecting mock dependencies.
      * @param httpClient The HTTP client to use (real or mock).
+     * @param applicationSettings The application settings to use (real or mock).
      */
-    OeKBHTTP(CloseableHttpClient httpClient) {
+    OeKBHTTP(CloseableHttpClient httpClient, IApplicationSettings applicationSettings) {
+        this.applicationSettings = applicationSettings;
         this.httpClient = httpClient;
     }
 
@@ -142,10 +156,10 @@ public class OeKBHTTP {
             // Build multipart entity
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.addTextBody("mode", "UPLOAD_ACCESS_RULE");
-            builder.addTextBody("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+            builder.addTextBody("server", getServerParam());
             builder.addTextBody("user", applicationSettings.getOekbUserName());
             builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
-            builder.addTextBody("clientversion", "4.4.0");
+            builder.addTextBody("clientversion", CLIENT_VERSION);
             builder.addTextBody("fileToUploadName", file.getName());
             builder.addBinaryBody("fileToUpload", file);
 
@@ -220,10 +234,10 @@ public class OeKBHTTP {
             // Build multipart entity
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.addTextBody("mode", "UPLOAD_DATA");
-            builder.addTextBody("server", "test");
+            builder.addTextBody("server", getServerParam());
             builder.addTextBody("user", applicationSettings.getOekbUserName());
             builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
-            builder.addTextBody("clientversion", "meine");
+            builder.addTextBody("clientversion", CLIENT_VERSION);
             builder.addTextBody("fileToUploadName", file.getName());
             builder.addTextBody("upload_xml", file.getName());
             builder.addBinaryBody("fileToUpload", file);
@@ -232,9 +246,18 @@ public class OeKBHTTP {
             httpPost.setEntity(multipart);
 
             try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                log.debug("Server response status: {}", statusCode);
+
                 HttpEntity responseEntity = response.getEntity();
                 if (responseEntity != null) {
                     outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+                }
+
+                if (statusCode >= 400) {
+                    log.error("Server returned error status: {}. Response: {}", statusCode,
+                        outputString.length() > 200 ? outputString.substring(0, 200) : outputString);
+                    return "ERROR: Server returned status " + statusCode;
                 }
             }
 
@@ -242,8 +265,22 @@ public class OeKBHTTP {
             saveToBackup(fileContent, file.getName());
             saveToBackup(outputString, "UPLOAD_DATA_REPLY");
 
+        } catch (java.net.UnknownHostException e) {
+            log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+            outputString = "ERROR: Cannot reach server - " + e.getMessage();
+        } catch (java.net.ConnectException e) {
+            log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.", e.getMessage());
+            outputString = "ERROR: Connection refused - " + e.getMessage();
+        } catch (javax.net.ssl.SSLException e) {
+            log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+            outputString = "ERROR: SSL/TLS error - " + e.getMessage();
+        } catch (java.net.SocketTimeoutException e) {
+            log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+            outputString = "ERROR: Connection timeout - " + e.getMessage();
         } catch (Exception e) {
-            log.error("Error uploading data file", e);
+            log.error("Error uploading data file: {}. Check credentials, proxy settings, and network connection.", e.getMessage());
+            log.debug("Full exception details", e);
+            outputString = "ERROR: " + e.getMessage();
         }
 
         return outputString;
@@ -265,10 +302,10 @@ public class OeKBHTTP {
             // Build form parameters
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_RECEIVED"));
-            params.add(new BasicNameValuePair("server", "test"));
+            params.add(new BasicNameValuePair("server", getServerParam()));
             params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
             params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
-            params.add(new BasicNameValuePair("clientversion", "meine"));
+            params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
 
             httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
@@ -333,10 +370,10 @@ public class OeKBHTTP {
             // Build form parameters
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_ASSIGNED"));
-            params.add(new BasicNameValuePair("server", "test"));
+            params.add(new BasicNameValuePair("server", getServerParam()));
             params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
             params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
-            params.add(new BasicNameValuePair("clientversion", "meine"));
+            params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
 
             httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
@@ -387,12 +424,13 @@ public class OeKBHTTP {
 
     public static void saveToBackup(String xml, String fileName) {
         try {
-            String filePraefix = applicationSettings.isUseProdServer() ? "PROD" : "DEV";
-            filePraefix += "_" + applicationSettings.getDataSupplierList();
+            ApplicationSettings settings = ApplicationSettings.getInstance();
+            String filePraefix = settings.isUseProdServer() ? "PROD" : "DEV";
+            filePraefix += "_" + settings.getDataSupplierList();
 
-            new File(applicationSettings.getBackupDirectory()).mkdirs();
+            new File(settings.getBackupDirectory()).mkdirs();
 
-            String filePath = applicationSettings.getBackupDirectory() + File.separator +
+            String filePath = settings.getBackupDirectory() + File.separator +
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) +
                     "__" + filePraefix + "_" + fileName + ".xml";
 
@@ -475,11 +513,11 @@ public class OeKBHTTP {
     public String downloadFund(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_FUND");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -506,11 +544,11 @@ public class OeKBHTTP {
     public String downloadShareClass(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_SHARECLASS_SEGMENT");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -537,11 +575,11 @@ public class OeKBHTTP {
     public String downloadOeNBAggregierung(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_AGGREGIERUNG");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -564,11 +602,11 @@ public class OeKBHTTP {
     public String downloadOeNBSecBySec(DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_SECBYSEC");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -591,10 +629,10 @@ public class OeKBHTTP {
     public String downloadOeNBCheck(LocalDate date, String validFilter) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OENB_CHECK");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (date != null) {
             requestParams.put("date", date.format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -615,10 +653,10 @@ public class OeKBHTTP {
                                         String uniqueId, boolean excludeEmptyDownloads) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_JOURNAL");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (timeFrom != null) {
             requestParams.put("time_from", timeFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -657,11 +695,11 @@ public class OeKBHTTP {
     public String downloadDocuments(DownloadParameters params, String documentType) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_DOCUMENTS");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -697,11 +735,11 @@ public class OeKBHTTP {
     public String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_REG_REPORTINGS");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (params.getDate() != null) {
             requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -734,11 +772,11 @@ public class OeKBHTTP {
                                                DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_AVAILABLE_DATA");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params != null && params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (contentDate != null) {
             requestParams.put("date", contentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -777,11 +815,11 @@ public class OeKBHTTP {
                                                    String fdpContent, DownloadParameters params) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("mode", "DOWNLOAD_OWN_DATA_DOWNLOADED");
-        requestParams.put("server", applicationSettings.isUseProdServer() ? "prod" : "test");
+        requestParams.put("server", getServerParam());
         requestParams.put("user", applicationSettings.getOekbUserName());
         requestParams.put("datasupplier", params != null && params.getDataSupplier() != null ?
                 params.getDataSupplier() : applicationSettings.getDataSupplierList());
-        requestParams.put("clientversion", "4.4.0");
+        requestParams.put("clientversion", CLIENT_VERSION);
 
         if (dateFrom != null) {
             requestParams.put("date_from", dateFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));

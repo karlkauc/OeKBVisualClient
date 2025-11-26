@@ -34,7 +34,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-public class ApplicationSettings {
+public class ApplicationSettings implements IApplicationSettings {
     private static final Logger log = LogManager.getLogger(ApplicationSettings.class);
     private static ApplicationSettings instance;
 

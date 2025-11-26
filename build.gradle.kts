@@ -65,12 +65,15 @@ dependencies {
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.mockito:mockito-core:5.12.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+    testImplementation("net.bytebuddy:byte-buddy:1.15.10")  // Latest ByteBuddy for Java 23
 }
 
 tasks.test {
     useJUnitPlatform()
+    // Enable ByteBuddy experimental mode for Java 23 support
+    jvmArgs("-Dnet.bytebuddy.experimental=true")
 }
 
 tasks.jar {

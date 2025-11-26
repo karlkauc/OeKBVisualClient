@@ -17,12 +17,13 @@ package model;
 
 import dao.FundEnhancer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccessRule {
     private String id;
     private String contentType;
-    private String profile;
+    private List<String> profiles;
 
     private String dataSupplierCreatorShort;
     private String dataSupplierCreatorName;
@@ -41,6 +42,10 @@ public class AccessRule {
     private List<String> ISIN_SEGMENT;
     private List<String> ISIN_SHARECLASS;
 
+    // Advanced options (Tab 4)
+    private List<String> documentTypes;         // For ContentType=DOC
+    private List<String> regulatoryReportings;  // For ContentType=REG
+
     // Getters and Setters
     public String getId() {
         return id;
@@ -58,12 +63,43 @@ public class AccessRule {
         this.contentType = contentType;
     }
 
-    public String getProfile() {
-        return profile;
+    /**
+     * Get all profiles for this access rule.
+     * @return List of profile names
+     */
+    public List<String> getProfiles() {
+        return profiles;
     }
 
+    /**
+     * Set all profiles for this access rule.
+     * @param profiles List of profile names
+     */
+    public void setProfiles(List<String> profiles) {
+        this.profiles = profiles;
+    }
+
+    /**
+     * Get the first profile (for backwards compatibility).
+     * @return The first profile or null if no profiles exist
+     */
+    public String getProfile() {
+        return (profiles != null && !profiles.isEmpty()) ? profiles.get(0) : null;
+    }
+
+    /**
+     * Set a single profile (for backwards compatibility).
+     * Clears existing profiles and adds the given profile.
+     * @param profile The profile to set
+     */
     public void setProfile(String profile) {
-        this.profile = profile;
+        if (this.profiles == null) {
+            this.profiles = new ArrayList<>();
+        }
+        this.profiles.clear();
+        if (profile != null && !profile.isEmpty()) {
+            this.profiles.add(profile);
+        }
     }
 
     public String getDataSupplierCreatorShort() {
@@ -170,12 +206,44 @@ public class AccessRule {
         this.ISIN_SHARECLASS = ISIN_SHARECLASS;
     }
 
+    /**
+     * Get document types (for ContentType=DOC).
+     * @return List of document type names (e.g., AIFMD, AnnualReport, KID, Prospectus)
+     */
+    public List<String> getDocumentTypes() {
+        return documentTypes;
+    }
+
+    /**
+     * Set document types (for ContentType=DOC).
+     * @param documentTypes List of document type names
+     */
+    public void setDocumentTypes(List<String> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
+
+    /**
+     * Get regulatory reportings (for ContentType=REG).
+     * @return List of regulatory reporting names (e.g., EMIR, KIID, EMT, TPTSolvencyII, PRIIPS)
+     */
+    public List<String> getRegulatoryReportings() {
+        return regulatoryReportings;
+    }
+
+    /**
+     * Set regulatory reportings (for ContentType=REG).
+     * @param regulatoryReportings List of regulatory reporting names
+     */
+    public void setRegulatoryReportings(List<String> regulatoryReportings) {
+        this.regulatoryReportings = regulatoryReportings;
+    }
+
     @Override
     public String toString() {
         return "AccessRule{" +
                 "id='" + id + '\'' +
                 ", contentType='" + contentType + '\'' +
-                ", profile='" + profile + '\'' +
+                ", profiles=" + profiles +
                 ", dataSupplierCreatorShort='" + dataSupplierCreatorShort + '\'' +
                 ", dataSupplierCreatorName='" + dataSupplierCreatorName + '\'' +
                 ", dataSuppliersGivenShort=" + dataSuppliersGivenShort +
@@ -189,6 +257,8 @@ public class AccessRule {
                 ", OENB_ID=" + OENB_ID +
                 ", ISIN_SEGMENT=" + ISIN_SEGMENT +
                 ", ISIN_SHARECLASS=" + ISIN_SHARECLASS +
+                ", documentTypes=" + documentTypes +
+                ", regulatoryReportings=" + regulatoryReportings +
                 '}';
     }
 }
