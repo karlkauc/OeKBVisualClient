@@ -39,8 +39,8 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 
 ### Create Distribution Packages
 ```bash
-# Create runtime image with jlink
-./gradlew jlink
+# Create runtime image with jlink (via org.beryx.runtime plugin)
+./gradlew runtime
 
 # Create Windows installer with jpackage (requires Windows + WiX Toolset)
 ./gradlew jpackage
@@ -51,7 +51,10 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 # Create portable ZIP
 ./gradlew createPortableZip
 
-# Or build everything at once (jlink + jpackage + jpackageImage + portable ZIP)
+# Suggest which JDK modules are needed by dependencies
+./gradlew suggestModules
+
+# Build everything at once (installer + portable ZIP)
 ./gradlew buildDistribution
 ```
 

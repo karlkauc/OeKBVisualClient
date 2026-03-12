@@ -5,6 +5,7 @@ plugins {
     application
     idea
     id("com.github.ben-manes.versions") version "0.53.0"
+    id("org.beryx.runtime") version "2.0.1"
 }
 
 application {
@@ -27,14 +28,6 @@ repositories {
 
 val poiVersion = "5.5.0"
 val log4jVersion = "2.24.3"
-
-configurations {
-    implementation {
-        exclude(module = "stax")
-        exclude(module = "stax-api")
-        exclude(module = "xpp3")
-    }
-}
 
 dependencies {
     // Logging
@@ -67,12 +60,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
-    testImplementation("net.bytebuddy:byte-buddy:1.15.10")  // Latest ByteBuddy for Java 23
+    testImplementation("net.bytebuddy:byte-buddy:1.15.10")
 }
 
 tasks.test {
     useJUnitPlatform()
-    // Enable ByteBuddy experimental mode for Java 23 support
     jvmArgs("-Dnet.bytebuddy.experimental=true")
 }
 
@@ -93,216 +85,104 @@ tasks.jar {
     exclude("**/isinlei.csv")
 }
 
-tasks.register<Copy>("copyFiles") {
-    doLast {
-        copy {
-            from(zipTree("jre.zip"))
-            into(layout.buildDirectory.dir(project.name))
-        }
-        copy {
-            from("LICENSE", "README.md")
-            into(layout.buildDirectory.dir(project.name))
-        }
-        copy {
-            val resourceDir = sourceSets.main.get().resources.srcDirs.first()
-            from("$resourceDir${File.separator}isinlei.csv", "$resourceDir${File.separator}log4j2.properties")
-            into(layout.buildDirectory.dir("${project.name}/resources"))
-        }
-
-        layout.buildDirectory.dir("${project.name}/logs").get().asFile.mkdirs()
-    }
-}
-
 /* ============================================
-   NATIVE JLINK & JPACKAGE TASKS
+   NATIVE DISTRIBUTION (org.beryx.runtime)
    ============================================ */
 
 val appName = "OeKBVisualClient"
-val appVersion = project.version.toString()
-val mainClassName = application.mainClass.get()
 
-// Prepare dependencies
-tasks.register<Copy>("prepareDependencies") {
-    group = "distribution"
-    description = "Copies all dependencies to build/jars"
+runtime {
+    options.set(listOf(
+        "--strip-debug", "--no-header-files", "--no-man-pages",
+        "--compress", "zip-9"
+    ))
 
-    from(configurations.runtimeClasspath)
-    into(layout.buildDirectory.dir("jars"))
+    modules.set(listOf(
+        "java.base", "java.desktop", "java.logging", "java.sql",
+        "java.xml", "java.management", "java.naming", "java.prefs",
+        "jdk.unsupported",
+        "javafx.controls", "javafx.fxml", "javafx.graphics", "javafx.base"
+    ))
 
-    dependsOn("jar")
+    jpackage {
+        imageName = appName
+        installerName = appName
+        appVersion = project.version.toString()
+        installerType = "msi"
 
-    doLast {
-        copy {
-            from(tasks.jar.get().archiveFile)
-            into(layout.buildDirectory.dir("jars"))
-        }
-    }
-}
-
-// Native jlink task
-tasks.register<Exec>("jlink") {
-    group = "distribution"
-    description = "Creates a custom runtime image using jlink"
-    dependsOn("prepareDependencies")
-
-    val outputDir = layout.buildDirectory.dir("image").get().asFile
-    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
-
-    doFirst {
-        outputDir.deleteRecursively()
-        outputDir.mkdirs()
-
-        val modulePath = jarsDir.absolutePath
-        val javaHome = System.getProperty("java.home")
-
-        commandLine(
-            "$javaHome/bin/jlink",
-            "--module-path", "$javaHome/jmods${File.pathSeparator}$modulePath",
-            "--add-modules", "java.base,java.desktop,java.logging,java.sql,java.xml,jdk.unsupported",
-            "--add-modules", "javafx.controls,javafx.fxml,javafx.graphics,javafx.base",
-            "--add-modules", "java.management,java.naming,java.prefs",
-            "--strip-debug",
-            "--no-header-files",
-            "--no-man-pages",
-            "--compress=2",
-            "--output", outputDir.absolutePath
-        )
-    }
-}
-
-// Native jpackage task - App Image only
-tasks.register<Exec>("jpackageImage") {
-    group = "distribution"
-    description = "Creates an application image (no installer) using jpackage"
-    dependsOn("prepareDependencies")
-
-    val outputDir = layout.buildDirectory.dir("jpackage").get().asFile
-    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
-    val resourceDir = file("src/main/resources")
-
-    doFirst {
-        outputDir.mkdirs()
-
-        val javaHome = System.getProperty("java.home")
-        val classpath = fileTree(jarsDir).files.joinToString(File.pathSeparator) { it.absolutePath }
-
-        val args = mutableListOf(
-            "$javaHome/bin/jpackage",
-            "--type", "app-image",
-            "--name", appName,
-            "--app-version", appVersion,
-            "--vendor", "Karl Kauc",
-            "--copyright", "Copyright © 2024 Karl Kauc",
-            "--description", "OeKB Visual Client",
-            "--input", jarsDir.absolutePath,
-            "--main-jar", tasks.jar.get().archiveFileName.get(),
-            "--main-class", mainClassName,
-            "--java-options", "--enable-native-access=javafx.graphics",
-            "--dest", outputDir.absolutePath,
-            "--resource-dir", resourceDir.absolutePath
+        jvmArgs = listOf(
+            "--enable-native-access=javafx.graphics",
+            "-XX:+UseG1GC",
+            "-XX:+UseStringDeduplication",
+            "-Xms64m",
+            "-Xmx512m"
         )
 
-        // Add icon if available
-        val iconFile = file("src/main/resources/img/connectdevelop.ico")
-        if (iconFile.exists()) {
-            args.addAll(listOf("--icon", iconFile.absolutePath))
+        imageOptions = mutableListOf(
+            "--vendor", "Karl Kauc",
+            "--copyright", "Copyright © 2025 Karl Kauc",
+            "--description", "OeKB Visual Client"
+        ).also { opts ->
+            val iconFile = file("img/icons8-connectdevelop.ico")
+            if (iconFile.exists()) {
+                opts.addAll(listOf("--icon", iconFile.absolutePath))
+            }
         }
 
-        commandLine(args)
-    }
-}
-
-// Native jpackage task - MSI Installer
-tasks.register<Exec>("jpackage") {
-    group = "distribution"
-    description = "Creates a Windows MSI installer using jpackage"
-    dependsOn("prepareDependencies")
-
-    val outputDir = layout.buildDirectory.dir("jpackage").get().asFile
-    val jarsDir = layout.buildDirectory.dir("jars").get().asFile
-    val resourceDir = file("src/main/resources")
-    val licenseFile = file("LICENSE")
-
-    doFirst {
-        outputDir.mkdirs()
-
-        val javaHome = System.getProperty("java.home")
-
-        val args = mutableListOf(
-            "$javaHome/bin/jpackage",
-            "--type", "msi",
-            "--name", appName,
-            "--app-version", appVersion,
+        installerOptions = mutableListOf(
             "--vendor", "Karl Kauc",
-            "--copyright", "Copyright © 2024 Karl Kauc",
+            "--copyright", "Copyright © 2025 Karl Kauc",
             "--description", "OeKB Visual Client for Financial Data Platform",
-            "--input", jarsDir.absolutePath,
-            "--main-jar", tasks.jar.get().archiveFileName.get(),
-            "--main-class", mainClassName,
-            "--java-options", "--enable-native-access=javafx.graphics",
-            "--dest", outputDir.absolutePath,
-            "--resource-dir", resourceDir.absolutePath,
             "--win-per-user-install",
             "--win-dir-chooser",
             "--win-menu",
             "--win-shortcut",
             "--win-shortcut-prompt"
-        )
-
-        // Add license if available
-        if (licenseFile.exists()) {
-            args.addAll(listOf("--license-file", licenseFile.absolutePath))
+        ).also { opts ->
+            val licenseFile = file("LICENSE")
+            if (licenseFile.exists()) {
+                opts.addAll(listOf("--license-file", licenseFile.absolutePath))
+            }
+            val iconFile = file("img/icons8-connectdevelop.ico")
+            if (iconFile.exists()) {
+                opts.addAll(listOf("--icon", iconFile.absolutePath))
+            }
         }
-
-        // Add icon if available
-        val iconFile = file("src/main/resources/img/connectdevelop.ico")
-        if (iconFile.exists()) {
-            args.addAll(listOf("--icon", iconFile.absolutePath))
-        }
-
-        commandLine(args)
     }
 }
 
-// Task to create portable ZIP from app image
+// Portable ZIP from app-image
 tasks.register<Zip>("createPortableZip") {
     group = "distribution"
     description = "Creates a portable ZIP package of the application"
     dependsOn("jpackageImage")
 
     from(layout.buildDirectory.dir("jpackage/$appName"))
-    archiveFileName.set("$appName-$appVersion-windows-x64.zip")
+    archiveFileName.set("$appName-${project.version}-windows-x64.zip")
     destinationDirectory.set(layout.buildDirectory.dir("jpackage"))
-
-    doFirst {
-        println("Creating portable ZIP package...")
-    }
 }
 
-// Task to create runtime image
+// Alias tasks for backwards compatibility
 tasks.register("createRuntimeImage") {
     group = "distribution"
     description = "Creates a custom runtime image using jlink"
-    dependsOn("jlink")
+    dependsOn("runtime")
 }
 
-// Task to create Windows installer
 tasks.register("createWindowsInstaller") {
     group = "distribution"
     description = "Creates a Windows MSI installer using jpackage"
     dependsOn("jpackage")
 }
 
-// Task to create app image
 tasks.register("createAppImage") {
     group = "distribution"
     description = "Creates a portable application image (no installer)"
     dependsOn("jpackageImage")
 }
 
-// Task to build all distribution packages
 tasks.register("buildDistribution") {
     group = "distribution"
-    description = "Builds complete distribution with runtime image, installer, and portable ZIP"
+    description = "Builds complete distribution with installer and portable ZIP"
     dependsOn("jpackage", "createPortableZip")
 }

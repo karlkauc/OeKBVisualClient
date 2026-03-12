@@ -2,13 +2,13 @@
 
 ## Native Windows Installer
 
-This project uses jlink and jpackage to create native Windows installers with a bundled Java runtime.
+This project uses the [badass-runtime plugin](https://github.com/beryx/badass-runtime-plugin) (`org.beryx.runtime` v2.0.1) to create native Windows installers with a bundled Java runtime via jlink and jpackage.
 
 ### Prerequisites
 
 - **JDK 17 or higher** with jpackage support (included in OpenJDK 17+)
 - **WiX Toolset** (for MSI installer on Windows): https://wixtoolset.org/
-- **Gradle 8.11.1+** (included via wrapper)
+- **Gradle 9.2.1+** (included via wrapper)
 
 ### Building on Windows
 
@@ -19,7 +19,7 @@ This project uses jlink and jpackage to create native Windows installers with a 
 
 #### 2. Create Runtime Image (jlink)
 ```bash
-./gradlew jlink
+./gradlew runtime
 ```
 This creates a custom JRE in `build/image/` with only required modules.
 
@@ -39,44 +39,47 @@ This creates a portable ZIP file in `build/jpackage/` that can be extracted and 
 ```bash
 ./gradlew buildDistribution
 ```
-This creates runtime image, MSI installer, and portable ZIP.
+This creates MSI installer, app-image, and portable ZIP.
 
 ### Installer Features
 
 The generated Windows installer:
-- ✅ **No Admin Rights Required** - Uses per-user installation (`--win-per-user-install`)
-- ✅ **Custom Install Directory** - User can choose installation location
-- ✅ **Start Menu Integration** - Adds application to Windows Start Menu
-- ✅ **Desktop Shortcut** - Optional desktop shortcut
-- ✅ **Bundled JRE** - No separate Java installation needed
-- ✅ **Auto-Update Ready** - Version management built-in
+- **No Admin Rights Required** - Uses per-user installation
+- **Custom Install Directory** - User can choose installation location
+- **Start Menu Integration** - Adds application to Windows Start Menu
+- **Desktop Shortcut** - Optional desktop shortcut
+- **Bundled JRE** - No separate Java installation needed, stripped to minimum modules
+- **Performance Optimized** - G1GC, String deduplication, tuned heap settings
 
 ### Available Gradle Tasks
 
 | Task | Description |
 |------|-------------|
-| `./gradlew jlink` | Creates custom runtime image with jlink |
-| `./gradlew jpackage` | Creates Windows MSI installer with jpackage |
+| `./gradlew runtime` | Creates custom runtime image with jlink |
+| `./gradlew runtimeZip` | Creates a ZIP of the runtime image |
+| `./gradlew jpackage` | Creates Windows MSI installer |
 | `./gradlew jpackageImage` | Creates app image without installer |
-| `./gradlew createRuntimeImage` | Alias for jlink |
-| `./gradlew createWindowsInstaller` | Alias for jpackage |
-| `./gradlew createAppImage` | Creates portable app image |
-| `./gradlew createPortableZip` | Creates portable ZIP (no install needed) |
-| `./gradlew buildDistribution` | Builds everything (runtime + installer + ZIP) |
+| `./gradlew suggestModules` | Suggests JDK modules needed by dependencies |
+| `./gradlew createRuntimeImage` | Alias for `runtime` |
+| `./gradlew createWindowsInstaller` | Alias for `jpackage` |
+| `./gradlew createAppImage` | Alias for `jpackageImage` |
+| `./gradlew createPortableZip` | Creates portable ZIP from app image |
+| `./gradlew buildDistribution` | Builds everything (installer + portable ZIP) |
 
 ### Customization
 
-Edit `build.gradle.kts` to customize:
+Edit `build.gradle.kts` `runtime { }` block to customize:
 - **App Version**: Change `version = "0.4"`
-- **Vendor**: Change `vendor = "Karl Kauc"`
+- **Vendor/Copyright**: In `jpackage { imageOptions / installerOptions }`
 - **Installer Type**: Change `installerType = "msi"` to `"exe"`
+- **JVM Flags**: In `jpackage { jvmArgs }`
+- **JDK Modules**: In `runtime { modules.set(...) }`
 - **Icon**: Place `.ico` file at `src/main/resources/img/connectdevelop.ico`
 
 ### Output Files
 
 After successful build:
-- **Runtime Image**: `build/image/OeKBVisualClient/`
-- **Launcher**: `build/image/OeKBVisualClient/bin/OeKBVisualClient.bat`
+- **Runtime Image**: `build/image/`
 - **MSI Installer**: `build/jpackage/OeKBVisualClient-0.4.msi`
 - **Portable ZIP**: `build/jpackage/OeKBVisualClient-0.4-windows-x64.zip`
 - **App Image** (unzipped): `build/jpackage/OeKBVisualClient/`
@@ -94,6 +97,10 @@ After successful build:
 #### Icon not showing
 - Convert PNG to ICO format (256x256 recommended)
 - Place at: `src/main/resources/img/connectdevelop.ico`
+
+#### Module errors
+- Run `./gradlew suggestModules` to check which modules your dependencies need
+- Update the `modules.set(...)` list in `build.gradle.kts` accordingly
 
 ## GitHub Actions - Automatic Builds
 
@@ -115,8 +122,7 @@ The repository includes a GitHub Actions workflow that automatically builds Wind
 
 3. **Wait for Build**:
    - GitHub Actions automatically builds the Windows installer
-   - MSI file is uploaded to the release assets
-   - Build takes ~10-15 minutes
+   - MSI and ZIP files are uploaded to the release assets
 
 ### Manual Workflow Trigger
 
