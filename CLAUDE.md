@@ -8,11 +8,12 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 
 - **Java 17** - Target and source compatibility
 - **JavaFX 25** - UI framework (native components, no JFoenix)
-- **Gradle 8.11.1** - Build system with Kotlin DSL
-- **Ikonli 12.4.0** - Font icon library (Bootstrap Icons pack)
-- **Apache POI 5.3.0** - Excel file processing
+- **Gradle 9.2.1** - Build system with Kotlin DSL
+- **Ikonli 12.4.0** - Font icon library (Bootstrap, Win10, Feather, CoreUI, FontAwesome packs)
+- **Apache POI 5.5.0** - Excel file processing
 - **Apache HttpComponents 5.4.1** - HTTP client for API communication
 - **Log4j 2.24.3** - Logging framework
+- **JUnit 5.11.4 / Mockito 5.14.2** - Testing framework
 
 ## Quick Start
 
@@ -36,7 +37,7 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 ./gradlew clean build
 ```
 
-### Create Windows Installer
+### Create Distribution Packages
 ```bash
 # Create runtime image with jlink
 ./gradlew jlink
@@ -44,7 +45,13 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 # Create Windows installer with jpackage (requires Windows + WiX Toolset)
 ./gradlew jpackage
 
-# Or build everything at once
+# Create app image without installer
+./gradlew jpackageImage
+
+# Create portable ZIP
+./gradlew createPortableZip
+
+# Or build everything at once (jlink + jpackage + jpackageImage + portable ZIP)
 ./gradlew buildDistribution
 ```
 
@@ -56,29 +63,54 @@ See [BUILD.md](BUILD.md) for detailed build instructions and GitHub Actions setu
 ```
 src/main/
 ├── java/
-│   ├── controller/          # FXML controllers for each page
-│   ├── dao/                 # Data access objects (HTTP, Access Rights)
+│   ├── common/              # Utility classes (XMLHelper)
+│   ├── controller/          # FXML controllers for each page (16 classes)
+│   ├── dao/                 # Data access objects (HTTP, Access Rights, Excel)
 │   ├── model/               # Data models and business objects
 │   └── StartApp.java        # Application entry point
 └── resources/
-    ├── css/
-    │   └── modern-theme.css # Professional financial UI theme
-    ├── pages/               # FXML UI definitions
+    ├── css/                 # Stylesheets (modern-theme.css, client.css, color-functions.css)
+    ├── sass/                # SCSS source (client.scss → client.css)
+    ├── fonts/               # Custom fonts (OpenSans.ttf)
+    ├── pages/               # FXML UI definitions (16 pages)
     ├── img/                 # Image resources (minimal, using font icons)
+    ├── xsd/                 # XML Schema definitions (FundsXML, OeNBCheck)
     └── log4j2.properties    # Logging configuration
+src/test/
+├── java/
+│   ├── common/              # XMLHelperTest
+│   └── dao/                 # FundEnhancerTest, OeKBHTTPTest
+└── resources/
+    └── mockito-extensions/  # Mockito configuration
 ```
 
 ### Design Patterns
 
-#### 1. FXML-Controller Pattern
+#### 1. Dependency Injection via Interface
+`IApplicationSettings` is an interface that abstracts application settings, enabling dependency injection for testability. Controllers and DAOs depend on `IApplicationSettings` rather than the concrete `ApplicationSettings` class.
+
+#### 2. FXML-Controller Pattern
 Each page has an FXML file paired with a Java controller:
 - `pageMain.fxml` ↔ `MainController.java`
+- `pageAbout.fxml` ↔ `About.java`
 - `pageApplicationSettings.fxml` ↔ `ApplicationSettings.java`
 - `pageAccessRightGrant.fxml` ↔ `AccessRightGrant.java`
+- `pageAccesRightsReceived.fxml` ↔ `AccessRightsReceived.java`
+- `pageAvailableData.fxml` ↔ `AvailableData.java`
+- `pageDataUpload.fxml` ↔ `DataUpload.java`
+- `pageDocumentDownload.fxml` ↔ `DocumentDownload.java`
+- `pageFundDownload.fxml` ↔ `FundDownload.java`
+- `pageJournal.fxml` ↔ `JournalController.java`
+- `pageNewInformation.fxml` ↔ `NewInformationController.java`
+- `pageOFI_new.fxml` ↔ `OFI.java`
+- `pageOwnDataDownloaded.fxml` ↔ `OwnDataDownloaded.java`
+- `pageRegulatoryReporting.fxml` ↔ `RegulatoryReportingDownload.java`
+- `pageShareClassDownload.fxml` ↔ `ShareClassDownload.java`
+- `dialogAccessRuleEdit.fxml` ↔ `AccessRuleEditDialog.java`
 
 Controllers handle UI logic and user interactions, while FXML defines the layout.
 
-#### 2. Professional UI Theme
+#### 3. Professional UI Theme
 The application uses a conservative financial institution design:
 - **Primary Color**: `#003d5c` (Deep Blue - Trust & Stability)
 - **Accent Color**: `#c8102e` (Austrian Red - OeKB branding)
@@ -86,8 +118,8 @@ The application uses a conservative financial institution design:
 - **Border Radius**: 3-4px (traditional look)
 - **CSS Classes**: Use `-compact` suffix for space-efficient layouts
 
-#### 3. Icon Integration
-All menu icons use Ikonli font icons (Bootstrap Icons pack):
+#### 4. Icon Integration
+All menu icons use Ikonli font icons (Bootstrap, Win10, Feather, CoreUI, FontAwesome packs):
 ```xml
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -198,17 +230,20 @@ git push
 ## Application Features
 
 ### Core Modules
-1. **Settings** - Configure OeKB credentials, proxy settings, application options
-2. **Access Rights Received** - View received data access permissions
-3. **Grant Rights** - Manage access rights for other institutions
-4. **Data Upload** - Upload financial data to OeKB FDP
-5. **OeNB Meldung** - Austrian National Bank reporting
+1. **About** - Application information and version details
+2. **Settings** - Configure OeKB credentials, proxy settings, application options
+3. **Access Rights Received** - View received data access permissions
+4. **Grant Rights** - Manage access rights for other institutions
+5. **Data Upload** - Upload financial data to OeKB FDP
 6. **Fund Download** - Download fund data
 7. **ShareClass Download** - Download share class information
 8. **Documents** - Document management
 9. **Regulatory Reporting** - Compliance reporting tools
 10. **Available Data** - Browse available datasets
-11. **Download Stats** - View download statistics and history
+11. **Own Data Downloaded** - View own downloaded data history
+12. **Journal** - Activity journal and audit log
+13. **New Information** - View new information notifications
+14. **OFI** - OFI (Offene Fonds Information) management
 
 ### Data Supplier (DDS)
 The application supports switching between different Data Supplier IDs via the menu sidebar.
