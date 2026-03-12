@@ -1,18 +1,26 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
 import java.util.Date
 
 plugins {
     java
     application
     idea
+    jacoco
+    pmd
+    checkstyle
     id("com.github.ben-manes.versions") version "0.53.0"
     id("org.beryx.runtime") version "2.0.1"
+    id("com.github.spotbugs") version "6.4.8"
+    id("com.diffplug.spotless") version "8.3.0"
 }
 
 application {
     mainClass.set("StartApp")
-    applicationDefaultJvmArgs = listOf(
-        "--enable-native-access=javafx.graphics"
-    )
+    applicationDefaultJvmArgs =
+        listOf(
+            "--enable-native-access=javafx.graphics",
+        )
 }
 
 version = "0.4"
@@ -68,6 +76,100 @@ tasks.test {
     jvmArgs("-Dnet.bytebuddy.experimental=true")
 }
 
+/* ============================================
+   CODE QUALITY TOOLS
+   ============================================ */
+
+// --- JaCoCo ---
+jacoco {
+    toolVersion = "0.8.14"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.0".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
+}
+
+// --- PMD ---
+pmd {
+    toolVersion = "7.22.0"
+    isConsoleOutput = true
+    isIgnoreFailures = true
+    ruleSetFiles = files("config/pmd/pmd-ruleset.xml")
+    ruleSets = listOf()
+}
+
+tasks.withType<Pmd> {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+// --- Checkstyle ---
+checkstyle {
+    toolVersion = "10.26.1"
+    configFile = file("config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = true
+}
+
+tasks.withType<Checkstyle> {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+// --- SpotBugs ---
+spotbugs {
+    effort.set(Effort.DEFAULT)
+    reportLevel.set(Confidence.DEFAULT)
+    ignoreFailures.set(true)
+    excludeFilter.set(file("config/spotbugs/spotbugs-exclude.xml"))
+}
+
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+    reports.create("html") {
+        required.set(true)
+    }
+    reports.create("xml") {
+        required.set(true)
+    }
+}
+
+// --- Spotless ---
+spotless {
+    java {
+        target("src/*/java/**/*.java")
+        eclipse()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint()
+    }
+}
+
 tasks.jar {
     manifest {
         attributes(
@@ -76,7 +178,7 @@ tasks.jar {
             "Implementation-Version" to version,
             "Built-By" to System.getProperty("user.name"),
             "Built-Date" to Date(),
-            "Built-JDK" to System.getProperty("java.version")
+            "Built-JDK" to System.getProperty("java.version"),
         )
     }
     exclude("**/*.txt")
@@ -92,17 +194,33 @@ tasks.jar {
 val appName = "OeKBVisualClient"
 
 runtime {
-    options.set(listOf(
-        "--strip-debug", "--no-header-files", "--no-man-pages",
-        "--compress", "zip-9"
-    ))
+    options.set(
+        listOf(
+            "--strip-debug",
+            "--no-header-files",
+            "--no-man-pages",
+            "--compress",
+            "zip-9",
+        ),
+    )
 
-    modules.set(listOf(
-        "java.base", "java.desktop", "java.logging", "java.sql",
-        "java.xml", "java.management", "java.naming", "java.prefs",
-        "jdk.unsupported",
-        "javafx.controls", "javafx.fxml", "javafx.graphics", "javafx.base"
-    ))
+    modules.set(
+        listOf(
+            "java.base",
+            "java.desktop",
+            "java.logging",
+            "java.sql",
+            "java.xml",
+            "java.management",
+            "java.naming",
+            "java.prefs",
+            "jdk.unsupported",
+            "javafx.controls",
+            "javafx.fxml",
+            "javafx.graphics",
+            "javafx.base",
+        ),
+    )
 
     jpackage {
         imageName = appName
@@ -110,44 +228,53 @@ runtime {
         appVersion = project.version.toString()
         installerType = "msi"
 
-        jvmArgs = listOf(
-            "--enable-native-access=javafx.graphics",
-            "-XX:+UseG1GC",
-            "-XX:+UseStringDeduplication",
-            "-Xms64m",
-            "-Xmx512m"
-        )
+        jvmArgs =
+            listOf(
+                "--enable-native-access=javafx.graphics",
+                "-XX:+UseG1GC",
+                "-XX:+UseStringDeduplication",
+                "-Xms64m",
+                "-Xmx512m",
+            )
 
-        imageOptions = mutableListOf(
-            "--vendor", "Karl Kauc",
-            "--copyright", "Copyright © 2025 Karl Kauc",
-            "--description", "OeKB Visual Client"
-        ).also { opts ->
-            val iconFile = file("img/icons8-connectdevelop.ico")
-            if (iconFile.exists()) {
-                opts.addAll(listOf("--icon", iconFile.absolutePath))
+        imageOptions =
+            mutableListOf(
+                "--vendor",
+                "Karl Kauc",
+                "--copyright",
+                "Copyright © 2025 Karl Kauc",
+                "--description",
+                "OeKB Visual Client",
+            ).also { opts ->
+                val iconFile = file("img/icons8-connectdevelop.ico")
+                if (iconFile.exists()) {
+                    opts.addAll(listOf("--icon", iconFile.absolutePath))
+                }
             }
-        }
 
-        installerOptions = mutableListOf(
-            "--vendor", "Karl Kauc",
-            "--copyright", "Copyright © 2025 Karl Kauc",
-            "--description", "OeKB Visual Client for Financial Data Platform",
-            "--win-per-user-install",
-            "--win-dir-chooser",
-            "--win-menu",
-            "--win-shortcut",
-            "--win-shortcut-prompt"
-        ).also { opts ->
-            val licenseFile = file("LICENSE")
-            if (licenseFile.exists()) {
-                opts.addAll(listOf("--license-file", licenseFile.absolutePath))
+        installerOptions =
+            mutableListOf(
+                "--vendor",
+                "Karl Kauc",
+                "--copyright",
+                "Copyright © 2025 Karl Kauc",
+                "--description",
+                "OeKB Visual Client for Financial Data Platform",
+                "--win-per-user-install",
+                "--win-dir-chooser",
+                "--win-menu",
+                "--win-shortcut",
+                "--win-shortcut-prompt",
+            ).also { opts ->
+                val licenseFile = file("LICENSE")
+                if (licenseFile.exists()) {
+                    opts.addAll(listOf("--license-file", licenseFile.absolutePath))
+                }
+                val iconFile = file("img/icons8-connectdevelop.ico")
+                if (iconFile.exists()) {
+                    opts.addAll(listOf("--icon", iconFile.absolutePath))
+                }
             }
-            val iconFile = file("img/icons8-connectdevelop.ico")
-            if (iconFile.exists()) {
-                opts.addAll(listOf("--icon", iconFile.absolutePath))
-            }
-        }
     }
 }
 

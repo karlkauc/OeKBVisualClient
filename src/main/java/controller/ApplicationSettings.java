@@ -32,127 +32,124 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ApplicationSettings implements Initializable {
-    private static final Logger log = LogManager.getLogger(ApplicationSettings.class);
+	private static final Logger log = LogManager.getLogger(ApplicationSettings.class);
 
-    private model.ApplicationSettings settingsData;
+	private model.ApplicationSettings settingsData;
 
-    // Data Supplier codes from Liste+DataSupplier.pdf (Stand: 10.12.2024)
-    private static final List<String> DATA_SUPPLIERS = Arrays.asList(
-            // Datenmelder/Datenbezieher
-            "FUM", "3BA", "AIB", "AMP", "CAP", "BAI", "EAM", "EIK", "FTCFFS", "GUT",
-            "CSP", "KEP", "CPI", "CON", "INV", "HYP", "PFSSICAV", "RIK", "RAI", "SKW",
-            "SEC", "ASL", "VBI",
-            // Datenbezieher only
-            "Dolomiten", "EDRF", "EDR", "Fenion", "Finee", "FOCUS", "NOEVERS", "RZB",
-            "UniCredit", "ssat",
-            // Datenvendor
-            "FactSet", "ThomsonReuters",
-            // OeKB
-            "OeKB"
-    );
+	// Data Supplier codes from Liste+DataSupplier.pdf (Stand: 10.12.2024)
+	private static final List<String> DATA_SUPPLIERS = Arrays.asList(
+			// Datenmelder/Datenbezieher
+			"FUM", "3BA", "AIB", "AMP", "CAP", "BAI", "EAM", "EIK", "FTCFFS", "GUT", "CSP", "KEP", "CPI", "CON", "INV",
+			"HYP", "PFSSICAV", "RIK", "RAI", "SKW", "SEC", "ASL", "VBI",
+			// Datenbezieher only
+			"Dolomiten", "EDRF", "EDR", "Fenion", "Finee", "FOCUS", "NOEVERS", "RZB", "UniCredit", "ssat",
+			// Datenvendor
+			"FactSet", "ThomsonReuters",
+			// OeKB
+			"OeKB");
 
-    @FXML
-    private TextField userNameField;
+	@FXML
+	private TextField userNameField;
 
-    @FXML
-    private PasswordField passwordField;
+	@FXML
+	private PasswordField passwordField;
 
-    @FXML
-    private ComboBox<String> dataSupplierComboBox;
+	@FXML
+	private ComboBox<String> dataSupplierComboBox;
 
-    @FXML
-    private Button save;
+	@FXML
+	private Button save;
 
-    @FXML
-    private TextField proxyHost;
+	@FXML
+	private TextField proxyHost;
 
-    @FXML
-    private TextField proxyPort;
+	@FXML
+	private TextField proxyPort;
 
-    @FXML
-    private CheckBox proxySystemSettings;
+	@FXML
+	private CheckBox proxySystemSettings;
 
-    @FXML
-    private CheckBox jbOverwriteData;
+	@FXML
+	private CheckBox jbOverwriteData;
 
-    @FXML
-    private CheckBox jbNewAccesRuleId;
+	@FXML
+	private CheckBox jbNewAccesRuleId;
 
-    @FXML
-    private TextField proxyUser;
+	@FXML
+	private TextField proxyUser;
 
-    @FXML
-    private PasswordField proxyPassword;
+	@FXML
+	private PasswordField proxyPassword;
 
-    @FXML
-    private CheckBox fileSystemCheckBox;
+	@FXML
+	private CheckBox fileSystemCheckBox;
 
-    @FXML
-    private TextField backupDirectoryField;
+	@FXML
+	private TextField backupDirectoryField;
 
-    @FXML
-    void saveSettings() {
-        settingsData.setOekbUserName(userNameField.getText());
-        settingsData.setOekbPasswort(passwordField.getText());
-        settingsData.setDataSupplierList(dataSupplierComboBox.getValue());
-        settingsData.setConnectionProxyHost(proxyHost.getText());
+	@FXML
+	void saveSettings() {
+		settingsData.setOekbUserName(userNameField.getText());
+		settingsData.setOekbPasswort(passwordField.getText());
+		settingsData.setDataSupplierList(dataSupplierComboBox.getValue());
+		settingsData.setConnectionProxyHost(proxyHost.getText());
 
-        if (proxyPort.getText() != null && proxyPort.getText().length() > 1) {
-            settingsData.setConnectionProxyPort(Integer.parseInt(proxyPort.getText()));
-        } else {
-            settingsData.setConnectionProxyPort(null);
-        }
+		if (proxyPort.getText() != null && proxyPort.getText().length() > 1) {
+			settingsData.setConnectionProxyPort(Integer.parseInt(proxyPort.getText()));
+		} else {
+			settingsData.setConnectionProxyPort(null);
+		}
 
-        settingsData.setConnectionProxyUser(proxyUser.getText());
-        settingsData.setConnectionProxyPassword(proxyPassword.getText());
-        settingsData.setOverwriteData(jbOverwriteData.isSelected());
-        settingsData.setConnectionUseSystemSettings(proxySystemSettings.isSelected());
-        settingsData.setNewAccesRuleId(jbNewAccesRuleId.isSelected());
+		settingsData.setConnectionProxyUser(proxyUser.getText());
+		settingsData.setConnectionProxyPassword(proxyPassword.getText());
+		settingsData.setOverwriteData(jbOverwriteData.isSelected());
+		settingsData.setConnectionUseSystemSettings(proxySystemSettings.isSelected());
+		settingsData.setNewAccesRuleId(jbNewAccesRuleId.isSelected());
 
-        // Development & Testing settings
-        settingsData.setFileSystem(fileSystemCheckBox.isSelected());
-        settingsData.setBackupDirectory(backupDirectoryField.getText());
+		// Development & Testing settings
+		settingsData.setFileSystem(fileSystemCheckBox.isSelected());
+		settingsData.setBackupDirectory(backupDirectoryField.getText());
 
-        settingsData.saveSettingsDataToFile();
+		settingsData.saveSettingsDataToFile();
 
-        log.info("Settings saved - File System Mode: {}, Backup Directory: {}",
-                fileSystemCheckBox.isSelected(), backupDirectoryField.getText());
-    }
+		log.info("Settings saved - File System Mode: {}, Backup Directory: {}", fileSystemCheckBox.isSelected(),
+				backupDirectoryField.getText());
+	}
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        log.debug("starte controller für settings");
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		log.debug("starte controller für settings");
 
-        settingsData = model.ApplicationSettings.getInstance();
-        settingsData.readSettingsFromFile();
+		settingsData = model.ApplicationSettings.getInstance();
+		settingsData.readSettingsFromFile();
 
-        // Initialize ComboBox with Data Supplier codes
-        dataSupplierComboBox.setItems(FXCollections.observableArrayList(DATA_SUPPLIERS));
+		// Initialize ComboBox with Data Supplier codes
+		dataSupplierComboBox.setItems(FXCollections.observableArrayList(DATA_SUPPLIERS));
 
-        userNameField.setText(settingsData.getOekbUserName());
-        passwordField.setText(settingsData.getOekbPasswort());
+		userNameField.setText(settingsData.getOekbUserName());
+		passwordField.setText(settingsData.getOekbPasswort());
 
-        // Set current value in ComboBox
-        String currentDDS = settingsData.getDataSupplierList();
-        if (currentDDS != null && !currentDDS.isEmpty()) {
-            dataSupplierComboBox.setValue(currentDDS);
-        }
+		// Set current value in ComboBox
+		String currentDDS = settingsData.getDataSupplierList();
+		if (currentDDS != null && !currentDDS.isEmpty()) {
+			dataSupplierComboBox.setValue(currentDDS);
+		}
 
-        proxyHost.setText(settingsData.getConnectionProxyHost());
-        proxyUser.setText(settingsData.getConnectionProxyUser());
+		proxyHost.setText(settingsData.getConnectionProxyHost());
+		proxyUser.setText(settingsData.getConnectionProxyUser());
 
-        if (settingsData.getConnectionProxyPort() != null) {
-            proxyPort.setText(settingsData.getConnectionProxyPort().toString());
-        }
+		if (settingsData.getConnectionProxyPort() != null) {
+			proxyPort.setText(settingsData.getConnectionProxyPort().toString());
+		}
 
-        proxyPassword.setText(settingsData.getConnectionProxyPassword());
-        proxySystemSettings.setSelected(settingsData.isConnectionUseSystemSettings());
+		proxyPassword.setText(settingsData.getConnectionProxyPassword());
+		proxySystemSettings.setSelected(settingsData.isConnectionUseSystemSettings());
 
-        jbOverwriteData.setSelected(settingsData.isOverwriteData());
-        jbNewAccesRuleId.setSelected(settingsData.isNewAccesRuleId());
+		jbOverwriteData.setSelected(settingsData.isOverwriteData());
+		jbNewAccesRuleId.setSelected(settingsData.isNewAccesRuleId());
 
-        // Development & Testing settings
-        fileSystemCheckBox.setSelected(settingsData.isFileSystem());
-        backupDirectoryField.setText(settingsData.getBackupDirectory());
-    }
+		// Development & Testing settings
+		fileSystemCheckBox.setSelected(settingsData.isFileSystem());
+		backupDirectoryField.setText(settingsData.getBackupDirectory());
+	}
 }

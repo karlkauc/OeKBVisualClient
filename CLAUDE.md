@@ -37,6 +37,26 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 ./gradlew clean build
 ```
 
+### Code Quality Checks
+```bash
+# Run all checks (tests + JaCoCo + PMD + Checkstyle + SpotBugs)
+./gradlew check
+
+# Format code with Spotless
+./gradlew spotlessApply
+
+# Check formatting without fixing
+./gradlew spotlessCheck
+
+# Individual tool reports
+./gradlew jacocoTestReport    # Coverage → build/reports/jacoco/
+./gradlew pmdMain             # PMD → build/reports/pmd/
+./gradlew checkstyleMain      # Checkstyle → build/reports/checkstyle/
+./gradlew spotbugsMain        # SpotBugs → build/reports/spotbugs/
+```
+
+Configuration files are in the `config/` directory.
+
 ### Create Distribution Packages
 ```bash
 # Create runtime image with jlink (via org.beryx.runtime plugin)

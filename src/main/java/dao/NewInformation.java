@@ -40,226 +40,230 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * DAO for retrieving and parsing New Information data from OeKB FDP.
- * Based on FundsXML_NewInformation_1.0.2.xsd
+ * DAO for retrieving and parsing New Information data from OeKB FDP. Based on
+ * FundsXML_NewInformation_1.0.2.xsd
  */
 public class NewInformation {
-    private static final Logger log = LogManager.getLogger(NewInformation.class);
-    private final ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+	private static final Logger log = LogManager.getLogger(NewInformation.class);
+	private final ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
-    /**
-     * Get new information entries from OeKB FDP or filesystem
-     * Uses DOWNLOAD_AVAILABLE_DATA mode which provides similar information
-     *
-     * @param contentDate Content date filter (optional)
-     * @param uploadTimeFrom Upload time from filter (optional)
-     * @param uploadTimeTo Upload time to filter (optional)
-     * @return List of new information entries
-     */
-    public List<NewInformationEntry> getNewInformationEntries(LocalDate contentDate,
-                                                              LocalDateTime uploadTimeFrom,
-                                                              LocalDateTime uploadTimeTo) {
-        String xmlString;
+	/**
+	 * Get new information entries from OeKB FDP or filesystem Uses
+	 * DOWNLOAD_AVAILABLE_DATA mode which provides similar information
+	 *
+	 * @param contentDate
+	 *            Content date filter (optional)
+	 * @param uploadTimeFrom
+	 *            Upload time from filter (optional)
+	 * @param uploadTimeTo
+	 *            Upload time to filter (optional)
+	 * @return List of new information entries
+	 */
+	public List<NewInformationEntry> getNewInformationEntries(LocalDate contentDate, LocalDateTime uploadTimeFrom,
+			LocalDateTime uploadTimeTo) {
+		String xmlString;
 
-        if (applicationSettings.isFileSystem()) {
-            // Read from filesystem backup
-            File backupDir = new File(applicationSettings.getBackupDirectory());
-            File[] potentialFiles = backupDir.listFiles((dir, name) ->
-                    name.contains("DOWNLOAD_AVAILABLE_DATA.xml") ||
-                    name.contains("DOWNLOAD_NEWINFORMATION.xml"));
+		if (applicationSettings.isFileSystem()) {
+			// Read from filesystem backup
+			File backupDir = new File(applicationSettings.getBackupDirectory());
+			File[] potentialFiles = backupDir.listFiles((dir, name) -> name.contains("DOWNLOAD_AVAILABLE_DATA.xml")
+					|| name.contains("DOWNLOAD_NEWINFORMATION.xml"));
 
-            log.debug("Potential new information files: " + (potentialFiles != null ? Arrays.toString(potentialFiles) : "none"));
+			log.debug("Potential new information files: "
+					+ (potentialFiles != null ? Arrays.toString(potentialFiles) : "none"));
 
-            if (potentialFiles != null && potentialFiles.length > 0) {
-                File latestFile = Arrays.stream(potentialFiles)
-                        .max((f1, f2) -> f1.getName().compareTo(f2.getName()))
-                        .orElse(potentialFiles[0]);
-                log.debug("Reading new information from file: " + latestFile);
+			if (potentialFiles != null && potentialFiles.length > 0) {
+				File latestFile = Arrays.stream(potentialFiles).max((f1, f2) -> f1.getName().compareTo(f2.getName()))
+						.orElse(potentialFiles[0]);
+				log.debug("Reading new information from file: " + latestFile);
 
-                try {
-                    xmlString = new String(java.nio.file.Files.readAllBytes(latestFile.toPath()), StandardCharsets.UTF_8);
-                } catch (Exception e) {
-                    log.error("Error reading new information file", e);
-                    return new ArrayList<>();
-                }
-            } else {
-                log.warn("No new information backup files found");
-                return new ArrayList<>();
-            }
-        } else {
-            log.debug("Downloading new information from OeKB server");
-            xmlString = new OeKBHTTP().downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, null, null);
-        }
+				try {
+					xmlString = new String(java.nio.file.Files.readAllBytes(latestFile.toPath()),
+							StandardCharsets.UTF_8);
+				} catch (Exception e) {
+					log.error("Error reading new information file", e);
+					return new ArrayList<>();
+				}
+			} else {
+				log.warn("No new information backup files found");
+				return new ArrayList<>();
+			}
+		} else {
+			log.debug("Downloading new information from OeKB server");
+			xmlString = new OeKBHTTP().downloadAvailableData(contentDate, uploadTimeFrom, uploadTimeTo, null, null);
+		}
 
-        return parseNewInformationXml(xmlString);
-    }
+		return parseNewInformationXml(xmlString);
+	}
 
-    /**
-     * Parse FundsXML_NewInformation XML string into list of NewInformationEntry objects
-     */
-    private List<NewInformationEntry> parseNewInformationXml(String xmlString) {
-        List<NewInformationEntry> entries = new ArrayList<>();
+	/**
+	 * Parse FundsXML_NewInformation XML string into list of NewInformationEntry
+	 * objects
+	 */
+	private List<NewInformationEntry> parseNewInformationXml(String xmlString) {
+		List<NewInformationEntry> entries = new ArrayList<>();
 
-        if (xmlString == null || xmlString.isEmpty()) {
-            log.warn("Empty XML string for new information parsing");
-            return entries;
-        }
+		if (xmlString == null || xmlString.isEmpty()) {
+			log.warn("Empty XML string for new information parsing");
+			return entries;
+		}
 
-        try {
-            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
+		try {
+			DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
 
-            doc.getDocumentElement().normalize();
+			doc.getDocumentElement().normalize();
 
-            // Get all NewInformation elements (or AvailableData elements)
-            NodeList infoNodes = doc.getElementsByTagName("NewInformation");
-            if (infoNodes.getLength() == 0) {
-                // Try alternative structure
-                infoNodes = doc.getElementsByTagName("AvailableData");
-            }
+			// Get all NewInformation elements (or AvailableData elements)
+			NodeList infoNodes = doc.getElementsByTagName("NewInformation");
+			if (infoNodes.getLength() == 0) {
+				// Try alternative structure
+				infoNodes = doc.getElementsByTagName("AvailableData");
+			}
 
-            log.debug("Found " + infoNodes.getLength() + " new information entries");
+			log.debug("Found " + infoNodes.getLength() + " new information entries");
 
-            for (int i = 0; i < infoNodes.getLength(); i++) {
-                Node node = infoNodes.item(i);
+			for (int i = 0; i < infoNodes.getLength(); i++) {
+				Node node = infoNodes.item(i);
 
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    NewInformationEntry entry = parseNewInformationEntry(element);
-                    if (entry != null) {
-                        entries.add(entry);
-                    }
-                }
-            }
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					NewInformationEntry entry = parseNewInformationEntry(element);
+					if (entry != null) {
+						entries.add(entry);
+					}
+				}
+			}
 
-        } catch (Exception e) {
-            log.error("Error parsing new information XML", e);
-        }
+		} catch (Exception e) {
+			log.error("Error parsing new information XML", e);
+		}
 
-        return entries;
-    }
+		return entries;
+	}
 
-    /**
-     * Parse a single NewInformation element
-     */
-    private NewInformationEntry parseNewInformationEntry(Element element) {
-        try {
-            NewInformationEntry entry = new NewInformationEntry();
+	/**
+	 * Parse a single NewInformation element
+	 */
+	private NewInformationEntry parseNewInformationEntry(Element element) {
+		try {
+			NewInformationEntry entry = new NewInformationEntry();
 
-            // ContentType (FUND, DOC, REG)
-            String contentTypeStr = getElementText(element, "ContentType");
-            ContentType contentType = ContentType.fromString(contentTypeStr);
-            entry.setContentType(contentType);
+			// ContentType (FUND, DOC, REG)
+			String contentTypeStr = getElementText(element, "ContentType");
+			ContentType contentType = ContentType.fromString(contentTypeStr);
+			entry.setContentType(contentType);
 
-            // ContentDate
-            String contentDateStr = getElementText(element, "ContentDate");
-            if (!contentDateStr.isEmpty()) {
-                try {
-                    LocalDate contentDate = LocalDate.parse(contentDateStr);
-                    entry.setContentDate(contentDate);
-                } catch (DateTimeParseException e) {
-                    log.warn("Could not parse content date: " + contentDateStr);
-                }
-            }
+			// ContentDate
+			String contentDateStr = getElementText(element, "ContentDate");
+			if (!contentDateStr.isEmpty()) {
+				try {
+					LocalDate contentDate = LocalDate.parse(contentDateStr);
+					entry.setContentDate(contentDate);
+				} catch (DateTimeParseException e) {
+					log.warn("Could not parse content date: " + contentDateStr);
+				}
+			}
 
-            // UploadDateTime
-            String uploadDateTimeStr = getElementText(element, "UploadDateTime");
-            if (!uploadDateTimeStr.isEmpty()) {
-                try {
-                    LocalDateTime uploadDateTime = LocalDateTime.parse(uploadDateTimeStr, DateTimeFormatter.ISO_DATE_TIME);
-                    entry.setUploadDateTime(uploadDateTime);
-                } catch (DateTimeParseException e) {
-                    log.warn("Could not parse upload date time: " + uploadDateTimeStr);
-                }
-            }
+			// UploadDateTime
+			String uploadDateTimeStr = getElementText(element, "UploadDateTime");
+			if (!uploadDateTimeStr.isEmpty()) {
+				try {
+					LocalDateTime uploadDateTime = LocalDateTime.parse(uploadDateTimeStr,
+							DateTimeFormatter.ISO_DATE_TIME);
+					entry.setUploadDateTime(uploadDateTime);
+				} catch (DateTimeParseException e) {
+					log.warn("Could not parse upload date time: " + uploadDateTimeStr);
+				}
+			}
 
-            // DataSuppliers
-            NodeList dataSupplierNodes = element.getElementsByTagName("DataSupplier");
-            for (int i = 0; i < dataSupplierNodes.getLength(); i++) {
-                Element dsElement = (Element) dataSupplierNodes.item(i);
-                String dataSupplierShort = getElementText(dsElement, "Short");
-                if (!dataSupplierShort.isEmpty()) {
-                    entry.addDataSupplier(dataSupplierShort);
-                }
-            }
+			// DataSuppliers
+			NodeList dataSupplierNodes = element.getElementsByTagName("DataSupplier");
+			for (int i = 0; i < dataSupplierNodes.getLength(); i++) {
+				Element dsElement = (Element) dataSupplierNodes.item(i);
+				String dataSupplierShort = getElementText(dsElement, "Short");
+				if (!dataSupplierShort.isEmpty()) {
+					entry.addDataSupplier(dataSupplierShort);
+				}
+			}
 
-            // Fund/ShareClass identifiers
-            NodeList fundOrShareClassNodes = element.getElementsByTagName("FundOrShareclass");
-            if (fundOrShareClassNodes.getLength() > 0) {
-                Element fundElement = (Element) fundOrShareClassNodes.item(0);
+			// Fund/ShareClass identifiers
+			NodeList fundOrShareClassNodes = element.getElementsByTagName("FundOrShareclass");
+			if (fundOrShareClassNodes.getLength() > 0) {
+				Element fundElement = (Element) fundOrShareClassNodes.item(0);
 
-                // LEI
-                String lei = getElementText(fundElement, "LEI");
-                if (!lei.isEmpty()) {
-                    entry.setLei(lei);
-                }
+				// LEI
+				String lei = getElementText(fundElement, "LEI");
+				if (!lei.isEmpty()) {
+					entry.setLei(lei);
+				}
 
-                // ISINs
-                NodeList isinNodes = fundElement.getElementsByTagName("ISIN");
-                for (int i = 0; i < isinNodes.getLength(); i++) {
-                    String isin = isinNodes.item(i).getTextContent();
-                    if (isin != null && !isin.trim().isEmpty()) {
-                        entry.addIsin(isin.trim());
-                    }
-                }
-            }
+				// ISINs
+				NodeList isinNodes = fundElement.getElementsByTagName("ISIN");
+				for (int i = 0; i < isinNodes.getLength(); i++) {
+					String isin = isinNodes.item(i).getTextContent();
+					if (isin != null && !isin.trim().isEmpty()) {
+						entry.addIsin(isin.trim());
+					}
+				}
+			}
 
-            // DocumentTypes (for DOC content type)
-            if (contentType == ContentType.DOC) {
-                NodeList docTypeNodes = element.getElementsByTagName("DocumentType");
-                if (docTypeNodes.getLength() > 0) {
-                    Element docTypeElement = (Element) docTypeNodes.item(0);
+			// DocumentTypes (for DOC content type)
+			if (contentType == ContentType.DOC) {
+				NodeList docTypeNodes = element.getElementsByTagName("DocumentType");
+				if (docTypeNodes.getLength() > 0) {
+					Element docTypeElement = (Element) docTypeNodes.item(0);
 
-                    String listedType = getElementText(docTypeElement, "ListedType");
-                    String unlistedType = getElementText(docTypeElement, "UnlistedType");
-                    entry.setDocumentType(!listedType.isEmpty() ? listedType : unlistedType);
+					String listedType = getElementText(docTypeElement, "ListedType");
+					String unlistedType = getElementText(docTypeElement, "UnlistedType");
+					entry.setDocumentType(!listedType.isEmpty() ? listedType : unlistedType);
 
-                    String language = getElementText(docTypeElement, "Language");
-                    entry.setDocumentLanguage(language);
+					String language = getElementText(docTypeElement, "Language");
+					entry.setDocumentLanguage(language);
 
-                    String format = getElementText(docTypeElement, "Format");
-                    entry.setDocumentFormat(format);
-                }
-            }
+					String format = getElementText(docTypeElement, "Format");
+					entry.setDocumentFormat(format);
+				}
+			}
 
-            // RegulatoryReportings (for REG content type)
-            if (contentType == ContentType.REG) {
-                NodeList regTypeNodes = element.getElementsByTagName("Type");
-                if (regTypeNodes.getLength() > 0) {
-                    String reportingType = regTypeNodes.item(0).getTextContent();
-                    entry.setReportingType(reportingType);
-                }
-            }
+			// RegulatoryReportings (for REG content type)
+			if (contentType == ContentType.REG) {
+				NodeList regTypeNodes = element.getElementsByTagName("Type");
+				if (regTypeNodes.getLength() > 0) {
+					String reportingType = regTypeNodes.item(0).getTextContent();
+					entry.setReportingType(reportingType);
+				}
+			}
 
-            // Profiles
-            NodeList profileNodes = element.getElementsByTagName("Profile");
-            for (int i = 0; i < profileNodes.getLength(); i++) {
-                String profile = profileNodes.item(i).getTextContent();
-                if (profile != null && !profile.trim().isEmpty()) {
-                    entry.addProfile(profile.trim());
-                }
-            }
+			// Profiles
+			NodeList profileNodes = element.getElementsByTagName("Profile");
+			for (int i = 0; i < profileNodes.getLength(); i++) {
+				String profile = profileNodes.item(i).getTextContent();
+				if (profile != null && !profile.trim().isEmpty()) {
+					entry.addProfile(profile.trim());
+				}
+			}
 
-            return entry;
+			return entry;
 
-        } catch (Exception e) {
-            log.error("Error parsing new information entry", e);
-            return null;
-        }
-    }
+		} catch (Exception e) {
+			log.error("Error parsing new information entry", e);
+			return null;
+		}
+	}
 
-    /**
-     * Helper method to get text content of an element by tag name
-     */
-    private String getElementText(Element parent, String tagName) {
-        NodeList nodeList = parent.getElementsByTagName(tagName);
-        if (nodeList.getLength() > 0) {
-            Node node = nodeList.item(0);
-            if (node != null) {
-                return node.getTextContent();
-            }
-        }
-        return "";
-    }
+	/**
+	 * Helper method to get text content of an element by tag name
+	 */
+	private String getElementText(Element parent, String tagName) {
+		NodeList nodeList = parent.getElementsByTagName(tagName);
+		if (nodeList.getLength() > 0) {
+			Node node = nodeList.item(0);
+			if (node != null) {
+				return node.getTextContent();
+			}
+		}
+		return "";
+	}
 }

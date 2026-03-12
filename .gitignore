@@ -30,3 +30,11 @@ settings.xml
 *.ipr
 *.iws
 
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Eclipse Gradle build output
+bin/
+

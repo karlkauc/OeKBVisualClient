@@ -22,102 +22,100 @@ import java.time.LocalDateTime;
  * Model class for available data information
  */
 public class AvailableDataInfo {
-    public enum FDPContentType {
-        FUND("Fund Data"),
-        REG("Regulatory Reporting"),
-        DOC("Documents");
+	public enum FDPContentType {
+		FUND("Fund Data"), REG("Regulatory Reporting"), DOC("Documents");
 
-        private final String description;
+		private final String description;
 
-        FDPContentType(String description) {
-            this.description = description;
-        }
+		FDPContentType(String description) {
+			this.description = description;
+		}
 
-        public String getDescription() {
-            return description;
-        }
-    }
+		public String getDescription() {
+			return description;
+		}
+	}
 
-    private String identifier; // LEI, OeNB-ID or ISIN
-    private String identifierType;
-    private LocalDate contentDate;
-    private LocalDateTime uploadTime;
-    private FDPContentType contentType;
-    private String dataSupplierProvider;
-    private String fundName;
-    private boolean hasData;
+	private String identifier; // LEI, OeNB-ID or ISIN
+	private String identifierType;
+	private LocalDate contentDate;
+	private LocalDateTime uploadTime;
+	private FDPContentType contentType;
+	private String dataSupplierProvider;
+	private String fundName;
+	private boolean hasData;
 
-    public AvailableDataInfo() {
-    }
+	public AvailableDataInfo() {
+	}
 
-    public AvailableDataInfo(String identifier, LocalDate contentDate, FDPContentType contentType) {
-        this.identifier = identifier;
-        this.contentDate = contentDate;
-        this.contentType = contentType;
-    }
+	public AvailableDataInfo(String identifier, LocalDate contentDate, FDPContentType contentType) {
+		this.identifier = identifier;
+		this.contentDate = contentDate;
+		this.contentType = contentType;
+	}
 
-    // Getters and Setters
-    public String getIdentifier() {
-        return identifier;
-    }
+	// Getters and Setters
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 
-    public String getIdentifierType() {
-        return identifierType;
-    }
+	public String getIdentifierType() {
+		return identifierType;
+	}
 
-    public void setIdentifierType(String identifierType) {
-        this.identifierType = identifierType;
-    }
+	public void setIdentifierType(String identifierType) {
+		this.identifierType = identifierType;
+	}
 
-    public LocalDate getContentDate() {
-        return contentDate;
-    }
+	public LocalDate getContentDate() {
+		return contentDate;
+	}
 
-    public void setContentDate(LocalDate contentDate) {
-        this.contentDate = contentDate;
-    }
+	public void setContentDate(LocalDate contentDate) {
+		this.contentDate = contentDate;
+	}
 
-    public LocalDateTime getUploadTime() {
-        return uploadTime;
-    }
+	public LocalDateTime getUploadTime() {
+		return uploadTime;
+	}
 
-    public void setUploadTime(LocalDateTime uploadTime) {
-        this.uploadTime = uploadTime;
-    }
+	public void setUploadTime(LocalDateTime uploadTime) {
+		this.uploadTime = uploadTime;
+	}
 
-    public FDPContentType getContentType() {
-        return contentType;
-    }
+	public FDPContentType getContentType() {
+		return contentType;
+	}
 
-    public void setContentType(FDPContentType contentType) {
-        this.contentType = contentType;
-    }
+	public void setContentType(FDPContentType contentType) {
+		this.contentType = contentType;
+	}
 
-    public String getDataSupplierProvider() {
-        return dataSupplierProvider;
-    }
+	public String getDataSupplierProvider() {
+		return dataSupplierProvider;
+	}
 
-    public void setDataSupplierProvider(String dataSupplierProvider) {
-        this.dataSupplierProvider = dataSupplierProvider;
-    }
+	public void setDataSupplierProvider(String dataSupplierProvider) {
+		this.dataSupplierProvider = dataSupplierProvider;
+	}
 
-    public String getFundName() {
-        return fundName;
-    }
+	public String getFundName() {
+		return fundName;
+	}
 
-    public void setFundName(String fundName) {
-        this.fundName = fundName;
-    }
+	public void setFundName(String fundName) {
+		this.fundName = fundName;
+	}
 
-    public boolean isHasData() {
-        return hasData;
-    }
+	public boolean isHasData() {
+		return hasData;
+	}
 
-    public void setHasData(boolean hasData) {
-        this.hasData = hasData;
-    }
+	public void setHasData(boolean hasData) {
+		this.hasData = hasData;
+	}
 }

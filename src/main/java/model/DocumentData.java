@@ -21,128 +21,123 @@ import java.time.LocalDate;
  * Model class for Document download data
  */
 public class DocumentData {
-    public enum DocumentType {
-        AIFMD("AIFMD"),
-        ANNUAL_REPORT("AnnualReport"),
-        AUDIT_REPORT("AuditReport"),
-        FACTSHEET("Factsheet"),
-        KID("KID"),
-        PROSPECTUS("Prospectus"),
-        PRIIPS_KID("PRIIPS-KID");
+	public enum DocumentType {
+		AIFMD("AIFMD"), ANNUAL_REPORT("AnnualReport"), AUDIT_REPORT("AuditReport"), FACTSHEET("Factsheet"), KID(
+				"KID"), PROSPECTUS("Prospectus"), PRIIPS_KID("PRIIPS-KID");
 
-        private final String value;
+		private final String value;
 
-        DocumentType(String value) {
-            this.value = value;
-        }
+		DocumentType(String value) {
+			this.value = value;
+		}
 
-        public String getValue() {
-            return value;
-        }
-    }
+		public String getValue() {
+			return value;
+		}
+	}
 
-    private String identifier; // LEI, OeNB-ID or ISIN
-    private String identifierType; // LEI, OENB, ISIN
-    private DocumentType documentType;
-    private String customDocumentType; // for unlisted types
-    private LocalDate contentDate;
-    private String profile;
-    private String documentUrl;
-    private String fileName;
-    private String fundName;
-    private long fileSize;
+	private String identifier; // LEI, OeNB-ID or ISIN
+	private String identifierType; // LEI, OENB, ISIN
+	private DocumentType documentType;
+	private String customDocumentType; // for unlisted types
+	private LocalDate contentDate;
+	private String profile;
+	private String documentUrl;
+	private String fileName;
+	private String fundName;
+	private long fileSize;
 
-    public DocumentData() {
-    }
+	public DocumentData() {
+	}
 
-    public DocumentData(String identifier, DocumentType documentType, LocalDate contentDate) {
-        this.identifier = identifier;
-        this.documentType = documentType;
-        this.contentDate = contentDate;
-    }
+	public DocumentData(String identifier, DocumentType documentType, LocalDate contentDate) {
+		this.identifier = identifier;
+		this.documentType = documentType;
+		this.contentDate = contentDate;
+	}
 
-    // Getters and Setters
-    public String getIdentifier() {
-        return identifier;
-    }
+	// Getters and Setters
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 
-    public String getIdentifierType() {
-        return identifierType;
-    }
+	public String getIdentifierType() {
+		return identifierType;
+	}
 
-    public void setIdentifierType(String identifierType) {
-        this.identifierType = identifierType;
-    }
+	public void setIdentifierType(String identifierType) {
+		this.identifierType = identifierType;
+	}
 
-    public DocumentType getDocumentType() {
-        return documentType;
-    }
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
 
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-    }
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
 
-    public String getCustomDocumentType() {
-        return customDocumentType;
-    }
+	public String getCustomDocumentType() {
+		return customDocumentType;
+	}
 
-    public void setCustomDocumentType(String customDocumentType) {
-        this.customDocumentType = customDocumentType;
-    }
+	public void setCustomDocumentType(String customDocumentType) {
+		this.customDocumentType = customDocumentType;
+	}
 
-    public LocalDate getContentDate() {
-        return contentDate;
-    }
+	public LocalDate getContentDate() {
+		return contentDate;
+	}
 
-    public void setContentDate(LocalDate contentDate) {
-        this.contentDate = contentDate;
-    }
+	public void setContentDate(LocalDate contentDate) {
+		this.contentDate = contentDate;
+	}
 
-    public String getProfile() {
-        return profile;
-    }
+	public String getProfile() {
+		return profile;
+	}
 
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 
-    public String getDocumentUrl() {
-        return documentUrl;
-    }
+	public String getDocumentUrl() {
+		return documentUrl;
+	}
 
-    public void setDocumentUrl(String documentUrl) {
-        this.documentUrl = documentUrl;
-    }
+	public void setDocumentUrl(String documentUrl) {
+		this.documentUrl = documentUrl;
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public String getFileName() {
+		return fileName;
+	}
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
-    public String getFundName() {
-        return fundName;
-    }
+	public String getFundName() {
+		return fundName;
+	}
 
-    public void setFundName(String fundName) {
-        this.fundName = fundName;
-    }
+	public void setFundName(String fundName) {
+		this.fundName = fundName;
+	}
 
-    public long getFileSize() {
-        return fileSize;
-    }
+	public long getFileSize() {
+		return fileSize;
+	}
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
 
-    public String getDocumentTypeString() {
-        return documentType != null ? documentType.getValue() : customDocumentType;
-    }
+	public String getDocumentTypeString() {
+		return documentType != null ? documentType.getValue() : customDocumentType;
+	}
 }

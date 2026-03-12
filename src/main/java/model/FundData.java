@@ -21,68 +21,68 @@ import java.time.LocalDate;
  * Model class for Fund download data
  */
 public class FundData {
-    private String leiOenId;
-    private String fundName;
-    private LocalDate contentDate;
-    private String profile;
-    private String xmlContent;
-    private String status;
+	private String leiOenId;
+	private String fundName;
+	private LocalDate contentDate;
+	private String profile;
+	private String xmlContent;
+	private String status;
 
-    public FundData() {
-    }
+	public FundData() {
+	}
 
-    public FundData(String leiOenId, String fundName, LocalDate contentDate) {
-        this.leiOenId = leiOenId;
-        this.fundName = fundName;
-        this.contentDate = contentDate;
-    }
+	public FundData(String leiOenId, String fundName, LocalDate contentDate) {
+		this.leiOenId = leiOenId;
+		this.fundName = fundName;
+		this.contentDate = contentDate;
+	}
 
-    // Getters and Setters
-    public String getLeiOenId() {
-        return leiOenId;
-    }
+	// Getters and Setters
+	public String getLeiOenId() {
+		return leiOenId;
+	}
 
-    public void setLeiOenId(String leiOenId) {
-        this.leiOenId = leiOenId;
-    }
+	public void setLeiOenId(String leiOenId) {
+		this.leiOenId = leiOenId;
+	}
 
-    public String getFundName() {
-        return fundName;
-    }
+	public String getFundName() {
+		return fundName;
+	}
 
-    public void setFundName(String fundName) {
-        this.fundName = fundName;
-    }
+	public void setFundName(String fundName) {
+		this.fundName = fundName;
+	}
 
-    public LocalDate getContentDate() {
-        return contentDate;
-    }
+	public LocalDate getContentDate() {
+		return contentDate;
+	}
 
-    public void setContentDate(LocalDate contentDate) {
-        this.contentDate = contentDate;
-    }
+	public void setContentDate(LocalDate contentDate) {
+		this.contentDate = contentDate;
+	}
 
-    public String getProfile() {
-        return profile;
-    }
+	public String getProfile() {
+		return profile;
+	}
 
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 
-    public String getXmlContent() {
-        return xmlContent;
-    }
+	public String getXmlContent() {
+		return xmlContent;
+	}
 
-    public void setXmlContent(String xmlContent) {
-        this.xmlContent = xmlContent;
-    }
+	public void setXmlContent(String xmlContent) {
+		this.xmlContent = xmlContent;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }
