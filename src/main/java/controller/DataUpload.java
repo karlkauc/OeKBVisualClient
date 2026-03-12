@@ -107,11 +107,7 @@ public class DataUpload implements Initializable {
 
         try {
             // Parse XML response
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            // Disable external entities for security
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
 
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(

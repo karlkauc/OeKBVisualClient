@@ -20,8 +20,11 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -30,6 +33,34 @@ import java.nio.charset.StandardCharsets;
 
 public class XMLHelper {
     private static final Logger log = LogManager.getLogger(XMLHelper.class);
+
+    /**
+     * Creates a DocumentBuilderFactory with XXE protections enabled.
+     * Use this instead of DocumentBuilderFactory.newInstance() everywhere.
+     */
+    public static DocumentBuilderFactory createSecureDocumentBuilderFactory() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+        return factory;
+    }
+
+    /**
+     * Creates a TransformerFactory with secure processing enabled.
+     */
+    public static TransformerFactory createSecureTransformerFactory() {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        try {
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            log.warn("TransformerFactory does not support external access restriction", e);
+        }
+        return tf;
+    }
 
     public enum FileTypes {
         OFI,
@@ -40,7 +71,7 @@ public class XMLHelper {
     public static FileTypes getFileType(String fileData) {
         FileTypes detectedType = null;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = createSecureDocumentBuilderFactory();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(fileData.getBytes(StandardCharsets.UTF_8)));
 
@@ -85,7 +116,7 @@ public class XMLHelper {
 
     public static boolean isOfiFile(String fileData) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = createSecureDocumentBuilderFactory();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(fileData.getBytes(StandardCharsets.UTF_8)));
 

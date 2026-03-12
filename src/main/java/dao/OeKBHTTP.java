@@ -21,6 +21,7 @@ import model.DownloadParameters;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.core5.util.Timeout;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
+import common.XMLHelper;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -115,14 +117,22 @@ public class OeKBHTTP {
             log.info("no valid proxy settings found!");
         }
 
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(Timeout.ofSeconds(10))
+                .setResponseTimeout(Timeout.ofSeconds(60))
+                .build();
+
         if (useCustomProxy) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
             return HttpClients.custom()
+                    .setDefaultRequestConfig(requestConfig)
                     .setRoutePlanner(routePlanner)
                     .build();
         } else {
-            return HttpClients.createDefault();
+            return HttpClients.custom()
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
         }
     }
 
@@ -438,11 +448,11 @@ public class OeKBHTTP {
             filePath = filePath.replace(".xml.xml", ".xml");
 
             // Parse and pretty print XML
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = XMLHelper.createSecureTransformerFactory();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

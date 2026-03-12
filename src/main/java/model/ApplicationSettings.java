@@ -19,6 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import common.XMLHelper;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -74,7 +75,7 @@ public class ApplicationSettings implements IApplicationSettings {
 
     public boolean saveSettingsDataToFile(String fileName) {
         try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory docFactory = XMLHelper.createSecureDocumentBuilderFactory();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
 
@@ -102,7 +103,7 @@ public class ApplicationSettings implements IApplicationSettings {
             createElement(doc, rootElement, "BackupDirectory", "backup");
             createElement(doc, rootElement, "fileSystem", String.valueOf(fileSystem));
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = XMLHelper.createSecureTransformerFactory();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -146,7 +147,7 @@ public class ApplicationSettings implements IApplicationSettings {
         }
 
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(file);
             doc.getDocumentElement().normalize();
@@ -201,8 +202,8 @@ public class ApplicationSettings implements IApplicationSettings {
     }
 
     public String getAuthCredentialsBasic() {
-        String pwString = new String((oekbUserName + ":" + oekbPasswort).getBytes(), StandardCharsets.US_ASCII);
-        return Base64.encodeBase64String(pwString.getBytes());
+        String credentials = oekbUserName + ":" + oekbPasswort;
+        return Base64.encodeBase64String(credentials.getBytes(StandardCharsets.UTF_8));
     }
 
     // Getters and Setters
