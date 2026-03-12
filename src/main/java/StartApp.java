@@ -63,7 +63,7 @@ public class StartApp extends Application {
                 var taskbar = Taskbar.getTaskbar();
                 if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
                     // Load icon using AWT Toolkit for macOS dock
-                    var iconURL = getClass().getResource("img/connectdevelop-256.png");
+                    var iconURL = getClass().getClassLoader().getResource("img/connectdevelop-256.png");
                     if (iconURL != null) {
                         var awtIcon = Toolkit.getDefaultToolkit().getImage(iconURL);
                         taskbar.setIconImage(awtIcon);
@@ -75,19 +75,22 @@ public class StartApp extends Application {
             }
         }
 
-        Parent root = FXMLLoader.load(getClass().getResource("pages/pageMain.fxml"));
+        var fxmlUrl = getClass().getClassLoader().getResource("pages/pageMain.fxml");
+        if (fxmlUrl == null) {
+            throw new IllegalStateException("Cannot find pages/pageMain.fxml on the classpath. Ensure resources are properly built.");
+        }
+        Parent root = FXMLLoader.load(fxmlUrl);
         Scene scene = new Scene(root);
 
-        // Font.loadFont("file:resources/fonts/isadoracyr.ttf", 120)
         // Load multiple icon sizes for optimal display in Windows taskbar and macOS dock
         stage.getIcons().addAll(
-            new Image(getClass().getResourceAsStream("img/connectdevelop-16.png")),
-            new Image(getClass().getResourceAsStream("img/connectdevelop-32.png")),
-            new Image(getClass().getResourceAsStream("img/connectdevelop-48.png")),
-            new Image(getClass().getResourceAsStream("img/connectdevelop-64.png")),
-            new Image(getClass().getResourceAsStream("img/connectdevelop.png")),      // 96x96
-            new Image(getClass().getResourceAsStream("img/connectdevelop-128.png")),
-            new Image(getClass().getResourceAsStream("img/connectdevelop-256.png"))
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-16.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-32.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-48.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-64.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop.png")),      // 96x96
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-128.png")),
+            new Image(getClass().getClassLoader().getResourceAsStream("img/connectdevelop-256.png"))
         );
         stage.setTitle("OeKB Visual Client");
         stage.setScene(scene);
