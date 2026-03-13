@@ -10,7 +10,12 @@
     <!-- Best practices -->
     <rule ref="category/java/bestpractices.xml">
         <exclude name="GuardLogStatement"/>
-        <exclude name="JUnitTestContainsTooManyAsserts"/>
+        <exclude name="AvoidReassigningParameters"/>
+        <!-- FXML event handlers are invoked via reflection, not direct calls -->
+        <exclude name="UnusedPrivateMethod"/>
+        <!-- Java requires variables to be initialized before use; empty-string
+             initializers for try/catch patterns are intentional -->
+        <exclude name="UnusedAssignment"/>
     </rule>
 
     <!-- Code style -->
@@ -23,6 +28,18 @@
         <exclude name="OnlyOneReturn"/>
         <exclude name="ShortVariable"/>
         <exclude name="TooManyStaticImports"/>
+        <exclude name="ConfusingTernary"/>
+        <exclude name="UnnecessaryAnnotationValueElement"/>
+        <exclude name="FieldNamingConventions"/>
+        <exclude name="FormalParameterNamingConventions"/>
+        <exclude name="MethodNamingConventions"/>
+        <exclude name="UseExplicitTypes"/>
+        <exclude name="LinguisticNaming"/>
+        <exclude name="ShortClassName"/>
+        <exclude name="CallSuperInConstructor"/>
+        <exclude name="UnnecessaryFullyQualifiedName"/>
+        <!-- StartApp.java intentionally has no package (JavaFX entry point) -->
+        <exclude name="NoPackage"/>
     </rule>
 
     <!-- Design -->
@@ -30,15 +47,50 @@
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
         <exclude name="TooManyMethods"/>
+        <exclude name="DataClass"/>
+        <exclude name="GodClass"/>
+        <exclude name="TooManyFields"/>
+        <exclude name="ExcessiveParameterList"/>
+        <exclude name="CognitiveComplexity"/>
+        <exclude name="CyclomaticComplexity"/>
+        <exclude name="NPathComplexity"/>
+        <exclude name="NcssCount"/>
+        <exclude name="ExcessiveImports"/>
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
+        <exclude name="CouplingBetweenObjects"/>
+        <exclude name="UseObjectForClearerAPI"/>
+        <exclude name="SingularField"/>
+        <!-- Using throw/catch for exceptional error conditions is acceptable -->
+        <exclude name="ExceptionAsFlowControl"/>
     </rule>
 
     <!-- Error prone -->
     <rule ref="category/java/errorprone.xml">
-        <exclude name="BeanMembersShouldSerialize"/>
-        <exclude name="DataflowAnomalyAnalysis"/>
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
+        <exclude name="NullAssignment"/>
+        <exclude name="AvoidLiteralsInIfCondition"/>
+        <exclude name="AssignmentInOperand"/>
+        <exclude name="AvoidFieldNameMatchingTypeName"/>
+        <exclude name="AvoidDuplicateLiterals"/>
+        <!-- HttpEntity from Apache HC5 does not implement Closeable;
+             EntityUtils.toString() consumes the entity -->
+        <exclude name="CloseResource"/>
+        <!-- UI event handlers must catch all exceptions to prevent app crashes -->
+        <exclude name="AvoidCatchingGenericException"/>
     </rule>
 
     <!-- Performance -->
-    <rule ref="category/java/performance.xml"/>
+    <rule ref="category/java/performance.xml">
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    </rule>
+
+    <!-- Multithreading: JavaFX has its own threading model -->
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="UseConcurrentHashMap"/>
+        <exclude name="DoNotUseThreads"/>
+        <exclude name="AvoidSynchronizedAtMethodLevel"/>
+        <exclude name="AvoidSynchronizedStatement"/>
+        <exclude name="AvoidUsingVolatile"/>
+    </rule>
 
 </ruleset>

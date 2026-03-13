@@ -38,202 +38,202 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class DataUpload implements Initializable {
-	private static final Logger log = LogManager.getLogger(DataUpload.class);
+    private static final Logger LOG = LogManager.getLogger(DataUpload.class);
 
-	@FXML
-	private TextArea dataUploadMessage;
+    @FXML
+    private TextArea dataUploadMessage;
 
-	@FXML
-	private StackPane dataUpload;
+    @FXML
+    private StackPane dataUpload;
 
-	private ImageView imageView;
+    private ImageView imageView;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		log.debug("bin im init...");
-		dataUploadMessage.clear();
-	}
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        LOG.debug("bin im init...");
+        dataUploadMessage.clear();
+    }
 
-	// wenn file auf pane gezogen wird
-	@FXML
-	void onDataUpload(DragEvent e) {
-		final Dragboard db = e.getDragboard();
+    // wenn file auf pane gezogen wird
+    @FXML
+    void onDataUpload(DragEvent e) {
+        final Dragboard db = e.getDragboard();
 
-		boolean isNotAccepted = false;
-		for (File file : db.getFiles()) {
-			if (!file.getName().toLowerCase().endsWith("xml")) {
-				isNotAccepted = true;
-			}
-		}
+        boolean isNotAccepted = false;
+        for (File file : db.getFiles()) {
+            if (!file.getName().toLowerCase(java.util.Locale.ROOT).endsWith("xml")) {
+                isNotAccepted = true;
+            }
+        }
 
-		if (db.hasFiles()) {
-			if (!isNotAccepted) {
-				dataUpload.setStyle("-fx-border-color: red;" + "-fx-border-width: 5;" + "-fx-background-color: #C6C6C6;"
-						+ "-fx-border-style: solid;");
-				e.acceptTransferModes(TransferMode.COPY);
-			}
-		}
-	}
+        if (db.hasFiles() && !isNotAccepted) {
+            dataUpload.setStyle("-fx-border-color: red;" + "-fx-border-width: 5;" + "-fx-background-color: #C6C6C6;"
+                    + "-fx-border-style: solid;");
+            e.acceptTransferModes(TransferMode.COPY);
+        }
+    }
 
-	/**
-	 * Analyzes the server response for errors and triggers appropriate next
-	 * actions. Checks for: - Error responses (e.g., "ID already exists") -
-	 * OFI-specific responses - Access Rights responses
-	 *
-	 * @param responseData
-	 *            The XML response from the server
-	 */
-	public static void checkForNextActions(String responseData) {
-		if (responseData == null || responseData.isEmpty()) {
-			log.warn("Empty response from server, no next actions to process");
-			return;
-		}
+    /**
+     * Analyzes the server response for errors and triggers appropriate next
+     * actions. Checks for: - Error responses (e.g., "ID already exists") -
+     * OFI-specific responses - Access Rights responses
+     *
+     * @param responseData
+     *            The XML response from the server
+     */
+    public static void checkForNextActions(String responseData) {
+        if (responseData == null || responseData.isEmpty()) {
+            LOG.warn("Empty response from server, no next actions to process");
+            return;
+        }
 
-		// Check if response starts with ERROR (from our improved error handling)
-		if (responseData.startsWith("ERROR:")) {
-			log.warn("Server returned error: {}", responseData);
-			return;
-		}
+        // Check if response starts with ERROR (from our improved error handling)
+        if (responseData.startsWith("ERROR:")) {
+            LOG.warn("Server returned error: {}", responseData);
+            return;
+        }
 
-		try {
-			// Parse XML response
-			DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
+        try {
+            // Parse XML response
+            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
 
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseData.getBytes(StandardCharsets.UTF_8)));
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new ByteArrayInputStream(responseData.getBytes(StandardCharsets.UTF_8)));
 
-			// Check for error elements
-			NodeList errorNodes = doc.getElementsByTagName("Error");
-			if (errorNodes.getLength() > 0) {
-				for (int i = 0; i < errorNodes.getLength(); i++) {
-					Element error = (Element) errorNodes.item(i);
-					String errorCode = error.getAttribute("code");
-					String errorMsg = error.getTextContent();
+            // Check for error elements
+            NodeList errorNodes = doc.getElementsByTagName("Error");
+            if (errorNodes.getLength() > 0) {
+                for (int i = 0; i < errorNodes.getLength(); i++) {
+                    Element error = (Element) errorNodes.item(i);
+                    String errorCode = error.getAttribute("code");
+                    String errorMsg = error.getTextContent();
 
-					if ("ID_EXISTS".equals(errorCode) || errorMsg.contains("id schon vorhanden")) {
-						log.warn("Upload failed - ID already exists: {}", errorMsg);
-					} else {
-						log.warn("Server error [{}]: {}", errorCode, errorMsg);
-					}
-				}
-			}
+                    if ("ID_EXISTS".equals(errorCode) || errorMsg.contains("id schon vorhanden")) {
+                        LOG.warn("Upload failed - ID already exists: {}", errorMsg);
+                    } else {
+                        LOG.warn("Server error [{}]: {}", errorCode, errorMsg);
+                    }
+                }
+            }
 
-			// Check for OFI-specific response
-			NodeList ofiNodes = doc.getElementsByTagName("OFI_Response");
-			if (ofiNodes.getLength() > 0) {
-				log.info("OFI response detected in server reply");
-				// OFI sum checking is already handled in dataUploadDropped() via
-				// XMLHelper.isOfiResponseOk()
-			}
+            // Check for OFI-specific response
+            NodeList ofiNodes = doc.getElementsByTagName("OFI_Response");
+            if (ofiNodes.getLength() > 0) {
+                LOG.info("OFI response detected in server reply");
+                // OFI sum checking is already handled in dataUploadDropped() via
+                // XMLHelper.isOfiResponseOk()
+            }
 
-			// Check for Access Rights response
-			NodeList arNodes = doc.getElementsByTagName("AccessRuleResponse");
-			if (arNodes.getLength() > 0) {
-				log.info("Access rule response detected in server reply");
-				// Could trigger UI update or notification here if needed
-			}
+            // Check for Access Rights response
+            NodeList arNodes = doc.getElementsByTagName("AccessRuleResponse");
+            if (arNodes.getLength() > 0) {
+                LOG.info("Access rule response detected in server reply");
+                // Could trigger UI update or notification here if needed
+            }
 
-			// Check for success indicators
-			NodeList successNodes = doc.getElementsByTagName("Success");
-			if (successNodes.getLength() > 0) {
-				log.info("Upload completed successfully");
-			}
+            // Check for success indicators
+            NodeList successNodes = doc.getElementsByTagName("Success");
+            if (successNodes.getLength() > 0) {
+                LOG.info("Upload completed successfully");
+            }
 
-		} catch (Exception e) {
-			log.error("Error parsing server response for next actions: {}", e.getMessage());
-			log.debug("Response content that failed to parse: {}",
-					responseData.length() > 500 ? responseData.substring(0, 500) + "..." : responseData);
-		}
-	}
+        } catch (javax.xml.parsers.ParserConfigurationException | org.xml.sax.SAXException | java.io.IOException e) {
+            LOG.error("Error parsing server response for next actions: {}", e.getMessage());
+            LOG.debug("Response content that failed to parse: {}",
+                    responseData.length() > 500 ? responseData.substring(0, 500) + "..." : responseData);
+        }
+    }
 
-	// hier wird das file verarbeitet
-	@FXML
-	void dataUploadDropped(DragEvent e) {
-		log.debug("bin in dropped ");
+    // hier wird das file verarbeitet
+    @FXML
+    void dataUploadDropped(DragEvent e) {
+        LOG.debug("bin in dropped ");
 
-		final Dragboard db = e.getDragboard();
-		StringBuilder text = new StringBuilder();
+        final Dragboard db = e.getDragboard();
+        StringBuilder text = new StringBuilder(64);
 
-		for (File file : db.getFiles()) {
-			log.debug("speichere File: " + file);
-			text.append("speichere File: ").append(file).append(System.lineSeparator());
+        for (File file : db.getFiles()) {
+            LOG.debug("speichere File: {}", file);
+            text.append("speichere File: ").append(file).append(System.lineSeparator());
 
-			try {
-				// Check if in FileSystem mode
-				model.ApplicationSettings settings = model.ApplicationSettings.getInstance();
-				if (settings.isFileSystem()) {
-					dataUploadMessage.setText(
-							"⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
-					e.setDropCompleted(false);
-					e.consume();
-					return;
-				}
+            try {
+                // Check if in FileSystem mode
+                model.ApplicationSettings settings = model.ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    dataUploadMessage.setText(
+                            "⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                    e.setDropCompleted(false);
+                    e.consume();
+                    return;
+                }
 
-				String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()),
-						StandardCharsets.UTF_8);
-				XMLHelper.FileTypes fileType = XMLHelper.getFileType(fileContent);
+                String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()),
+                        StandardCharsets.UTF_8);
+                XMLHelper.FileTypes fileType = XMLHelper.getFileType(fileContent);
 
-				String responseFile = new OeKBHTTP().uploadDataFile(file);
-				if (fileType == XMLHelper.FileTypes.OFI) {
-					text.append("OFI File gefunden ").append(System.lineSeparator());
-					log.debug("OFI FIle.. Summen Checken... ");
-					boolean t = XMLHelper.isOfiResponseOk(responseFile);
-					text.append("OFI Summen OK? ").append(t);
-					log.debug("OFI Summen sind OK?? " + t);
-				}
-				checkForNextActions(responseFile);
-			} catch (Exception ex) {
-				log.error("Error processing file", ex);
-				text.append("Error: ").append(ex.getMessage()).append(System.lineSeparator());
-			}
-		}
+                String responseFile = new OeKBHTTP().uploadDataFile(file);
+                if (fileType == XMLHelper.FileTypes.OFI) {
+                    text.append("OFI File gefunden ").append(System.lineSeparator());
+                    LOG.debug("OFI FIle.. Summen Checken... ");
+                    boolean t = XMLHelper.isOfiResponseOk(responseFile);
+                    text.append("OFI Summen OK? ").append(t);
+                    LOG.debug("OFI Summen sind OK?? {}", t);
+                }
+                checkForNextActions(responseFile);
+            } catch (java.io.IOException | RuntimeException ex) {
+                LOG.error("Error processing file", ex);
+                text.append("Error: ").append(ex.getMessage()).append(System.lineSeparator());
+            }
+        }
 
-		dataUploadMessage.setText(text.toString());
-		e.setDropCompleted(true);
-		e.consume();
-	}
+        dataUploadMessage.setText(text.toString());
+        e.setDropCompleted(true);
+        e.consume();
+    }
 
-	// setDropCompleted can be called only from DRAG_DROPPED handler
+    // setDropCompleted can be called only from DRAG_DROPPED handler
 
-	@FXML
-	void dataUploadDone(DragEvent e) {
-		dataUpload.setStyle("");
-		final Dragboard db = e.getDragboard();
+    @FXML
+    void dataUploadDone(DragEvent e) {
+        dataUpload.setStyle("");
+        final Dragboard db = e.getDragboard();
 
-		boolean success = false;
-		if (db.hasFiles()) {
-			success = true;
-			// Only get the first file from the list
-			final File file = db.getFiles().get(0);
-			Platform.runLater(() -> {
-				log.debug("Processing file: {}", file.getAbsolutePath());
-				try {
-					if (!dataUpload.getChildren().isEmpty()) {
-						dataUpload.getChildren().remove(0);
-					}
-					Image img = new Image(new FileInputStream(file.getAbsolutePath()));
-					addImage(img, dataUpload);
-				} catch (FileNotFoundException ex) {
-					log.error(ex.toString());
-					log.error(ex.getMessage());
-				}
-			});
-		}
-		e.setDropCompleted(success);
-		e.consume();
-	}
+        boolean success = false;
+        if (db.hasFiles()) {
+            success = true;
+            // Only get the first file from the list
+            final File file = db.getFiles().get(0);
+            Platform.runLater(() -> {
+                LOG.debug("Processing file: {}", file.getAbsolutePath());
+                try {
+                    if (!dataUpload.getChildren().isEmpty()) {
+                        dataUpload.getChildren().remove(0);
+                    }
+                    try (InputStream fis = java.nio.file.Files.newInputStream(file.toPath())) {
+                        Image img = new Image(fis);
+                        addImage(img, dataUpload);
+                    }
+                } catch (IOException ex) {
+                    LOG.error(ex.toString());
+                    LOG.error(ex.getMessage());
+                }
+            });
+        }
+        e.setDropCompleted(success);
+        e.consume();
+    }
 
-	// Hilfsfunktion
-	void addImage(Image i, StackPane pane) {
-		imageView = new ImageView();
-		imageView.setImage(i);
-		pane.getChildren().add(imageView);
-	}
+    // Hilfsfunktion
+    void addImage(Image i, StackPane pane) {
+        imageView = new ImageView();
+        imageView.setImage(i);
+        pane.getChildren().add(imageView);
+    }
 }

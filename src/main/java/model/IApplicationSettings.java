@@ -22,78 +22,78 @@ package model;
  */
 public interface IApplicationSettings {
 
-	/**
-	 * Read settings from the configuration file.
-	 */
-	void readSettingsFromFile();
+    /**
+     * Read settings from the configuration file.
+     */
+    void readSettingsFromFile();
 
-	/**
-	 * Check if production server should be used.
-	 *
-	 * @return true if production server, false for test server
-	 */
-	boolean isUseProdServer();
+    /**
+     * Check if production server should be used.
+     *
+     * @return true if production server, false for test server
+     */
+    boolean isUseProdServer();
 
-	/**
-	 * Check if system proxy settings should be used.
-	 *
-	 * @return true if system proxy settings should be used
-	 */
-	boolean isConnectionUseSystemSettings();
+    /**
+     * Check if system proxy settings should be used.
+     *
+     * @return true if system proxy settings should be used
+     */
+    boolean isConnectionUseSystemSettings();
 
-	/**
-	 * Get the proxy host.
-	 *
-	 * @return proxy host or null if not configured
-	 */
-	String getConnectionProxyHost();
+    /**
+     * Get the proxy host.
+     *
+     * @return proxy host or null if not configured
+     */
+    String getConnectionProxyHost();
 
-	/**
-	 * Get the proxy port.
-	 *
-	 * @return proxy port or null if not configured
-	 */
-	Integer getConnectionProxyPort();
+    /**
+     * Get the proxy port.
+     *
+     * @return proxy port or null if not configured
+     */
+    Integer getConnectionProxyPort();
 
-	/**
-	 * Check if file system mode is enabled (for offline testing).
-	 *
-	 * @return true if file system mode is enabled
-	 */
-	boolean isFileSystem();
+    /**
+     * Check if file system mode is enabled (for offline testing).
+     *
+     * @return true if file system mode is enabled
+     */
+    boolean isFileSystem();
 
-	/**
-	 * Get the OeKB server URL.
-	 *
-	 * @return the server URL
-	 */
-	String getServerURL();
+    /**
+     * Get the OeKB server URL.
+     *
+     * @return the server URL
+     */
+    String getServerURL();
 
-	/**
-	 * Get the Basic authentication credentials (Base64 encoded).
-	 *
-	 * @return Base64 encoded credentials
-	 */
-	String getAuthCredentialsBasic();
+    /**
+     * Get the Basic authentication credentials (Base64 encoded).
+     *
+     * @return Base64 encoded credentials
+     */
+    String getAuthCredentialsBasic();
 
-	/**
-	 * Get the OeKB username.
-	 *
-	 * @return the username
-	 */
-	String getOekbUserName();
+    /**
+     * Get the OeKB username.
+     *
+     * @return the username
+     */
+    String getOekbUserName();
 
-	/**
-	 * Get the data supplier list.
-	 *
-	 * @return the data supplier identifier
-	 */
-	String getDataSupplierList();
+    /**
+     * Get the data supplier list.
+     *
+     * @return the data supplier identifier
+     */
+    String getDataSupplierList();
 
-	/**
-	 * Get the backup directory path.
-	 *
-	 * @return the backup directory path
-	 */
-	String getBackupDirectory();
+    /**
+     * Get the backup directory path.
+     *
+     * @return the backup directory path
+     */
+    String getBackupDirectory();
 }

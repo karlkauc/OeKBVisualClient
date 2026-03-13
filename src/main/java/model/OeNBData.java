@@ -21,81 +21,81 @@ import java.time.LocalDate;
  * Model class for OeNB specific data (Aggregation, SecBySec, Check)
  */
 public class OeNBData {
-	public enum OeNBMode {
-		AGGREGIERUNG, SECBYSEC, CHECK
-	}
+    public enum OeNBMode {
+        AGGREGIERUNG, SECBYSEC, CHECK
+    }
 
-	private String oenbId;
-	private LocalDate contentDate;
-	private OeNBMode mode;
-	private String xmlContent;
-	private boolean valid;
-	private String checkStatus;
-	private String fundName;
+    private String oenbId;
+    private LocalDate contentDate;
+    private OeNBMode mode;
+    private String xmlContent;
+    private boolean valid;
+    private String checkStatus;
+    private String fundName;
 
-	public OeNBData() {
-	}
+    public OeNBData() {
+    }
 
-	public OeNBData(String oenbId, LocalDate contentDate, OeNBMode mode) {
-		this.oenbId = oenbId;
-		this.contentDate = contentDate;
-		this.mode = mode;
-	}
+    public OeNBData(String oenbId, LocalDate contentDate, OeNBMode mode) {
+        this.oenbId = oenbId;
+        this.contentDate = contentDate;
+        this.mode = mode;
+    }
 
-	// Getters and Setters
-	public String getOenbId() {
-		return oenbId;
-	}
+    // Getters and Setters
+    public String getOenbId() {
+        return oenbId;
+    }
 
-	public void setOenbId(String oenbId) {
-		this.oenbId = oenbId;
-	}
+    public void setOenbId(String oenbId) {
+        this.oenbId = oenbId;
+    }
 
-	public LocalDate getContentDate() {
-		return contentDate;
-	}
+    public LocalDate getContentDate() {
+        return contentDate;
+    }
 
-	public void setContentDate(LocalDate contentDate) {
-		this.contentDate = contentDate;
-	}
+    public void setContentDate(LocalDate contentDate) {
+        this.contentDate = contentDate;
+    }
 
-	public OeNBMode getMode() {
-		return mode;
-	}
+    public OeNBMode getMode() {
+        return mode;
+    }
 
-	public void setMode(OeNBMode mode) {
-		this.mode = mode;
-	}
+    public void setMode(OeNBMode mode) {
+        this.mode = mode;
+    }
 
-	public String getXmlContent() {
-		return xmlContent;
-	}
+    public String getXmlContent() {
+        return xmlContent;
+    }
 
-	public void setXmlContent(String xmlContent) {
-		this.xmlContent = xmlContent;
-	}
+    public void setXmlContent(String xmlContent) {
+        this.xmlContent = xmlContent;
+    }
 
-	public boolean isValid() {
-		return valid;
-	}
+    public boolean isValid() {
+        return valid;
+    }
 
-	public void setValid(boolean valid) {
-		this.valid = valid;
-	}
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
 
-	public String getCheckStatus() {
-		return checkStatus;
-	}
+    public String getCheckStatus() {
+        return checkStatus;
+    }
 
-	public void setCheckStatus(String checkStatus) {
-		this.checkStatus = checkStatus;
-	}
+    public void setCheckStatus(String checkStatus) {
+        this.checkStatus = checkStatus;
+    }
 
-	public String getFundName() {
-		return fundName;
-	}
+    public String getFundName() {
+        return fundName;
+    }
 
-	public void setFundName(String fundName) {
-		this.fundName = fundName;
-	}
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
+    }
 }

@@ -159,7 +159,7 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
 spotless {
     java {
         target("src/*/java/**/*.java")
-        eclipse()
+        eclipse().configFile("config/spotless/eclipse-formatter.xml")
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

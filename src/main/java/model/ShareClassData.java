@@ -21,77 +21,77 @@ import java.time.LocalDate;
  * Model class for ShareClass/Segment download data
  */
 public class ShareClassData {
-	private String isin;
-	private String shareClassName;
-	private LocalDate contentDate;
-	private String profile;
-	private String xmlContent;
-	private String fundName;
-	private String status;
+    private String isin;
+    private String shareClassName;
+    private LocalDate contentDate;
+    private String profile;
+    private String xmlContent;
+    private String fundName;
+    private String status;
 
-	public ShareClassData() {
-	}
+    public ShareClassData() {
+    }
 
-	public ShareClassData(String isin, String shareClassName, LocalDate contentDate) {
-		this.isin = isin;
-		this.shareClassName = shareClassName;
-		this.contentDate = contentDate;
-	}
+    public ShareClassData(String isin, String shareClassName, LocalDate contentDate) {
+        this.isin = isin;
+        this.shareClassName = shareClassName;
+        this.contentDate = contentDate;
+    }
 
-	// Getters and Setters
-	public String getIsin() {
-		return isin;
-	}
+    // Getters and Setters
+    public String getIsin() {
+        return isin;
+    }
 
-	public void setIsin(String isin) {
-		this.isin = isin;
-	}
+    public void setIsin(String isin) {
+        this.isin = isin;
+    }
 
-	public String getShareClassName() {
-		return shareClassName;
-	}
+    public String getShareClassName() {
+        return shareClassName;
+    }
 
-	public void setShareClassName(String shareClassName) {
-		this.shareClassName = shareClassName;
-	}
+    public void setShareClassName(String shareClassName) {
+        this.shareClassName = shareClassName;
+    }
 
-	public LocalDate getContentDate() {
-		return contentDate;
-	}
+    public LocalDate getContentDate() {
+        return contentDate;
+    }
 
-	public void setContentDate(LocalDate contentDate) {
-		this.contentDate = contentDate;
-	}
+    public void setContentDate(LocalDate contentDate) {
+        this.contentDate = contentDate;
+    }
 
-	public String getProfile() {
-		return profile;
-	}
+    public String getProfile() {
+        return profile;
+    }
 
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
 
-	public String getXmlContent() {
-		return xmlContent;
-	}
+    public String getXmlContent() {
+        return xmlContent;
+    }
 
-	public void setXmlContent(String xmlContent) {
-		this.xmlContent = xmlContent;
-	}
+    public void setXmlContent(String xmlContent) {
+        this.xmlContent = xmlContent;
+    }
 
-	public String getFundName() {
-		return fundName;
-	}
+    public String getFundName() {
+        return fundName;
+    }
 
-	public void setFundName(String fundName) {
-		this.fundName = fundName;
-	}
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

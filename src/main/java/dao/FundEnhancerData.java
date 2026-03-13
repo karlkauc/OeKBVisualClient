@@ -16,83 +16,83 @@
 package dao;
 
 public class FundEnhancerData {
-	private String ISIN;
-	private String Fondsbezeichnung;
-	private String KAG;
-	private String OENB_ID;
-	private String LEI;
-	private String LEIStatus;
-	private String WRAPPER;
-	private String ISINStatus;
+    private String isin;
+    private String fondsbezeichnung;
+    private String kag;
+    private String oenbId;
+    private String lei;
+    private String leiStatus;
+    private String wrapper;
+    private String isinStatus;
 
-	public String getISIN() {
-		return ISIN;
-	}
+    public String getIsin() {
+        return isin;
+    }
 
-	public void setISIN(String ISIN) {
-		this.ISIN = ISIN;
-	}
+    public void setIsin(String isin) {
+        this.isin = isin;
+    }
 
-	public String getFondsbezeichnung() {
-		return Fondsbezeichnung;
-	}
+    public String getFondsbezeichnung() {
+        return fondsbezeichnung;
+    }
 
-	public void setFondsbezeichnung(String Fondsbezeichnung) {
-		this.Fondsbezeichnung = Fondsbezeichnung;
-	}
+    public void setFondsbezeichnung(String fondsbezeichnung) {
+        this.fondsbezeichnung = fondsbezeichnung;
+    }
 
-	public String getKAG() {
-		return KAG;
-	}
+    public String getKag() {
+        return kag;
+    }
 
-	public void setKAG(String KAG) {
-		this.KAG = KAG;
-	}
+    public void setKag(String kag) {
+        this.kag = kag;
+    }
 
-	public String getOENB_ID() {
-		return OENB_ID;
-	}
+    public String getOenbId() {
+        return oenbId;
+    }
 
-	public void setOENB_ID(String OENB_ID) {
-		this.OENB_ID = OENB_ID;
-	}
+    public void setOenbId(String oenbId) {
+        this.oenbId = oenbId;
+    }
 
-	public String getLEI() {
-		return LEI;
-	}
+    public String getLei() {
+        return lei;
+    }
 
-	public void setLEI(String LEI) {
-		this.LEI = LEI;
-	}
+    public void setLei(String lei) {
+        this.lei = lei;
+    }
 
-	public String getLEIStatus() {
-		return LEIStatus;
-	}
+    public String getLeiStatus() {
+        return leiStatus;
+    }
 
-	public void setLEIStatus(String LEIStatus) {
-		this.LEIStatus = LEIStatus;
-	}
+    public void setLeiStatus(String leiStatus) {
+        this.leiStatus = leiStatus;
+    }
 
-	public String getWRAPPER() {
-		return WRAPPER;
-	}
+    public String getWrapper() {
+        return wrapper;
+    }
 
-	public void setWRAPPER(String WRAPPER) {
-		this.WRAPPER = WRAPPER;
-	}
+    public void setWrapper(String wrapper) {
+        this.wrapper = wrapper;
+    }
 
-	public String getISINStatus() {
-		return ISINStatus;
-	}
+    public String getIsinStatus() {
+        return isinStatus;
+    }
 
-	public void setISINStatus(String ISINStatus) {
-		this.ISINStatus = ISINStatus;
-	}
+    public void setIsinStatus(String isinStatus) {
+        this.isinStatus = isinStatus;
+    }
 
-	@Override
-	public String toString() {
-		return "FundEnhancerData{" + "ISIN='" + ISIN + '\'' + ", Fondsbezeichnung='" + Fondsbezeichnung + '\''
-				+ ", KAG='" + KAG + '\'' + ", OENB_ID='" + OENB_ID + '\'' + ", LEI='" + LEI + '\'' + ", LEIStatus='"
-				+ LEIStatus + '\'' + ", WRAPPER='" + WRAPPER + '\'' + ", ISINStatus='" + ISINStatus + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "FundEnhancerData{" + "isin='" + isin + '\'' + ", fondsbezeichnung='" + fondsbezeichnung + '\''
+                + ", kag='" + kag + '\'' + ", oenbId='" + oenbId + '\'' + ", lei='" + lei + '\'' + ", leiStatus='"
+                + leiStatus + '\'' + ", wrapper='" + wrapper + '\'' + ", isinStatus='" + isinStatus + '\'' + '}';
+    }
 }

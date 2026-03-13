@@ -46,7 +46,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,842 +59,849 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class OeKBHTTP {
-	private static final Logger log = LogManager.getLogger(OeKBHTTP.class);
-
-	/** Client version sent to OeKB server */
-	private static final String CLIENT_VERSION = "4.4.0";
-
-	private final CloseableHttpClient httpClient;
-	private final IApplicationSettings applicationSettings;
-
-	/**
-	 * Get the server parameter based on settings (prod or test).
-	 */
-	private String getServerParam() {
-		return applicationSettings.isUseProdServer() ? "prod" : "test";
-	}
-
-	/**
-	 * Public constructor for application use. Creates a real HTTP client.
-	 */
-	public OeKBHTTP() {
-		this.applicationSettings = ApplicationSettings.getInstance();
-		this.httpClient = getOekbConnection();
-	}
-
-	/**
-	 * Package-private constructor for testing purposes. Allows injecting mock
-	 * dependencies.
-	 *
-	 * @param httpClient
-	 *            The HTTP client to use (real or mock).
-	 * @param applicationSettings
-	 *            The application settings to use (real or mock).
-	 */
-	OeKBHTTP(CloseableHttpClient httpClient, IApplicationSettings applicationSettings) {
-		this.applicationSettings = applicationSettings;
-		this.httpClient = httpClient;
-	}
-
-	private CloseableHttpClient getOekbConnection() {
-		applicationSettings.readSettingsFromFile();
-
-		String proxyHost = "";
-		Integer proxyPort = 0;
-		boolean useCustomProxy = false;
-
-		if (applicationSettings.isConnectionUseSystemSettings()) {
-			log.debug("using system proxy Settings");
-			System.setProperty("java.net.useSystemProxies", "true");
-			useCustomProxy = false;
-		} else {
-			if (applicationSettings.getConnectionProxyHost() != null
-					&& !applicationSettings.getConnectionProxyHost().isEmpty()) {
-				proxyHost = applicationSettings.getConnectionProxyHost();
-				proxyPort = applicationSettings.getConnectionProxyPort();
-			}
-		}
-
-		if (proxyHost != null && proxyHost.length() > 1 && proxyPort != null && proxyPort > 1) {
-			useCustomProxy = true;
-			log.debug("proxy settings: " + proxyHost + ":" + proxyPort);
-		} else {
-			log.info("no valid proxy settings found!");
-		}
-
-		RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(Timeout.ofSeconds(10))
-				.setResponseTimeout(Timeout.ofSeconds(60)).build();
-
-		if (useCustomProxy) {
-			HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-			return HttpClients.custom().setDefaultRequestConfig(requestConfig).setRoutePlanner(routePlanner).build();
-		} else {
-			return HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
-		}
-	}
-
-	public String uploadAccessRule(File file) {
-		applicationSettings.readSettingsFromFile();
-		String outputString = "";
-
-		// Check if in FileSystem mode (offline mode)
-		if (applicationSettings.isFileSystem()) {
-			try {
-				String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()),
-						StandardCharsets.UTF_8);
-				saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_OFFLINE");
-				log.info("OFFLINE MODE: Access rule saved to backup instead of uploading to server");
-				return "SUCCESS (OFFLINE MODE)\n\nAccess rule saved to backup directory.\nNo actual upload to server performed.";
-			} catch (Exception e) {
-				log.error("Error saving access rule in offline mode", e);
-				return "ERROR: " + e.getMessage();
-			}
-		}
-
-		// Real mode: HTTP POST to server
-		try {
-			HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
-
-			// Set headers
-			String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
-			httpPost.setHeader("Authorization", authHeader);
-			httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
-			httpPost.setHeader("Accept-Encoding", "gzip,deflate");
-
-			// Build multipart entity
-			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-			builder.addTextBody("mode", "UPLOAD_ACCESS_RULE");
-			builder.addTextBody("server", getServerParam());
-			builder.addTextBody("user", applicationSettings.getOekbUserName());
-			builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
-			builder.addTextBody("clientversion", CLIENT_VERSION);
-			builder.addTextBody("fileToUploadName", file.getName());
-			builder.addBinaryBody("fileToUpload", file);
-
-			HttpEntity multipart = builder.build();
-			httpPost.setEntity(multipart);
-
-			log.info("Uploading access rule to server: {}", file.getName());
-
-			try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
-				int statusCode = response.getCode();
-				log.debug("Server response status: {}", statusCode);
-
-				HttpEntity responseEntity = response.getEntity();
-				if (responseEntity != null) {
-					outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-
-					if (statusCode != 200) {
-						log.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
-								outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
-					} else {
-						log.info("Access rule uploaded successfully");
-					}
-				} else {
-					log.warn("No response entity received from server");
-					outputString = "ERROR: No response from server";
-				}
-			}
-
-			// Save backup of both request and response
-			String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_REQUEST");
-			if (!outputString.isEmpty()) {
-				saveToBackup(outputString, "ACCESS_RULE_UPLOAD_RESPONSE");
-			}
-
-		} catch (java.net.UnknownHostException e) {
-			log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
-			outputString = "ERROR: Cannot reach server - " + e.getMessage();
-		} catch (java.net.ConnectException e) {
-			log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
-					e.getMessage());
-			outputString = "ERROR: Connection refused - " + e.getMessage();
-		} catch (javax.net.ssl.SSLException e) {
-			log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
-			outputString = "ERROR: SSL/TLS error - " + e.getMessage();
-		} catch (java.net.SocketTimeoutException e) {
-			log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
-			outputString = "ERROR: Connection timeout - " + e.getMessage();
-		} catch (Exception e) {
-			log.error("Error uploading access rule: {}. Check credentials, proxy settings, and network connection.",
-					e.getMessage());
-			log.debug("Full exception details", e);
-			outputString = "ERROR: " + e.getMessage();
-		}
-
-		return outputString;
-	}
-
-	public String uploadDataFile(File file) {
-		applicationSettings.readSettingsFromFile();
-		String outputString = "";
-
-		try {
-			HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
-
-			// Set headers
-			String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
-			httpPost.setHeader("Authorization", authHeader);
-			httpPost.setHeader("User-Agent", "(KarlK)");
-			httpPost.setHeader("Accept-Encoding", "gzip,deflate");
-
-			// Build multipart entity
-			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-			builder.addTextBody("mode", "UPLOAD_DATA");
-			builder.addTextBody("server", getServerParam());
-			builder.addTextBody("user", applicationSettings.getOekbUserName());
-			builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
-			builder.addTextBody("clientversion", CLIENT_VERSION);
-			builder.addTextBody("fileToUploadName", file.getName());
-			builder.addTextBody("upload_xml", file.getName());
-			builder.addBinaryBody("fileToUpload", file);
-
-			HttpEntity multipart = builder.build();
-			httpPost.setEntity(multipart);
-
-			try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
-				int statusCode = response.getCode();
-				log.debug("Server response status: {}", statusCode);
-
-				HttpEntity responseEntity = response.getEntity();
-				if (responseEntity != null) {
-					outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-				}
-
-				if (statusCode >= 400) {
-					log.error("Server returned error status: {}. Response: {}", statusCode,
-							outputString.length() > 200 ? outputString.substring(0, 200) : outputString);
-					return "ERROR: Server returned status " + statusCode;
-				}
-			}
-
-			String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			saveToBackup(fileContent, file.getName());
-			saveToBackup(outputString, "UPLOAD_DATA_REPLY");
-
-		} catch (java.net.UnknownHostException e) {
-			log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
-			outputString = "ERROR: Cannot reach server - " + e.getMessage();
-		} catch (java.net.ConnectException e) {
-			log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
-					e.getMessage());
-			outputString = "ERROR: Connection refused - " + e.getMessage();
-		} catch (javax.net.ssl.SSLException e) {
-			log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
-			outputString = "ERROR: SSL/TLS error - " + e.getMessage();
-		} catch (java.net.SocketTimeoutException e) {
-			log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
-			outputString = "ERROR: Connection timeout - " + e.getMessage();
-		} catch (Exception e) {
-			log.error("Error uploading data file: {}. Check credentials, proxy settings, and network connection.",
-					e.getMessage());
-			log.debug("Full exception details", e);
-			outputString = "ERROR: " + e.getMessage();
-		}
-
-		return outputString;
-	}
-
-	public String downloadAccessRules() {
-		applicationSettings.readSettingsFromFile();
-		String outputString = "";
-
-		try {
-			HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
-
-			// Set headers
-			String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
-			httpPost.setHeader("Authorization", authHeader);
-			httpPost.setHeader("User-Agent", "(KarlK)");
-			httpPost.setHeader("Accept-Encoding", "gzip,deflate");
-
-			// Build form parameters
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_RECEIVED"));
-			params.add(new BasicNameValuePair("server", getServerParam()));
-			params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
-			params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
-			params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
-
-			httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
-
-			log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
-
-			try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
-				int statusCode = response.getCode();
-				log.debug("Server response status: {}", statusCode);
-
-				HttpEntity responseEntity = response.getEntity();
-				if (responseEntity != null) {
-					outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-
-					if (outputString == null || outputString.trim().isEmpty()) {
-						log.warn("Server returned empty response. Check credentials and server availability.");
-					} else if (statusCode != 200) {
-						log.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
-								outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
-					} else {
-						log.debug("Received {} bytes from server", outputString.length());
-					}
-				} else {
-					log.warn("No response entity received from server");
-				}
-			}
-
-			if (outputString != null && !outputString.trim().isEmpty()) {
-				saveToBackup(outputString, "DOWNLOAD_ACCESS_RULE");
-			}
-
-		} catch (java.net.UnknownHostException e) {
-			log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
-		} catch (java.net.ConnectException e) {
-			log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
-					e.getMessage());
-		} catch (javax.net.ssl.SSLException e) {
-			log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
-		} catch (java.net.SocketTimeoutException e) {
-			log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
-		} catch (Exception e) {
-			log.error("Error downloading access rules: {}. Check credentials, proxy settings, and network connection.",
-					e.getMessage());
-			log.debug("Full exception details", e);
-		}
-
-		return outputString;
-	}
-
-	public String downloadGivenAccessRules() {
-		applicationSettings.readSettingsFromFile();
-		String outputString = "";
-
-		try {
-			HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
-
-			// Set headers
-			String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
-			httpPost.setHeader("Authorization", authHeader);
-			httpPost.setHeader("User-Agent", "(KarlK)");
-			httpPost.setHeader("Accept-Encoding", "gzip,deflate");
-
-			// Build form parameters
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_ASSIGNED"));
-			params.add(new BasicNameValuePair("server", getServerParam()));
-			params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
-			params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
-			params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
-
-			httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
-
-			log.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
-
-			try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
-				int statusCode = response.getCode();
-				log.debug("Server response status: {}", statusCode);
-
-				HttpEntity responseEntity = response.getEntity();
-				if (responseEntity != null) {
-					outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-
-					if (outputString == null || outputString.trim().isEmpty()) {
-						log.warn("Server returned empty response. Check credentials and server availability.");
-					} else if (statusCode != 200) {
-						log.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
-								outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
-					} else {
-						log.debug("Received {} bytes from server", outputString.length());
-					}
-				} else {
-					log.warn("No response entity received from server");
-				}
-			}
-
-			if (outputString != null && !outputString.trim().isEmpty()) {
-				saveToBackup(outputString, "DOWNLOAD_AR_ASSIGNED");
-			}
-
-		} catch (java.net.UnknownHostException e) {
-			log.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
-		} catch (java.net.ConnectException e) {
-			log.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
-					e.getMessage());
-		} catch (javax.net.ssl.SSLException e) {
-			log.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
-		} catch (java.net.SocketTimeoutException e) {
-			log.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
-		} catch (Exception e) {
-			log.error(
-					"Error downloading given access rules: {}. Check credentials, proxy settings, and network connection.",
-					e.getMessage());
-			log.debug("Full exception details", e);
-		}
-
-		return outputString;
-	}
-
-	public static void saveToBackup(String xml, String fileName) {
-		try {
-			ApplicationSettings settings = ApplicationSettings.getInstance();
-			String filePraefix = settings.isUseProdServer() ? "PROD" : "DEV";
-			filePraefix += "_" + settings.getDataSupplierList();
-
-			new File(settings.getBackupDirectory()).mkdirs();
-
-			String filePath = settings.getBackupDirectory() + File.separator
-					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "__" + filePraefix
-					+ "_" + fileName + ".xml";
-
-			// Fix double .xml.xml extension
-			filePath = filePath.replace(".xml.xml", ".xml");
-
-			// Parse and pretty print XML
-			DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-
-			TransformerFactory transformerFactory = XMLHelper.createSecureTransformerFactory();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-			File outputFile = new File(filePath);
-			try (FileWriter writer = new FileWriter(outputFile)) {
-				transformer.transform(new DOMSource(doc), new StreamResult(writer));
-			}
-
-			log.info("Saving Backup File: " + filePath);
-
-		} catch (Exception e) {
-			log.error("Error saving backup file", e);
-		}
-	}
-
-	/**
-	 * Generic download method for all download modes
-	 *
-	 * @param params
-	 *            Download parameters
-	 * @return XML response as string
-	 */
-	private String genericDownload(Map<String, String> params) {
-		applicationSettings.readSettingsFromFile();
-		String outputString = "";
-
-		try {
-			HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
-
-			// Set headers
-			String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
-			httpPost.setHeader("Authorization", authHeader);
-			httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
-			httpPost.setHeader("Accept-Encoding", "gzip,deflate");
-
-			// Build form parameters
-			List<NameValuePair> formParams = new ArrayList<>();
-			for (Map.Entry<String, String> entry : params.entrySet()) {
-				if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-					formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-				}
-			}
-
-			httpPost.setEntity(new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8));
-
-			try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
-				HttpEntity responseEntity = response.getEntity();
-				if (responseEntity != null) {
-					outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-				}
-			}
-
-			// Save backup if mode is available
-			String mode = params.get("mode");
-			if (mode != null) {
-				saveToBackup(outputString, mode + "_RESPONSE");
-			}
-
-		} catch (Exception e) {
-			log.error("Error in generic download", e);
-		}
-
-		return outputString;
-	}
-
-	/**
-	 * DOWNLOAD_FUND - Download fund data by LEI or OeNB-ID
-	 */
-	public String downloadFund(DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_FUND");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.getProfile() != null) {
-			requestParams.put("profile", params.getProfile());
-		}
-
-		if (params.hasLeiOenIds()) {
-			requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-		}
-
-		if (params.getRequestBlockSize() != null) {
-			requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_SHARECLASS_SEGMENT - Download shareclass/segment data by ISIN
-	 */
-	public String downloadShareClass(DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_SHARECLASS_SEGMENT");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.getProfile() != null) {
-			requestParams.put("profile", params.getProfile());
-		}
-
-		if (params.hasIsins()) {
-			requestParams.put("isin", String.join(" ", params.getIsins()));
-		}
-
-		if (params.getRequestBlockSize() != null) {
-			requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_OENB_AGGREGIERUNG - Download OeNB aggregated data
-	 */
-	public String downloadOeNBAggregierung(DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_OENB_AGGREGIERUNG");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.hasLeiOenIds()) {
-			requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-		}
-
-		if (params.isExcludeInvalid()) {
-			requestParams.put("excludeinvalid", "true");
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_OENB_SECBYSEC - Download OeNB Security-by-Security data
-	 */
-	public String downloadOeNBSecBySec(DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_OENB_SECBYSEC");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.hasLeiOenIds()) {
-			requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-		}
-
-		if (params.isExcludeInvalid()) {
-			requestParams.put("excludeinvalid", "true");
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_OENB_CHECK - Download OeNB aggregation check
-	 */
-	public String downloadOeNBCheck(LocalDate date, String validFilter) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_OENB_CHECK");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (date != null) {
-			requestParams.put("date", date.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (validFilter != null) {
-			requestParams.put("valid", validFilter); // "true" or "false"
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_JOURNAL - Download journal entries
-	 */
-	public String downloadJournal(LocalDateTime timeFrom, LocalDateTime timeTo, String action, String type,
-			String userJournal, String uniqueId, boolean excludeEmptyDownloads) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_JOURNAL");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (timeFrom != null) {
-			requestParams.put("time_from", timeFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (timeTo != null) {
-			requestParams.put("time_to", timeTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (action != null) {
-			requestParams.put("action", action); // UL, DL
-		}
-
-		if (type != null) {
-			requestParams.put("type", type); // AR, FXML_DATA, etc.
-		}
-
-		if (userJournal != null) {
-			requestParams.put("user_journal", userJournal);
-		}
-
-		if (uniqueId != null) {
-			requestParams.put("unique_id", uniqueId);
-		}
-
-		if (excludeEmptyDownloads) {
-			requestParams.put("exclude_empty_dl", "true");
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_DOCUMENTS - Download documents
-	 */
-	public String downloadDocuments(DownloadParameters params, String documentType) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_DOCUMENTS");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.getProfile() != null) {
-			requestParams.put("profile", params.getProfile());
-		}
-
-		if (params.hasLeiOenIds()) {
-			requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-		}
-
-		if (params.hasIsins()) {
-			requestParams.put("isin", String.join(" ", params.getIsins()));
-		}
-
-		if (documentType != null) {
-			// Check if it's a listed or unlisted document type
-			if (isListedDocumentType(documentType)) {
-				requestParams.put("listed_doc_type", documentType);
-			} else {
-				requestParams.put("unlisted_doc_type", documentType);
-			}
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_REG_REPORTINGS - Download regulatory reportings
-	 */
-	public String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_REG_REPORTINGS");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (params.getDate() != null) {
-			requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (params.getProfile() != null) {
-			requestParams.put("profile", params.getProfile());
-		}
-
-		if (params.hasLeiOenIds()) {
-			requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-		}
-
-		if (params.hasIsins()) {
-			requestParams.put("isin", String.join(" ", params.getIsins()));
-		}
-
-		if (reportingType != null) {
-			requestParams.put("reg_reporting_type", reportingType);
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_AVAILABLE_DATA - Download available data information
-	 */
-	public String downloadAvailableData(LocalDate contentDate, LocalDateTime uploadTimeFrom, LocalDateTime uploadTimeTo,
-			String fdpContent, DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_AVAILABLE_DATA");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params != null && params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (contentDate != null) {
-			requestParams.put("date", contentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (uploadTimeFrom != null) {
-			requestParams.put("upload_time_from",
-					uploadTimeFrom.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-		}
-
-		if (uploadTimeTo != null) {
-			requestParams.put("upload_time_to",
-					uploadTimeTo.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-		}
-
-		if (fdpContent != null) {
-			requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
-		}
-
-		if (params != null) {
-			if (params.hasLeiOenIds()) {
-				requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-			}
-			if (params.hasIsins()) {
-				requestParams.put("isin", String.join(" ", params.getIsins()));
-			}
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * DOWNLOAD_OWN_DATA_DOWNLOADED - Download information about own data downloaded
-	 * by others
-	 */
-	public String downloadOwnDataDownloaded(LocalDate dateFrom, LocalDate dateTo, String fdpContent,
-			DownloadParameters params) {
-		Map<String, String> requestParams = new HashMap<>();
-		requestParams.put("mode", "DOWNLOAD_OWN_DATA_DOWNLOADED");
-		requestParams.put("server", getServerParam());
-		requestParams.put("user", applicationSettings.getOekbUserName());
-		requestParams.put("datasupplier",
-				params != null && params.getDataSupplier() != null
-						? params.getDataSupplier()
-						: applicationSettings.getDataSupplierList());
-		requestParams.put("clientversion", CLIENT_VERSION);
-
-		if (dateFrom != null) {
-			requestParams.put("date_from", dateFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (dateTo != null) {
-			requestParams.put("date_to", dateTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		}
-
-		if (fdpContent != null) {
-			requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
-		}
-
-		if (params != null) {
-			if (params.hasLeiOenIds()) {
-				requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
-			}
-			if (params.hasIsins()) {
-				requestParams.put("isin", String.join(" ", params.getIsins()));
-			}
-		}
-
-		return genericDownload(requestParams);
-	}
-
-	/**
-	 * Helper method to check if document type is listed
-	 */
-	private static boolean isListedDocumentType(String docType) {
-		return docType.equals("AIFMD") || docType.equals("AnnualReport") || docType.equals("AuditReport")
-				|| docType.equals("Factsheet") || docType.equals("KID") || docType.equals("Prospectus")
-				|| docType.equals("PRIIPS-KID");
-	}
-
-	/**
-	 * Batch upload multiple files
-	 */
-	public List<String> uploadDataFiles(List<File> files) {
-		List<String> results = new ArrayList<>();
-
-		for (File file : files) {
-			log.info("Uploading file: " + file.getName());
-			String result = uploadDataFile(file);
-			results.add(result);
-		}
-
-		return results;
-	}
+    private static final Logger LOG = LogManager.getLogger(OeKBHTTP.class);
+
+    /** Client version sent to OeKB server */
+    private static final String CLIENT_VERSION = "4.4.0";
+
+    private final CloseableHttpClient httpClient;
+    private final IApplicationSettings applicationSettings;
+
+    /**
+     * Get the server parameter based on settings (prod or test).
+     */
+    private String getServerParam() {
+        return applicationSettings.isUseProdServer() ? "prod" : "test";
+    }
+
+    /**
+     * Public constructor for application use. Creates a real HTTP client.
+     */
+    public OeKBHTTP() {
+        this.applicationSettings = ApplicationSettings.getInstance();
+        this.httpClient = getOekbConnection();
+    }
+
+    /**
+     * Package-private constructor for testing purposes. Allows injecting mock
+     * dependencies.
+     *
+     * @param httpClient
+     *            The HTTP client to use (real or mock).
+     * @param applicationSettings
+     *            The application settings to use (real or mock).
+     */
+    OeKBHTTP(CloseableHttpClient httpClient, IApplicationSettings applicationSettings) {
+        this.applicationSettings = applicationSettings;
+        this.httpClient = httpClient;
+    }
+
+    private CloseableHttpClient getOekbConnection() {
+        applicationSettings.readSettingsFromFile();
+
+        String proxyHost = "";
+        Integer proxyPort = 0;
+        boolean useCustomProxy = false;
+
+        if (applicationSettings.isConnectionUseSystemSettings()) {
+            LOG.debug("using system proxy Settings");
+            System.setProperty("java.net.useSystemProxies", "true");
+            useCustomProxy = false;
+        } else {
+            if (applicationSettings.getConnectionProxyHost() != null
+                    && !applicationSettings.getConnectionProxyHost().isEmpty()) {
+                proxyHost = applicationSettings.getConnectionProxyHost();
+                proxyPort = applicationSettings.getConnectionProxyPort();
+            }
+        }
+
+        if (proxyHost != null && proxyHost.length() > 1 && proxyPort != null && proxyPort > 1) {
+            useCustomProxy = true;
+            LOG.debug("proxy settings: " + proxyHost + ":" + proxyPort);
+        } else {
+            LOG.info("no valid proxy settings found!");
+        }
+
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(Timeout.ofSeconds(10))
+                .setResponseTimeout(Timeout.ofSeconds(60)).build();
+
+        if (useCustomProxy) {
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            return HttpClients.custom().setDefaultRequestConfig(requestConfig).setRoutePlanner(routePlanner).build();
+        } else {
+            return HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
+        }
+    }
+
+    public String uploadAccessRule(File file) {
+        applicationSettings.readSettingsFromFile();
+
+        // Check if in FileSystem mode (offline mode)
+        if (applicationSettings.isFileSystem()) {
+            try {
+                String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()),
+                        StandardCharsets.UTF_8);
+                saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_OFFLINE");
+                LOG.info("OFFLINE MODE: Access rule saved to backup instead of uploading to server");
+                return "SUCCESS (OFFLINE MODE)\n\nAccess rule saved to backup directory.\nNo actual upload to server performed.";
+            } catch (IOException e) {
+                LOG.error("Error saving access rule in offline mode", e);
+                return "ERROR: " + e.getMessage();
+            }
+        }
+
+        // Real mode: HTTP POST to server
+        String outputString = "";
+        try {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build multipart entity
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody("mode", "UPLOAD_ACCESS_RULE");
+            builder.addTextBody("server", getServerParam());
+            builder.addTextBody("user", applicationSettings.getOekbUserName());
+            builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
+            builder.addTextBody("clientversion", CLIENT_VERSION);
+            builder.addTextBody("fileToUploadName", file.getName());
+            builder.addBinaryBody("fileToUpload", file);
+
+            HttpEntity multipart = builder.build();
+            httpPost.setEntity(multipart);
+
+            LOG.info("Uploading access rule to server: {}", file.getName());
+
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                LOG.debug("Server response status: {}", statusCode);
+
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (statusCode != 200) {
+                        LOG.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
+                                outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        LOG.info("Access rule uploaded successfully");
+                    }
+                } else {
+                    LOG.warn("No response entity received from server");
+                    outputString = "ERROR: No response from server";
+                }
+            }
+
+            // Save backup of both request and response
+            String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+            saveToBackup(fileContent, "ACCESS_RULE_UPLOAD_REQUEST");
+            if (!outputString.isEmpty()) {
+                saveToBackup(outputString, "ACCESS_RULE_UPLOAD_RESPONSE");
+            }
+
+        } catch (java.net.UnknownHostException e) {
+            LOG.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+            outputString = "ERROR: Cannot reach server - " + e.getMessage();
+        } catch (java.net.ConnectException e) {
+            LOG.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
+                    e.getMessage());
+            outputString = "ERROR: Connection refused - " + e.getMessage();
+        } catch (javax.net.ssl.SSLException e) {
+            LOG.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+            outputString = "ERROR: SSL/TLS error - " + e.getMessage();
+        } catch (java.net.SocketTimeoutException e) {
+            LOG.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+            outputString = "ERROR: Connection timeout - " + e.getMessage();
+        } catch (Exception e) {
+            LOG.error("Error uploading access rule: {}. Check credentials, proxy settings, and network connection.",
+                    e.getMessage());
+            LOG.debug("Full exception details", e);
+            outputString = "ERROR: " + e.getMessage();
+        }
+
+        return outputString;
+    }
+
+    public String uploadDataFile(File file) {
+        applicationSettings.readSettingsFromFile();
+        String outputString = "";
+
+        try {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(KarlK)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build multipart entity
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody("mode", "UPLOAD_DATA");
+            builder.addTextBody("server", getServerParam());
+            builder.addTextBody("user", applicationSettings.getOekbUserName());
+            builder.addTextBody("datasupplier", applicationSettings.getDataSupplierList());
+            builder.addTextBody("clientversion", CLIENT_VERSION);
+            builder.addTextBody("fileToUploadName", file.getName());
+            builder.addTextBody("upload_xml", file.getName());
+            builder.addBinaryBody("fileToUpload", file);
+
+            HttpEntity multipart = builder.build();
+            httpPost.setEntity(multipart);
+
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                LOG.debug("Server response status: {}", statusCode);
+
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+                }
+
+                if (statusCode >= 400) {
+                    LOG.error("Server returned error status: {}. Response: {}", statusCode,
+                            outputString.length() > 200 ? outputString.substring(0, 200) : outputString);
+                    return "ERROR: Server returned status " + statusCode;
+                }
+            }
+
+            String fileContent = new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+            saveToBackup(fileContent, file.getName());
+            saveToBackup(outputString, "UPLOAD_DATA_REPLY");
+
+        } catch (java.net.UnknownHostException e) {
+            LOG.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+            outputString = "ERROR: Cannot reach server - " + e.getMessage();
+        } catch (java.net.ConnectException e) {
+            LOG.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
+                    e.getMessage());
+            outputString = "ERROR: Connection refused - " + e.getMessage();
+        } catch (javax.net.ssl.SSLException e) {
+            LOG.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+            outputString = "ERROR: SSL/TLS error - " + e.getMessage();
+        } catch (java.net.SocketTimeoutException e) {
+            LOG.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+            outputString = "ERROR: Connection timeout - " + e.getMessage();
+        } catch (Exception e) {
+            LOG.error("Error uploading data file: {}. Check credentials, proxy settings, and network connection.",
+                    e.getMessage());
+            LOG.debug("Full exception details", e);
+            outputString = "ERROR: " + e.getMessage();
+        }
+
+        return outputString;
+    }
+
+    public String downloadAccessRules() {
+        applicationSettings.readSettingsFromFile();
+        String outputString = "";
+
+        try {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(KarlK)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build form parameters
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_RECEIVED"));
+            params.add(new BasicNameValuePair("server", getServerParam()));
+            params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
+            params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
+            params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
+
+            LOG.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
+
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                LOG.debug("Server response status: {}", statusCode);
+
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (outputString == null || outputString.isBlank()) {
+                        LOG.warn("Server returned empty response. Check credentials and server availability.");
+                    } else if (statusCode != 200) {
+                        LOG.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
+                                outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        LOG.debug("Received {} bytes from server", outputString.length());
+                    }
+                } else {
+                    LOG.warn("No response entity received from server");
+                }
+            }
+
+            if (outputString != null && !outputString.isBlank()) {
+                saveToBackup(outputString, "DOWNLOAD_ACCESS_RULE");
+            }
+
+        } catch (java.net.UnknownHostException e) {
+            LOG.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+        } catch (java.net.ConnectException e) {
+            LOG.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
+                    e.getMessage());
+        } catch (javax.net.ssl.SSLException e) {
+            LOG.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+        } catch (java.net.SocketTimeoutException e) {
+            LOG.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+        } catch (Exception e) {
+            LOG.error("Error downloading access rules: {}. Check credentials, proxy settings, and network connection.",
+                    e.getMessage());
+            LOG.debug("Full exception details", e);
+        }
+
+        return outputString;
+    }
+
+    public String downloadGivenAccessRules() {
+        applicationSettings.readSettingsFromFile();
+        String outputString = "";
+
+        try {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(KarlK)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build form parameters
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("mode", "DOWNLOAD_AR_ASSIGNED"));
+            params.add(new BasicNameValuePair("server", getServerParam()));
+            params.add(new BasicNameValuePair("user", applicationSettings.getOekbUserName()));
+            params.add(new BasicNameValuePair("datasupplier", applicationSettings.getDataSupplierList()));
+            params.add(new BasicNameValuePair("clientversion", CLIENT_VERSION));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
+
+            LOG.debug("Requesting access rules from: {}", applicationSettings.getServerURL());
+
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                int statusCode = response.getCode();
+                LOG.debug("Server response status: {}", statusCode);
+
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+
+                    if (outputString == null || outputString.isBlank()) {
+                        LOG.warn("Server returned empty response. Check credentials and server availability.");
+                    } else if (statusCode != 200) {
+                        LOG.warn("Server returned non-OK status code: {}. Response: {}", statusCode,
+                                outputString.length() > 200 ? outputString.substring(0, 200) + "..." : outputString);
+                    } else {
+                        LOG.debug("Received {} bytes from server", outputString.length());
+                    }
+                } else {
+                    LOG.warn("No response entity received from server");
+                }
+            }
+
+            if (outputString != null && !outputString.isBlank()) {
+                saveToBackup(outputString, "DOWNLOAD_AR_ASSIGNED");
+            }
+
+        } catch (java.net.UnknownHostException e) {
+            LOG.error("Cannot reach server: {}. Check network connection and server URL.", e.getMessage());
+        } catch (java.net.ConnectException e) {
+            LOG.error("Connection refused: {}. Check if proxy settings are correct and server is reachable.",
+                    e.getMessage());
+        } catch (javax.net.ssl.SSLException e) {
+            LOG.error("SSL/TLS error: {}. Check certificate configuration.", e.getMessage());
+        } catch (java.net.SocketTimeoutException e) {
+            LOG.error("Connection timeout: {}. Server may be slow or unreachable.", e.getMessage());
+        } catch (Exception e) {
+            LOG.error(
+                    "Error downloading given access rules: {}. Check credentials, proxy settings, and network connection.",
+                    e.getMessage());
+            LOG.debug("Full exception details", e);
+        }
+
+        return outputString;
+    }
+
+    public static void saveToBackup(String xml, String fileName) {
+        try {
+            ApplicationSettings settings = ApplicationSettings.getInstance();
+            String filePraefix = settings.isUseProdServer() ? "PROD" : "DEV";
+            filePraefix += "_" + settings.getDataSupplierList();
+
+            File backupDir = new File(settings.getBackupDirectory());
+            if (!backupDir.exists() && !backupDir.mkdirs()) {
+                LOG.warn("Could not create backup directory: {}", backupDir.getAbsolutePath());
+            }
+
+            String filePath = settings.getBackupDirectory() + File.separator
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_H_m_s")) + "__" + filePraefix
+                    + "_" + fileName + ".xml";
+
+            // Fix double .xml.xml extension
+            filePath = filePath.replace(".xml.xml", ".xml");
+
+            // Parse and pretty print XML
+            DocumentBuilderFactory factory = XMLHelper.createSecureDocumentBuilderFactory();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+
+            TransformerFactory transformerFactory = XMLHelper.createSecureTransformerFactory();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+            Path outputPath = new File(filePath).toPath();
+            try (BufferedWriter writer = java.nio.file.Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
+                transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            }
+
+            LOG.info("Saving Backup File: " + filePath);
+
+        } catch (IOException e) {
+            LOG.error("Error saving backup file", e);
+        } catch (javax.xml.parsers.ParserConfigurationException | org.xml.sax.SAXException e) {
+            LOG.error("Error parsing XML for backup", e);
+        } catch (javax.xml.transform.TransformerException e) {
+            LOG.error("Error transforming XML for backup", e);
+        }
+    }
+
+    /**
+     * Generic download method for all download modes
+     *
+     * @param params
+     *            Download parameters
+     * @return XML response as string
+     */
+    private String genericDownload(Map<String, String> params) {
+        applicationSettings.readSettingsFromFile();
+        String outputString = "";
+
+        try {
+            HttpPost httpPost = new HttpPost(applicationSettings.getServerURL());
+
+            // Set headers
+            String authHeader = "Basic " + applicationSettings.getAuthCredentialsBasic();
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.setHeader("User-Agent", "(OeKBVisualClient)");
+            httpPost.setHeader("Accept-Encoding", "gzip,deflate");
+
+            // Build form parameters
+            List<NameValuePair> formParams = new ArrayList<>();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                    formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                }
+            }
+
+            httpPost.setEntity(new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8));
+
+            try (CloseableHttpResponse response = this.httpClient.execute(httpPost)) {
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    outputString = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+                }
+            }
+
+            // Save backup if mode is available
+            String mode = params.get("mode");
+            if (mode != null) {
+                saveToBackup(outputString, mode + "_RESPONSE");
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error in generic download", e);
+        }
+
+        return outputString;
+    }
+
+    /**
+     * DOWNLOAD_FUND - Download fund data by LEI or OeNB-ID
+     */
+    public String downloadFund(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_FUND");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.getRequestBlockSize() != null) {
+            requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_SHARECLASS_SEGMENT - Download shareclass/segment data by ISIN
+     */
+    public String downloadShareClass(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_SHARECLASS_SEGMENT");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (params.getRequestBlockSize() != null) {
+            requestParams.put("requestblock-size", params.getRequestBlockSize().toString());
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_AGGREGIERUNG - Download OeNB aggregated data
+     */
+    public String downloadOeNBAggregierung(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_AGGREGIERUNG");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.isExcludeInvalid()) {
+            requestParams.put("excludeinvalid", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_SECBYSEC - Download OeNB Security-by-Security data
+     */
+    public String downloadOeNBSecBySec(DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_SECBYSEC");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.isExcludeInvalid()) {
+            requestParams.put("excludeinvalid", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OENB_CHECK - Download OeNB aggregation check
+     */
+    public String downloadOeNBCheck(LocalDate date, String validFilter) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OENB_CHECK");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (date != null) {
+            requestParams.put("date", date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (validFilter != null) {
+            requestParams.put("valid", validFilter); // "true" or "false"
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_JOURNAL - Download journal entries
+     */
+    public String downloadJournal(LocalDateTime timeFrom, LocalDateTime timeTo, String action, String type,
+            String userJournal, String uniqueId, boolean excludeEmptyDownloads) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_JOURNAL");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier", applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (timeFrom != null) {
+            requestParams.put("time_from", timeFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (timeTo != null) {
+            requestParams.put("time_to", timeTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (action != null) {
+            requestParams.put("action", action); // UL, DL
+        }
+
+        if (type != null) {
+            requestParams.put("type", type); // AR, FXML_DATA, etc.
+        }
+
+        if (userJournal != null) {
+            requestParams.put("user_journal", userJournal);
+        }
+
+        if (uniqueId != null) {
+            requestParams.put("unique_id", uniqueId);
+        }
+
+        if (excludeEmptyDownloads) {
+            requestParams.put("exclude_empty_dl", "true");
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_DOCUMENTS - Download documents
+     */
+    public String downloadDocuments(DownloadParameters params, String documentType) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_DOCUMENTS");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (documentType != null) {
+            // Check if it's a listed or unlisted document type
+            if (isListedDocumentType(documentType)) {
+                requestParams.put("listed_doc_type", documentType);
+            } else {
+                requestParams.put("unlisted_doc_type", documentType);
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_REG_REPORTINGS - Download regulatory reportings
+     */
+    public String downloadRegulatoryReportings(DownloadParameters params, String reportingType) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_REG_REPORTINGS");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (params.getDate() != null) {
+            requestParams.put("date", params.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (params.getProfile() != null) {
+            requestParams.put("profile", params.getProfile());
+        }
+
+        if (params.hasLeiOenIds()) {
+            requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+        }
+
+        if (params.hasIsins()) {
+            requestParams.put("isin", String.join(" ", params.getIsins()));
+        }
+
+        if (reportingType != null) {
+            requestParams.put("reg_reporting_type", reportingType);
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_AVAILABLE_DATA - Download available data information
+     */
+    public String downloadAvailableData(LocalDate contentDate, LocalDateTime uploadTimeFrom, LocalDateTime uploadTimeTo,
+            String fdpContent, DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_AVAILABLE_DATA");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params != null && params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (contentDate != null) {
+            requestParams.put("date", contentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (uploadTimeFrom != null) {
+            requestParams.put("upload_time_from",
+                    uploadTimeFrom.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        }
+
+        if (uploadTimeTo != null) {
+            requestParams.put("upload_time_to",
+                    uploadTimeTo.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        }
+
+        if (fdpContent != null) {
+            requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
+        }
+
+        if (params != null) {
+            if (params.hasLeiOenIds()) {
+                requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+            }
+            if (params.hasIsins()) {
+                requestParams.put("isin", String.join(" ", params.getIsins()));
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * DOWNLOAD_OWN_DATA_DOWNLOADED - Download information about own data downloaded
+     * by others
+     */
+    public String downloadOwnDataDownloaded(LocalDate dateFrom, LocalDate dateTo, String fdpContent,
+            DownloadParameters params) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("mode", "DOWNLOAD_OWN_DATA_DOWNLOADED");
+        requestParams.put("server", getServerParam());
+        requestParams.put("user", applicationSettings.getOekbUserName());
+        requestParams.put("datasupplier",
+                params != null && params.getDataSupplier() != null
+                        ? params.getDataSupplier()
+                        : applicationSettings.getDataSupplierList());
+        requestParams.put("clientversion", CLIENT_VERSION);
+
+        if (dateFrom != null) {
+            requestParams.put("date_from", dateFrom.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (dateTo != null) {
+            requestParams.put("date_to", dateTo.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        if (fdpContent != null) {
+            requestParams.put("fdp_content", fdpContent); // FUND, REG, DOC
+        }
+
+        if (params != null) {
+            if (params.hasLeiOenIds()) {
+                requestParams.put("lei_oen_id", String.join(" ", params.getLeiOenIds()));
+            }
+            if (params.hasIsins()) {
+                requestParams.put("isin", String.join(" ", params.getIsins()));
+            }
+        }
+
+        return genericDownload(requestParams);
+    }
+
+    /**
+     * Helper method to check if document type is listed
+     */
+    private static boolean isListedDocumentType(String docType) {
+        return "AIFMD".equals(docType) || "AnnualReport".equals(docType) || "AuditReport".equals(docType)
+                || "Factsheet".equals(docType) || "KID".equals(docType) || "Prospectus".equals(docType)
+                || "PRIIPS-KID".equals(docType);
+    }
+
+    /**
+     * Batch upload multiple files
+     */
+    public List<String> uploadDataFiles(List<File> files) {
+        List<String> results = new ArrayList<>();
+
+        for (File file : files) {
+            LOG.info("Uploading file: " + file.getName());
+            String result = uploadDataFile(file);
+            results.add(result);
+        }
+
+        return results;
+    }
 }

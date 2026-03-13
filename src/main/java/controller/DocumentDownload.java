@@ -15,25 +15,16 @@
  */
 package controller;
 
-// JFoenix removed
 import dao.OeKBHTTP;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -52,203 +43,203 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class DocumentDownload implements Initializable {
-	private static final Logger log = LogManager.getLogger(DocumentDownload.class);
-	private ApplicationSettings settingsData;
+    private static final Logger LOG = LogManager.getLogger(DocumentDownload.class);
+    private ApplicationSettings settingsData;
 
-	@FXML
-	private TextField identifierField;
+    @FXML
+    private TextField identifierField;
 
-	@FXML
-	private ComboBox<String> identifierTypeCombo;
+    @FXML
+    private ComboBox<String> identifierTypeCombo;
 
-	@FXML
-	private Button selectFileButton;
+    @FXML
+    private Button selectFileButton;
 
-	@FXML
-	private DatePicker datePicker;
+    @FXML
+    private DatePicker datePicker;
 
-	@FXML
-	private ComboBox<String> profileComboBox;
+    @FXML
+    private ComboBox<String> profileComboBox;
 
-	@FXML
-	private ComboBox<String> documentTypeCombo;
+    @FXML
+    private ComboBox<String> documentTypeCombo;
 
-	@FXML
-	private TextField customDocTypeField;
+    @FXML
+    private TextField customDocTypeField;
 
-	@FXML
-	private Button downloadButton;
+    @FXML
+    private Button downloadButton;
 
-	@FXML
-	private ProgressIndicator progressIndicator;
+    @FXML
+    private ProgressIndicator progressIndicator;
 
-	@FXML
-	private TextArea resultTextArea;
+    @FXML
+    private TextArea resultTextArea;
 
-	@FXML
-	private Label statusLabel;
+    @FXML
+    private Label statusLabel;
 
-	@FXML
-	private Label fileLabel;
+    @FXML
+    private Label fileLabel;
 
-	private List<String> idsFromFile;
+    private List<String> idsFromFile;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		log.debug("Initialize DocumentDownload controller");
-		settingsData = ApplicationSettings.getInstance();
-		settingsData.readSettingsFromFile();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        LOG.debug("Initialize DocumentDownload controller");
+        settingsData = ApplicationSettings.getInstance();
+        settingsData.readSettingsFromFile();
 
-		// Setup identifier type combo
-		identifierTypeCombo.setItems(FXCollections.observableArrayList("LEI/OeNB-ID", "ISIN"));
-		identifierTypeCombo.setValue("LEI/OeNB-ID");
+        // Setup identifier type combo
+        identifierTypeCombo.setItems(FXCollections.observableArrayList("LEI/OeNB-ID", "ISIN"));
+        identifierTypeCombo.setValue("LEI/OeNB-ID");
 
-		// Setup profile combo box
-		profileComboBox.setItems(FXCollections.observableArrayList("all", "PKG", "Vendor", "OeNB", "OENB_Meldungen"));
-		profileComboBox.setValue("all");
+        // Setup profile combo box
+        profileComboBox.setItems(FXCollections.observableArrayList("all", "PKG", "Vendor", "OeNB", "OENB_Meldungen"));
+        profileComboBox.setValue("all");
 
-		// Setup document type combo
-		documentTypeCombo.setItems(FXCollections.observableArrayList("AIFMD", "AnnualReport", "AuditReport",
-				"Factsheet", "KID", "Prospectus", "PRIIPS-KID", "Custom (unlisted)"));
-		documentTypeCombo.setValue("Factsheet");
+        // Setup document type combo
+        documentTypeCombo.setItems(FXCollections.observableArrayList("AIFMD", "AnnualReport", "AuditReport",
+                "Factsheet", "KID", "Prospectus", "PRIIPS-KID", "Custom (unlisted)"));
+        documentTypeCombo.setValue("Factsheet");
 
-		// Set default date to today
-		datePicker.setValue(LocalDate.now());
+        // Set default date to today
+        datePicker.setValue(LocalDate.now());
 
-		progressIndicator.setVisible(false);
-		idsFromFile = new ArrayList<>();
+        progressIndicator.setVisible(false);
+        idsFromFile = new ArrayList<>();
 
-		// Enable/disable custom doc type field based on selection
-		documentTypeCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
-			customDocTypeField.setDisable(!newVal.equals("Custom (unlisted)"));
-		});
-		customDocTypeField.setDisable(true);
-	}
+        // Enable/disable custom doc type field based on selection
+        documentTypeCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            customDocTypeField.setDisable(!"Custom (unlisted)".equals(newVal));
+        });
+        customDocTypeField.setDisable(true);
+    }
 
-	@FXML
-	private void selectFile() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Select ID File");
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+    @FXML
+    private void selectFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select ID File");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
 
-		File file = fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
-		if (file != null) {
-			try {
-				idsFromFile = Files.readAllLines(file.toPath());
-				idsFromFile.removeIf(String::isEmpty);
-				fileLabel.setText("File: " + file.getName() + " (" + idsFromFile.size() + " IDs)");
-				statusLabel.setText("Loaded " + idsFromFile.size() + " IDs from file");
-				log.info("Loaded {} IDs from file: {}", idsFromFile.size(), file.getName());
-			} catch (Exception e) {
-				log.error("Error reading file", e);
-				statusLabel.setText("Error reading file: " + e.getMessage());
-			}
-		}
-	}
+        File file = fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
+        if (file != null) {
+            try {
+                idsFromFile = Files.readAllLines(file.toPath());
+                idsFromFile.removeIf(String::isEmpty);
+                fileLabel.setText("File: " + file.getName() + " (" + idsFromFile.size() + " IDs)");
+                statusLabel.setText("Loaded " + idsFromFile.size() + " IDs from file");
+                LOG.info("Loaded {} IDs from file: {}", idsFromFile.size(), file.getName());
+            } catch (java.io.IOException e) {
+                LOG.error("Error reading file", e);
+                statusLabel.setText("Error reading file: " + e.getMessage());
+            }
+        }
+    }
 
-	@FXML
-	private void download() {
-		resultTextArea.clear();
-		statusLabel.setText("Downloading documents...");
-		progressIndicator.setVisible(true);
-		downloadButton.setDisable(true);
+    @FXML
+    private void download() {
+        resultTextArea.clear();
+        statusLabel.setText("Downloading documents...");
+        progressIndicator.setVisible(true);
+        downloadButton.setDisable(true);
 
-		new Thread(() -> {
-			try {
-				DownloadParameters params = new DownloadParameters("DOWNLOAD_DOCUMENTS");
+        new Thread(() -> {
+            try {
+                DownloadParameters params = new DownloadParameters("DOWNLOAD_DOCUMENTS");
 
-				// Set date
-				if (datePicker.getValue() != null) {
-					params.setDate(datePicker.getValue());
-				}
+                // Set date
+                if (datePicker.getValue() != null) {
+                    params.setDate(datePicker.getValue());
+                }
 
-				// Set profile
-				params.setProfile(profileComboBox.getValue());
+                // Set profile
+                params.setProfile(profileComboBox.getValue());
 
-				// Get IDs from text field or file
-				List<String> ids = new ArrayList<>();
-				if (!idsFromFile.isEmpty()) {
-					ids.addAll(idsFromFile);
-				} else {
-					String inputText = identifierField.getText().trim();
-					if (!inputText.isEmpty()) {
-						String[] idArray = inputText.split("[,\\s]+");
-						ids.addAll(Arrays.asList(idArray));
-					}
-				}
+                // Get IDs from text field or file
+                List<String> ids = new ArrayList<>();
+                if (!idsFromFile.isEmpty()) {
+                    ids.addAll(idsFromFile);
+                } else {
+                    String inputText = identifierField.getText().trim();
+                    if (!inputText.isEmpty()) {
+                        String[] idArray = inputText.split("[,\\s]+");
+                        ids.addAll(Arrays.asList(idArray));
+                    }
+                }
 
-				if (ids.isEmpty()) {
-					Platform.runLater(() -> {
-						statusLabel.setText("Error: No identifiers provided");
-						progressIndicator.setVisible(false);
-						downloadButton.setDisable(false);
-					});
-					return;
-				}
+                if (ids.isEmpty()) {
+                    Platform.runLater(() -> {
+                        statusLabel.setText("Error: No identifiers provided");
+                        progressIndicator.setVisible(false);
+                        downloadButton.setDisable(false);
+                    });
+                    return;
+                }
 
-				// Set IDs based on type
-				String idType = identifierTypeCombo.getValue();
-				if (idType.equals("ISIN")) {
-					params.setIsins(ids);
-				} else {
-					params.setLeiOenIds(ids);
-				}
+                // Set IDs based on type
+                String idType = identifierTypeCombo.getValue();
+                if ("ISIN".equals(idType)) {
+                    params.setIsins(ids);
+                } else {
+                    params.setLeiOenIds(ids);
+                }
 
-				// Get document type
-				String docType;
-				if (documentTypeCombo.getValue().equals("Custom (unlisted)")) {
-					docType = customDocTypeField.getText().trim();
-					if (docType.isEmpty()) {
-						Platform.runLater(() -> {
-							statusLabel.setText("Error: Custom document type required");
-							progressIndicator.setVisible(false);
-							downloadButton.setDisable(false);
-						});
-						return;
-					}
-				} else {
-					docType = documentTypeCombo.getValue();
-				}
+                // Get document type
+                String docType;
+                if ("Custom (unlisted)".equals(documentTypeCombo.getValue())) {
+                    docType = customDocTypeField.getText().trim();
+                    if (docType.isEmpty()) {
+                        Platform.runLater(() -> {
+                            statusLabel.setText("Error: Custom document type required");
+                            progressIndicator.setVisible(false);
+                            downloadButton.setDisable(false);
+                        });
+                        return;
+                    }
+                } else {
+                    docType = documentTypeCombo.getValue();
+                }
 
-				// Check if in FileSystem mode
-				ApplicationSettings settings = ApplicationSettings.getInstance();
-				if (settings.isFileSystem()) {
-					Platform.runLater(() -> {
-						resultTextArea.setText(
-								"⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
-						statusLabel.setText("Feature not available in offline mode");
-						progressIndicator.setVisible(false);
-						downloadButton.setDisable(false);
-					});
-					return;
-				}
+                // Check if in FileSystem mode
+                ApplicationSettings settings = ApplicationSettings.getInstance();
+                if (settings.isFileSystem()) {
+                    Platform.runLater(() -> {
+                        resultTextArea.setText(
+                                "⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                        statusLabel.setText("Feature not available in offline mode");
+                        progressIndicator.setVisible(false);
+                        downloadButton.setDisable(false);
+                    });
+                    return;
+                }
 
-				log.info("Downloading documents for {} IDs, type: {}", ids.size(), docType);
-				String result = new OeKBHTTP().downloadDocuments(params, docType);
+                LOG.info("Downloading documents for {} IDs, type: {}", ids.size(), docType);
+                String result = new OeKBHTTP().downloadDocuments(params, docType);
 
-				Platform.runLater(() -> {
-					resultTextArea.setText(result);
-					statusLabel.setText("Document download completed for " + ids.size() + " identifier(s)");
-					progressIndicator.setVisible(false);
-					downloadButton.setDisable(false);
-				});
+                Platform.runLater(() -> {
+                    resultTextArea.setText(result);
+                    statusLabel.setText("Document download completed for " + ids.size() + " identifier(s)");
+                    progressIndicator.setVisible(false);
+                    downloadButton.setDisable(false);
+                });
 
-			} catch (Exception e) {
-				log.error("Error during download", e);
-				Platform.runLater(() -> {
-					statusLabel.setText("Error: " + e.getMessage());
-					resultTextArea.setText("Error occurred:\n" + e.getMessage());
-					progressIndicator.setVisible(false);
-					downloadButton.setDisable(false);
-				});
-			}
-		}).start();
-	}
+            } catch (RuntimeException e) {
+                LOG.error("Error during download", e);
+                Platform.runLater(() -> {
+                    statusLabel.setText("Error: " + e.getMessage());
+                    resultTextArea.setText("Error occurred:\n" + e.getMessage());
+                    progressIndicator.setVisible(false);
+                    downloadButton.setDisable(false);
+                });
+            }
+        }).start();
+    }
 
-	@FXML
-	private void clearFile() {
-		idsFromFile.clear();
-		fileLabel.setText("No file selected");
-		statusLabel.setText("File cleared");
-	}
+    @FXML
+    private void clearFile() {
+        idsFromFile.clear();
+        fileLabel.setText("No file selected");
+        statusLabel.setText("File cleared");
+    }
 }

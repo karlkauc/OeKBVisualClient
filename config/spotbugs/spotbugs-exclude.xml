@@ -16,4 +16,17 @@
     <Match>
         <Source name="~.*Test\.java"/>
     </Match>
+
+    <!-- Singleton pattern: getInstance() intentionally returns the mutable singleton -->
+    <Match>
+        <Class name="model.ApplicationSettings"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <!-- JavaFX dialog pattern: AccessRuleEditDialog intentionally shares the
+         AccessRule object with its caller for editing -->
+    <Match>
+        <Class name="controller.AccessRuleEditDialog"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>
