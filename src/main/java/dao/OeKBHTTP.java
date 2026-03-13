@@ -18,20 +18,26 @@ package dao;
 import model.ApplicationSettings;
 import model.IApplicationSettings;
 import model.DownloadParameters;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
-import org.apache.hc.core5.util.Timeout;
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -48,6 +54,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ProxySelector;
 import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -98,39 +106,82 @@ public class OeKBHTTP {
 
     private CloseableHttpClient getOekbConnection() {
         applicationSettings.readSettingsFromFile();
+        return createHttpClient(applicationSettings);
+    }
 
-        String proxyHost = "";
-        Integer proxyPort = 0;
-        boolean useCustomProxy = false;
-
-        if (applicationSettings.isConnectionUseSystemSettings()) {
-            LOG.debug("using system proxy Settings");
-            System.setProperty("java.net.useSystemProxies", "true");
-            useCustomProxy = false;
-        } else {
-            if (applicationSettings.getConnectionProxyHost() != null
-                    && !applicationSettings.getConnectionProxyHost().isEmpty()) {
-                proxyHost = applicationSettings.getConnectionProxyHost();
-                proxyPort = applicationSettings.getConnectionProxyPort();
-            }
-        }
-
-        if (proxyHost != null && proxyHost.length() > 1 && proxyPort != null && proxyPort > 1) {
-            useCustomProxy = true;
-            LOG.debug("proxy settings: " + proxyHost + ":" + proxyPort);
-        } else {
-            LOG.info("no valid proxy settings found!");
-        }
-
+    static CloseableHttpClient createHttpClient(IApplicationSettings settings) {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(Timeout.ofSeconds(10))
                 .setResponseTimeout(Timeout.ofSeconds(60)).build();
 
-        if (useCustomProxy) {
-            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-            return HttpClients.custom().setDefaultRequestConfig(requestConfig).setRoutePlanner(routePlanner).build();
+        HttpClientBuilder builder = HttpClients.custom().setDefaultRequestConfig(requestConfig);
+
+        if (settings.isConnectionUseSystemSettings()) {
+            LOG.debug("Using system proxy settings (reading from OS/registry)");
+            System.setProperty("java.net.useSystemProxies", "true");
+            SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+            builder.setRoutePlanner(routePlanner);
+
+            BasicCredentialsProvider credsProvider = configureProxyCredentials(settings, null, -1);
+            if (credsProvider != null) {
+                builder.setDefaultCredentialsProvider(credsProvider);
+            }
         } else {
-            return HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
+            String proxyHost = settings.getConnectionProxyHost();
+            Integer proxyPort = settings.getConnectionProxyPort();
+
+            if (proxyHost != null && proxyHost.length() > 1 && proxyPort != null && proxyPort > 1) {
+                LOG.debug("Using manual proxy: {}:{}", proxyHost, proxyPort);
+                HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+                builder.setRoutePlanner(routePlanner);
+
+                BasicCredentialsProvider credsProvider = configureProxyCredentials(settings, proxyHost, proxyPort);
+                if (credsProvider != null) {
+                    builder.setDefaultCredentialsProvider(credsProvider);
+                }
+            } else {
+                LOG.info("No proxy configured - using direct connection");
+            }
+        }
+
+        return builder.build();
+    }
+
+    private static BasicCredentialsProvider configureProxyCredentials(IApplicationSettings settings, String proxyHost,
+            int proxyPort) {
+        String user = settings.getConnectionProxyUser();
+        String password = settings.getConnectionProxyPassword();
+
+        if (user == null || user.isEmpty() || password == null || password.isEmpty()) {
+            return null;
+        }
+
+        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+        AuthScope authScope = new AuthScope(proxyHost, proxyPort);
+
+        if (user.contains("\\")) {
+            // NTLM format: DOMAIN\\username
+            int separatorIndex = user.indexOf('\\');
+            String domain = user.substring(0, separatorIndex);
+            String username = user.substring(separatorIndex + 1);
+            String workstation = getWorkstationName();
+            LOG.debug("Configuring NTLM proxy auth for domain: {}, user: {}", domain, username);
+            credsProvider.setCredentials(authScope,
+                    new NTCredentials(username, password.toCharArray(), workstation, domain));
+        } else {
+            LOG.debug("Configuring basic proxy auth for user: {}", user);
+            credsProvider.setCredentials(authScope, new UsernamePasswordCredentials(user, password.toCharArray()));
+        }
+
+        return credsProvider;
+    }
+
+    private static String getWorkstationName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (java.net.UnknownHostException e) {
+            LOG.warn("Could not determine workstation name for NTLM auth", e);
+            return "";
         }
     }
 

@@ -145,11 +145,20 @@ public class ApplicationSettings implements Initializable {
         proxyPassword.setText(settingsData.getConnectionProxyPassword());
         proxySystemSettings.setSelected(settingsData.isConnectionUseSystemSettings());
 
+        // Disable manual proxy host/port when system proxy is active
+        updateProxyFieldState(settingsData.isConnectionUseSystemSettings());
+        proxySystemSettings.selectedProperty().addListener((obs, oldVal, newVal) -> updateProxyFieldState(newVal));
+
         jbOverwriteData.setSelected(settingsData.isOverwriteData());
         jbNewAccesRuleId.setSelected(settingsData.isNewAccesRuleId());
 
         // Development & Testing settings
         fileSystemCheckBox.setSelected(settingsData.isFileSystem());
         backupDirectoryField.setText(settingsData.getBackupDirectory());
+    }
+
+    private void updateProxyFieldState(boolean useSystemProxy) {
+        proxyHost.setDisable(useSystemProxy);
+        proxyPort.setDisable(useSystemProxy);
     }
 }

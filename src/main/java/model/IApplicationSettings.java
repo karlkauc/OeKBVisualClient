@@ -56,6 +56,21 @@ public interface IApplicationSettings {
     Integer getConnectionProxyPort();
 
     /**
+     * Get the proxy username. For NTLM authentication, use {@code DOMAIN\\username}
+     * format.
+     *
+     * @return proxy username or null if not configured
+     */
+    String getConnectionProxyUser();
+
+    /**
+     * Get the proxy password.
+     *
+     * @return proxy password or null if not configured
+     */
+    String getConnectionProxyPassword();
+
+    /**
      * Check if file system mode is enabled (for offline testing).
      *
      * @return true if file system mode is enabled

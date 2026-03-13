@@ -37,12 +37,13 @@ class OeKBHTTPTest {
 
     @BeforeEach
     void setUp() {
-        // Common setup for ApplicationSettings mock
-        when(mockAppSettings.getAuthCredentialsBasic()).thenReturn("dGVzdDp0ZXN0"); // "test:test" base64
-        when(mockAppSettings.getServerURL()).thenReturn("http://localhost:8080");
-        when(mockAppSettings.getOekbUserName()).thenReturn("testuser");
-        when(mockAppSettings.getDataSupplierList()).thenReturn("DDS001");
-        when(mockAppSettings.isUseProdServer()).thenReturn(false);
+        // Common setup for ApplicationSettings mock (lenient because not all tests use
+        // these)
+        lenient().when(mockAppSettings.getAuthCredentialsBasic()).thenReturn("dGVzdDp0ZXN0"); // "test:test" base64
+        lenient().when(mockAppSettings.getServerURL()).thenReturn("http://localhost:8080");
+        lenient().when(mockAppSettings.getOekbUserName()).thenReturn("testuser");
+        lenient().when(mockAppSettings.getDataSupplierList()).thenReturn("DDS001");
+        lenient().when(mockAppSettings.isUseProdServer()).thenReturn(false);
     }
 
     @Test
@@ -156,5 +157,69 @@ class OeKBHTTPTest {
 
         // Assert - verify auth credentials were retrieved
         verify(mockAppSettings).getAuthCredentialsBasic();
+    }
+
+    @Test
+    @DisplayName("Should create client with SystemDefaultRoutePlanner for system proxy without credentials")
+    void testCreateHttpClient_SystemProxy_NoCredentials() throws Exception {
+        // Arrange
+        IApplicationSettings settings = mock(IApplicationSettings.class);
+        when(settings.isConnectionUseSystemSettings()).thenReturn(true);
+        when(settings.getConnectionProxyUser()).thenReturn("");
+        when(settings.getConnectionProxyPassword()).thenReturn("");
+
+        // Act & Assert
+        try (CloseableHttpClient client = OeKBHTTP.createHttpClient(settings)) {
+            assertNotNull(client);
+        }
+    }
+
+    @Test
+    @DisplayName("Should create client with NTLM credentials for DOMAIN\\username format")
+    void testCreateHttpClient_ManualProxy_NtlmCredentials() throws Exception {
+        // Arrange
+        IApplicationSettings settings = mock(IApplicationSettings.class);
+        when(settings.isConnectionUseSystemSettings()).thenReturn(false);
+        when(settings.getConnectionProxyHost()).thenReturn("proxy.corp.local");
+        when(settings.getConnectionProxyPort()).thenReturn(8080);
+        when(settings.getConnectionProxyUser()).thenReturn("CORP\\jsmith");
+        when(settings.getConnectionProxyPassword()).thenReturn("secret");
+
+        // Act & Assert
+        try (CloseableHttpClient client = OeKBHTTP.createHttpClient(settings)) {
+            assertNotNull(client);
+        }
+    }
+
+    @Test
+    @DisplayName("Should create client with basic credentials for plain username")
+    void testCreateHttpClient_ManualProxy_BasicCredentials() throws Exception {
+        // Arrange
+        IApplicationSettings settings = mock(IApplicationSettings.class);
+        when(settings.isConnectionUseSystemSettings()).thenReturn(false);
+        when(settings.getConnectionProxyHost()).thenReturn("proxy.example.com");
+        when(settings.getConnectionProxyPort()).thenReturn(3128);
+        when(settings.getConnectionProxyUser()).thenReturn("proxyuser");
+        when(settings.getConnectionProxyPassword()).thenReturn("proxypass");
+
+        // Act & Assert
+        try (CloseableHttpClient client = OeKBHTTP.createHttpClient(settings)) {
+            assertNotNull(client);
+        }
+    }
+
+    @Test
+    @DisplayName("Should create client with direct connection when no proxy configured")
+    void testCreateHttpClient_NoProxy_DirectConnection() throws Exception {
+        // Arrange
+        IApplicationSettings settings = mock(IApplicationSettings.class);
+        when(settings.isConnectionUseSystemSettings()).thenReturn(false);
+        when(settings.getConnectionProxyHost()).thenReturn("");
+        when(settings.getConnectionProxyPort()).thenReturn(null);
+
+        // Act & Assert
+        try (CloseableHttpClient client = OeKBHTTP.createHttpClient(settings)) {
+            assertNotNull(client);
+        }
     }
 }

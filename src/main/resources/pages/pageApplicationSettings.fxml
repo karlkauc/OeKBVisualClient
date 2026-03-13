@@ -78,7 +78,8 @@
 
                         <VBox spacing="4">
                             <Label text="Proxy Username" styleClass="label-secondary-compact"/>
-                            <TextField fx:id="proxyUser" promptText="Enter proxy username" styleClass="text-field-compact"/>
+                            <TextField fx:id="proxyUser" promptText="DOMAIN\username" styleClass="text-field-compact"/>
+                            <Label text="For NTLM: use DOMAIN\username format" styleClass="label-hint-compact"/>
                         </VBox>
 
                         <VBox spacing="4">

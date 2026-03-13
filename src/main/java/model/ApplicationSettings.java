@@ -255,6 +255,7 @@ public final class ApplicationSettings implements IApplicationSettings {
         this.connectionProxyPort = connectionProxyPort;
     }
 
+    @Override
     public String getConnectionProxyUser() {
         return connectionProxyUser;
     }
@@ -263,6 +264,7 @@ public final class ApplicationSettings implements IApplicationSettings {
         this.connectionProxyUser = connectionProxyUser;
     }
 
+    @Override
     public String getConnectionProxyPassword() {
         return connectionProxyPassword;
     }

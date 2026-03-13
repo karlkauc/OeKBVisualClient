@@ -214,6 +214,12 @@
     -fx-border-width: 1;
 }
 
+.text-field-compact:disabled,
+.password-field-compact:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #f0f0f0;
+}
+
 .text-field-compact:focused,
 .password-field-compact:focused {
     -fx-border-color: -primary-color;
