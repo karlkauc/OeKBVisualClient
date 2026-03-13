@@ -6,7 +6,7 @@ OeKB Visual Client is a JavaFX 25 desktop application for interacting with OeKB'
 
 ## Technology Stack
 
-- **Java 17** - Target and source compatibility
+- **Java 25** - Target and source compatibility
 - **JavaFX 25** - UI framework (native components, no JFoenix)
 - **Gradle 9.2.1** - Build system with Kotlin DSL
 - **Ikonli 12.4.0** - Font icon library (Bootstrap, Win10, Feather, CoreUI, FontAwesome packs)

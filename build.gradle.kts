@@ -26,8 +26,8 @@ application {
 version = "0.4"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -283,6 +283,7 @@ tasks.register<Zip>("createPortableZip") {
     group = "distribution"
     description = "Creates a portable ZIP package of the application"
     dependsOn("jpackageImage")
+    mustRunAfter("jpackage")
 
     from(layout.buildDirectory.dir("jpackage/$appName"))
     archiveFileName.set("$appName-${project.version}-windows-x64.zip")
