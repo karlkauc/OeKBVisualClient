@@ -15,6 +15,7 @@
  */
 package controller;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -116,17 +117,68 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Common helper to load an FXML page into the main content area. Checks for
+     * valid settings before loading; redirects to Settings if invalid.
+     */
+    private void loadPage(String fxmlPath, String pageName, Button menuButton) {
+        setActiveMenuButton(menuButton);
+        if (!hasValidSettings()) {
+            changeToSettings();
+            return;
+        }
+        try {
+            javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource(fxmlPath));
+            mainPane.getChildren().setAll(tempPane);
+            mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+        } catch (IOException e) {
+            LOG.error("Error loading " + pageName, e);
+            showErrorPane(pageName, e);
+        }
+    }
+
+    /**
+     * Displays an error recovery pane when FXML loading fails.
+     */
+    private void showErrorPane(String pageName, Exception e) {
+        javafx.scene.layout.VBox errorBox = new javafx.scene.layout.VBox(12);
+        errorBox.setStyle("-fx-background-color: #f5f7f9; -fx-padding: 24;");
+        errorBox.setAlignment(Pos.CENTER);
+
+        Label titleLabel = new Label("Fehler beim Laden: " + pageName);
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #d32f2f;");
+
+        Label messageLabel = new Label(e.getMessage() != null ? e.getMessage() : "Unknown error");
+        messageLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #6c757d;");
+        messageLabel.setWrapText(true);
+
+        mainPane.getChildren().setAll(errorBox);
+        errorBox.getChildren().addAll(titleLabel, messageLabel);
+    }
+
     @FXML
     private void changeToSettings() {
         setActiveMenuButton(btnSettings);
-        LOG.debug("bin jetzt in settings");
-
         try {
             javafx.scene.Parent tempPane = FXMLLoader
                     .load(getClass().getResource("/pages/pageApplicationSettings.fxml"));
             mainPane.getChildren().setAll(tempPane);
         } catch (IOException e) {
             LOG.error("Error loading settings page", e);
+            showErrorPane("Settings", e);
+        }
+    }
+
+    @FXML
+    private void changeToAbout() {
+        setActiveMenuButton(btnAbout);
+        try {
+            javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageAbout.fxml"));
+            mainPane.getChildren().setAll(tempPane);
+            mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
+        } catch (IOException e) {
+            LOG.error("Error loading about page", e);
+            showErrorPane("About", e);
         }
     }
 
@@ -190,250 +242,62 @@ public class MainController implements Initializable {
 
     @FXML
     private void changeToAccessRightsReceived() {
-        setActiveMenuButton(btnAccessRightsReceived);
-        LOG.debug("bin jetzt im access rights receive");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageAccesRightsReceived.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading access rights received page", e);
-            }
-        }
+        loadPage("/pages/pageAccesRightsReceived.fxml", "Access Rights Received", btnAccessRightsReceived);
     }
 
     @FXML
     private void changeToAccessRightsGrant() {
-        setActiveMenuButton(btnAccessRightsGrant);
-        LOG.debug("bin jetzt im access rights GRANT");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageAccessRightGrant.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading access rights grant page", e);
-            }
-        }
+        loadPage("/pages/pageAccessRightGrant.fxml", "Access Rights Grant", btnAccessRightsGrant);
     }
 
     @FXML
     private void changeToJournal() {
-        setActiveMenuButton(btnJournal);
-        LOG.debug("change to Activity Journal");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageJournal.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading journal page", e);
-            }
-        }
+        loadPage("/pages/pageJournal.fxml", "Journal", btnJournal);
     }
 
     @FXML
     private void changeToNewInformation() {
-        setActiveMenuButton(btnNewInformation);
-        LOG.debug("change to New Information");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageNewInformation.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading new information page", e);
-            }
-        }
+        loadPage("/pages/pageNewInformation.fxml", "New Information", btnNewInformation);
     }
 
     @FXML
     private void changeToOFI() {
-        setActiveMenuButton(btnOeNB);
-        LOG.debug("chenage to OFI");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageOFI_new.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading OFI page", e);
-            }
-        }
+        loadPage("/pages/pageOFI_new.fxml", "OFI", btnOeNB);
     }
 
     @FXML
     private void changeToDataUpload() {
-        setActiveMenuButton(btnDataUpload);
-        LOG.debug("bin jetzt in changeToDataUpload");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageDataUpload.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading data upload page", e);
-            }
-        }
+        loadPage("/pages/pageDataUpload.fxml", "Data Upload", btnDataUpload);
     }
 
     @FXML
     private void changeToFundDownload() {
-        setActiveMenuButton(btnFundDownload);
-        LOG.debug("change to Fund Download");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageFundDownload.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading fund download page", e);
-            }
-        }
+        loadPage("/pages/pageFundDownload.fxml", "Fund Download", btnFundDownload);
     }
 
     @FXML
     private void changeToShareClassDownload() {
-        setActiveMenuButton(btnShareClassDownload);
-        LOG.debug("change to ShareClass Download");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageShareClassDownload.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading shareclass download page", e);
-            }
-        }
+        loadPage("/pages/pageShareClassDownload.fxml", "ShareClass Download", btnShareClassDownload);
     }
 
     @FXML
     private void changeToDocumentDownload() {
-        setActiveMenuButton(btnDocumentDownload);
-        LOG.debug("change to Document Download");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageDocumentDownload.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading document download page", e);
-            }
-        }
+        loadPage("/pages/pageDocumentDownload.fxml", "Document Download", btnDocumentDownload);
     }
 
     @FXML
     private void changeToRegulatoryReporting() {
-        setActiveMenuButton(btnRegulatoryReporting);
-        LOG.debug("change to Regulatory Reporting");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageRegulatoryReporting.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading regulatory reporting page", e);
-            }
-        }
-    }
-
-    @FXML
-    private void changeToAbout() {
-        setActiveMenuButton(btnAbout);
-        LOG.debug("change to About");
-
-        try {
-            javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageAbout.fxml"));
-            mainPane.getChildren().setAll(tempPane);
-            mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-        } catch (IOException e) {
-            LOG.error("Error loading about page", e);
-        }
+        loadPage("/pages/pageRegulatoryReporting.fxml", "Regulatory Reporting", btnRegulatoryReporting);
     }
 
     @FXML
     private void changeToAvailableData() {
-        setActiveMenuButton(btnAvailableData);
-        LOG.debug("change to Available Data");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader.load(getClass().getResource("/pages/pageAvailableData.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading available data page", e);
-            }
-        }
+        loadPage("/pages/pageAvailableData.fxml", "Available Data", btnAvailableData);
     }
 
     @FXML
     private void changeToOwnDataDownloaded() {
-        setActiveMenuButton(btnDownloadStats);
-        LOG.debug("change to Own Data Downloaded");
-
-        if (!hasValidSettings()) {
-            LOG.debug("no settings found");
-            changeToSettings();
-        } else {
-            try {
-                javafx.scene.Node tempPane = FXMLLoader
-                        .load(getClass().getResource("/pages/pageOwnDataDownloaded.fxml"));
-                mainPane.getChildren().setAll(tempPane);
-                mainPane.setPrefSize(mainPane.getMaxWidth(), mainPane.getMaxHeight());
-            } catch (IOException e) {
-                LOG.error("Error loading own data downloaded page", e);
-            }
-        }
+        loadPage("/pages/pageOwnDataDownloaded.fxml", "Own Data Downloaded", btnDownloadStats);
     }
 
     @Override

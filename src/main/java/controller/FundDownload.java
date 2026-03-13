@@ -178,7 +178,7 @@ public class FundDownload implements Initializable {
                 if (settings.isFileSystem()) {
                     Platform.runLater(() -> {
                         resultTextArea.setText(
-                                "⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                                "OFFLINE MODUS\n\nDiese Funktion ist im File System Modus nicht verfügbar.\n\nUm diese Funktion zu nutzen:\n1. Gehe zu Einstellungen\n2. Deaktiviere 'File System Modus verwenden'\n3. Stelle sicher, dass gültige OeKB-Zugangsdaten konfiguriert sind");
                         statusLabel.setText("Feature not available in offline mode");
                         progressIndicator.setVisible(false);
                         downloadButton.setDisable(false);

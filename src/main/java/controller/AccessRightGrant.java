@@ -33,7 +33,6 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -111,7 +110,8 @@ public class AccessRightGrant implements Initializable {
             if (statusMessage != null) {
                 statusMessage.setText(
                         "No data available. Check: 1) Credentials in Settings, 2) Network/Proxy settings, 3) Server connection");
-                statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+                statusMessage.getStyleClass().removeAll("status-message-error", "status-message-success");
+                statusMessage.getStyleClass().add("status-message-error");
             }
         }
 
@@ -300,12 +300,13 @@ public class AccessRightGrant implements Initializable {
         accessRightTable.setRoot(filteredRoot);
         accessRightTable.setShowRoot(false);
 
+        searchResultLabel.getStyleClass().removeAll("status-message-error", "status-message-success");
         if (matchCount == 0) {
             searchResultLabel.setText("No matches found");
-            searchResultLabel.setStyle("-fx-text-fill: #c8102e;");
+            searchResultLabel.getStyleClass().add("status-message-error");
         } else {
             searchResultLabel.setText(matchCount + " rule(s) found");
-            searchResultLabel.setStyle("-fx-text-fill: #28a745;");
+            searchResultLabel.getStyleClass().add("status-message-success");
         }
     }
 
@@ -405,7 +406,8 @@ public class AccessRightGrant implements Initializable {
 
         if (accessRule == null || accessRule.isEmpty()) {
             statusMessage.setText("No data available after refresh");
-            statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+            statusMessage.getStyleClass().removeAll("status-message-error", "status-message-success");
+            statusMessage.getStyleClass().add("status-message-error");
             return;
         }
 
@@ -458,7 +460,8 @@ public class AccessRightGrant implements Initializable {
 
         accessRightTable.setRoot(root);
         statusMessage.setText("Data refreshed successfully - " + accessRule.size() + " rules loaded");
-        statusMessage.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
+        statusMessage.getStyleClass().removeAll("status-message-error", "status-message-success");
+        statusMessage.getStyleClass().add("status-message-success");
     }
 
     /**
@@ -706,9 +709,10 @@ class ButtonCell extends TreeTableCell<RuleRow, Boolean> {
             alert.setTitle("Delete fund from rule");
             alert.setHeaderText("Do you really want to delete the Fund?");
 
-            Image image = new Image("img/icons8-trash-40.png");
-            ImageView imageView = new ImageView(image);
-            alert.setGraphic(imageView);
+            FontIcon trashIcon = new FontIcon("bi-trash");
+            trashIcon.setIconSize(32);
+            trashIcon.setIconColor(javafx.scene.paint.Color.web("#d32f2f"));
+            alert.setGraphic(trashIcon);
 
             StringBuilder textBuilder = new StringBuilder(256);
             textBuilder.append("delete ");

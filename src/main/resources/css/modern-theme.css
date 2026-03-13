@@ -367,6 +367,8 @@
 
 /* ============================================
    BUTTONS - ACTION BUTTONS
+   Canonical names: btn-primary, btn-secondary, btn-success, btn-danger, btn-info
+   Aliases: button-primary, button-secondary, etc. (for backwards compatibility)
    ============================================ */
 .button {
     -fx-background-radius: 3px;
@@ -386,7 +388,7 @@
 /* Primary Button - Deep Blue */
 .btn-primary,
 .button-primary,
-.saveSetttings {
+.saveSettings {
     -fx-background-color: -primary-color;
     -fx-text-fill: white;
     -fx-border-color: -primary-dark;
@@ -395,14 +397,14 @@
 
 .btn-primary:hover,
 .button-primary:hover,
-.saveSetttings:hover {
+.saveSettings:hover {
     -fx-background-color: -primary-dark;
     -fx-border-color: -primary-dark;
 }
 
 .btn-primary:pressed,
 .button-primary:pressed,
-.saveSetttings:pressed {
+.saveSettings:pressed {
     -fx-background-color: #001f2e;
 }
 
@@ -925,54 +927,68 @@
 }
 
 /* ============================================
-   UTILITY CLASSES
+   STATUS MESSAGES
    ============================================ */
-.spacing-small {
-    -fx-spacing: 10;
+.status-message-error {
+    -fx-text-fill: -danger-color;
+    -fx-font-weight: bold;
 }
 
-.spacing-medium {
-    -fx-spacing: 20;
+.status-message-success {
+    -fx-text-fill: -success-color;
+    -fx-font-weight: bold;
 }
 
-.spacing-large {
-    -fx-spacing: 30;
-}
-
-.padding-small {
-    -fx-padding: 10;
-}
-
-.padding-medium {
-    -fx-padding: 20;
-}
-
-.padding-large {
-    -fx-padding: 30;
-}
-
-.text-white {
-    -fx-text-fill: white;
-}
-
-.text-primary {
+/* ============================================
+   CARD TITLE COMPACT
+   ============================================ */
+.card-title-compact {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
     -fx-text-fill: -primary-color;
+    -fx-padding: 0 0 4 0;
 }
 
-.text-secondary {
-    -fx-text-fill: -text-secondary;
+/* ============================================
+   RESULT TEXTAREA (monospace for XML output)
+   ============================================ */
+.result-textarea {
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 12px;
 }
 
-.bg-gradient-primary {
-    -fx-background-color: linear-gradient(to right, -primary-color, -primary-light);
+/* ============================================
+   TABPANE STYLING
+   ============================================ */
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #f8f9fa;
 }
 
-.bg-gradient-secondary {
-    -fx-background-color: linear-gradient(to right, -secondary-color, -secondary-light);
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 4 4 0 0;
+    -fx-padding: 8 16;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
 }
 
-.bg-gradient-accent {
-    -fx-background-color: linear-gradient(to right, -accent-color, #fbbf24);
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: white;
+    -fx-font-weight: 600;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: #dee2e6;
+}
+
+/* ============================================
+   DRAG-OVER STYLING FOR DATA UPLOAD
+   ============================================ */
+.dataUploadPaneDragOver {
+    -fx-border-color: -accent-color;
+    -fx-border-width: 3;
+    -fx-background-color: #f0f4f8;
+    -fx-border-style: dashed;
 }
 
 /* ============================================

@@ -239,7 +239,8 @@ public class JournalController implements Initializable {
         } catch (RuntimeException e) {
             LOG.error("Error loading journal entries", e);
             statusMessage.setText("Error loading journal");
-            statusMessage.setStyle("-fx-text-fill: #c8102e;");
+            statusMessage.getStyleClass().removeAll("status-message-error", "status-message-success");
+            statusMessage.getStyleClass().add("status-message-error");
         }
     }
 
@@ -338,12 +339,13 @@ public class JournalController implements Initializable {
             filteredEntries.clear();
             filteredEntries.addAll(matches);
 
+            searchResultLabel.getStyleClass().removeAll("status-message-error", "status-message-success");
             if (!matches.isEmpty()) {
                 searchResultLabel.setText(matches.size() + " matches found");
-                searchResultLabel.setStyle("-fx-text-fill: #2e7d32;");
+                searchResultLabel.getStyleClass().add("status-message-success");
             } else {
                 searchResultLabel.setText("No matches");
-                searchResultLabel.setStyle("-fx-text-fill: #d32f2f;");
+                searchResultLabel.getStyleClass().add("status-message-error");
             }
         }
 

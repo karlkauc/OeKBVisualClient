@@ -120,12 +120,13 @@ public class AccessRightsReceived implements Initializable {
         accessRightTable.setRoot(filteredRoot);
 
         // Update result label
+        searchResultLabel.getStyleClass().removeAll("status-message-error", "status-message-success");
         if (totalMatches > 0) {
             searchResultLabel.setText(totalMatches + " Treffer gefunden");
-            searchResultLabel.setStyle("-fx-text-fill: #2e7d32;");
+            searchResultLabel.getStyleClass().add("status-message-success");
         } else {
             searchResultLabel.setText("Keine Treffer");
-            searchResultLabel.setStyle("-fx-text-fill: #d32f2f;");
+            searchResultLabel.getStyleClass().add("status-message-error");
         }
     }
 
@@ -176,7 +177,8 @@ public class AccessRightsReceived implements Initializable {
             if (statusMessage != null) {
                 statusMessage.setText(
                         "No data available. Check: 1) Credentials in Settings, 2) Network/Proxy settings, 3) Server connection");
-                statusMessage.setStyle("-fx-text-fill: #c8102e; -fx-font-weight: bold;");
+                statusMessage.getStyleClass().removeAll("status-message-error", "status-message-success");
+                statusMessage.getStyleClass().add("status-message-error");
             }
         }
 

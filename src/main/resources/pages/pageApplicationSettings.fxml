@@ -133,7 +133,7 @@
                 </padding>
                 <Button fx:id="save" onAction="#saveSettings"
                            prefHeight="36.0" minWidth="180.0"
-                           styleClass="saveSetttings"
+                           styleClass="saveSettings"
                            text="Save Settings">
                     <graphic>
                         <FontIcon iconLiteral="bi-check-circle-fill" iconSize="12" iconColor="WHITE"/>

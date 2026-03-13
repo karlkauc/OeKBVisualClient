@@ -1,103 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.AvailableData"
-            prefHeight="700.0" prefWidth="900.0"
-            style="-fx-background-color: #f5f5f5;">
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true"
+            stylesheets="@../css/modern-theme.css">
 
-    <VBox spacing="20.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0"
-          AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0">
+    <content>
+        <VBox styleClass="mainPane" spacing="12">
 
-        <!-- Header -->
-        <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label text="Verfügbare Daten abfragen" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-        </HBox>
-
-        <Separator/>
-
-        <!-- Parameters Section -->
-        <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
-            <Label text="Abfrage-Parameter:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-
-            <HBox spacing="20.0">
-                <VBox spacing="5.0">
-                    <Label text="Content Date (optional):"/>
-                    <HBox spacing="5.0">
-                        <DatePicker fx:id="contentDatePicker" prefWidth="200.0"/>
-                        <Button text="Clear" onAction="#clearContentDate"
-                                  style="-fx-background-color: #95a5a6; -fx-text-fill: white;"/>
-                    </HBox>
-                </VBox>
-
-                <VBox spacing="5.0">
-                    <Label text="FDP Content Type:"/>
-                    <ComboBox fx:id="fdpContentCombo" prefWidth="150.0"/>
-                </VBox>
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="bi-hdd-stack-fill" iconSize="24" iconColor="#003d5c"/>
+                <Label text="Verfügbare Daten abfragen" styleClass="page-title-compact"/>
             </HBox>
 
-            <Separator/>
+            <!-- Parameters Section -->
+            <VBox styleClass="card-compact" spacing="10">
+                <Label text="Abfrage-Parameter:" styleClass="section-title-compact"/>
 
-            <Label text="Upload-Zeitraum (nur wenn Content Date leer):" style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <HBox spacing="20">
+                    <VBox spacing="5">
+                        <Label text="Content Date (optional):" styleClass="label-primary"/>
+                        <HBox spacing="5">
+                            <DatePicker fx:id="contentDatePicker" prefWidth="200.0"/>
+                            <Button text="Clear" onAction="#clearContentDate"
+                                    styleClass="btn-secondary-compact">
+                                <tooltip><Tooltip text="Content Date zurücksetzen"/></tooltip>
+                            </Button>
+                        </HBox>
+                    </VBox>
 
-            <HBox spacing="20.0">
-                <VBox spacing="5.0">
-                    <Label text="Upload Date From:"/>
-                    <DatePicker fx:id="uploadDateFromPicker" prefWidth="200.0"/>
+                    <VBox spacing="5">
+                        <Label text="FDP Content Type:" styleClass="label-primary"/>
+                        <ComboBox fx:id="fdpContentCombo" prefWidth="150.0"/>
+                    </VBox>
+                </HBox>
+
+                <Separator/>
+
+                <Label text="Upload-Zeitraum (nur wenn Content Date leer):" styleClass="section-title-compact"/>
+
+                <HBox spacing="20">
+                    <VBox spacing="5">
+                        <Label text="Upload Date From:" styleClass="label-primary"/>
+                        <DatePicker fx:id="uploadDateFromPicker" prefWidth="200.0"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Upload Date To:" styleClass="label-primary"/>
+                        <DatePicker fx:id="uploadDateToPicker" prefWidth="200.0"/>
+                    </VBox>
+                </HBox>
+
+                <Label fx:id="infoLabel" text="" wrapText="true" styleClass="label-secondary"/>
+
+                <Separator/>
+
+                <VBox spacing="5">
+                    <Label text="Identifier Filter (optional):" styleClass="label-primary"/>
+                    <TextField fx:id="identifierField"
+                               promptText="LEI/OeNB-ID oder ISIN (mehrere durch Leerzeichen getrennt)"
+                               prefWidth="700.0"/>
                 </VBox>
-
-                <VBox spacing="5.0">
-                    <Label text="Upload Date To:"/>
-                    <DatePicker fx:id="uploadDateToPicker" prefWidth="200.0"/>
-                </VBox>
-            </HBox>
-
-            <Label fx:id="infoLabel" text="" wrapText="true"
-                   style="-fx-text-fill: #f39c12; -fx-font-size: 12px;"/>
-
-            <Separator/>
-
-            <VBox spacing="5.0">
-                <Label text="Identifier Filter (optional):"/>
-                <TextField fx:id="identifierField"
-                             promptText="LEI/OeNB-ID oder ISIN (mehrere durch Leerzeichen getrennt)"
-                             prefWidth="700.0"/>
             </VBox>
+
+            <!-- Action Section -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button fx:id="downloadButton"
+                        text="Abfrage starten"
+                        onAction="#download"
+                        styleClass="btn-primary-compact">
+                    <graphic>
+                        <FontIcon iconLiteral="bi-cloud-download" iconSize="14"/>
+                    </graphic>
+                    <tooltip><Tooltip text="Abfrage der verfügbaren Daten starten"/></tooltip>
+                </Button>
+                <ProgressIndicator fx:id="progressIndicator" prefWidth="30.0" prefHeight="30.0"/>
+                <Label fx:id="statusLabel" text="Bereit" styleClass="label-secondary"/>
+            </HBox>
+
+            <!-- Result Section -->
+            <VBox styleClass="card-compact" spacing="10" VBox.vgrow="ALWAYS">
+                <Label text="Ergebnis (XML):" styleClass="section-title-compact"/>
+                <TextArea fx:id="resultTextArea"
+                          VBox.vgrow="ALWAYS"
+                          prefHeight="250.0"
+                          editable="false"
+                          styleClass="result-textarea"
+                          promptText="Ergebnisse werden hier angezeigt..."/>
+            </VBox>
+
         </VBox>
-
-        <!-- Action Section -->
-        <HBox spacing="15.0" alignment="CENTER_LEFT">
-            <Button fx:id="downloadButton"
-                      text="Abfrage starten"
-                      onAction="#download"
-                      style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30;">
-                <font>
-                    <Font name="System Bold" size="14.0"/>
-                </font>
-            </Button>
-            <ProgressIndicator fx:id="progressIndicator" prefWidth="30.0" prefHeight="30.0"/>
-            <Label fx:id="statusLabel" text="Bereit" style="-fx-text-fill: #2c3e50;"/>
-        </HBox>
-
-        <!-- Result Section -->
-        <VBox spacing="10.0" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
-            <Label text="Ergebnis (XML):" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-            <TextArea fx:id="resultTextArea"
-                        VBox.vgrow="ALWAYS"
-                        prefHeight="250.0"
-                        editable="false"
-                        style="-fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
-        </VBox>
-
-    </VBox>
-</AnchorPane>
+    </content>
+</ScrollPane>

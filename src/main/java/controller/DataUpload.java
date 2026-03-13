@@ -74,8 +74,8 @@ public class DataUpload implements Initializable {
         }
 
         if (db.hasFiles() && !isNotAccepted) {
-            dataUpload.setStyle("-fx-border-color: red;" + "-fx-border-width: 5;" + "-fx-background-color: #C6C6C6;"
-                    + "-fx-border-style: solid;");
+            dataUpload.getStyleClass().remove("dataUploadPane");
+            dataUpload.getStyleClass().add("dataUploadPaneDragOver");
             e.acceptTransferModes(TransferMode.COPY);
         }
     }
@@ -168,7 +168,7 @@ public class DataUpload implements Initializable {
                 model.ApplicationSettings settings = model.ApplicationSettings.getInstance();
                 if (settings.isFileSystem()) {
                     dataUploadMessage.setText(
-                            "⚠️ OFFLINE MODE\n\nThis feature is not available in File System Mode.\n\nTo use this feature:\n1. Go to Settings\n2. Uncheck 'Use File System Mode (Mock XML Data)'\n3. Make sure you have valid OeKB credentials configured");
+                            "OFFLINE MODUS\n\nDiese Funktion ist im File System Modus nicht verfügbar.\n\nUm diese Funktion zu nutzen:\n1. Gehe zu Einstellungen\n2. Deaktiviere 'File System Modus verwenden'\n3. Stelle sicher, dass gültige OeKB-Zugangsdaten konfiguriert sind");
                     e.setDropCompleted(false);
                     e.consume();
                     return;
@@ -202,7 +202,10 @@ public class DataUpload implements Initializable {
 
     @FXML
     void dataUploadDone(DragEvent e) {
-        dataUpload.setStyle("");
+        dataUpload.getStyleClass().remove("dataUploadPaneDragOver");
+        if (!dataUpload.getStyleClass().contains("dataUploadPane")) {
+            dataUpload.getStyleClass().add("dataUploadPane");
+        }
         final Dragboard db = e.getDragboard();
 
         boolean success = false;
