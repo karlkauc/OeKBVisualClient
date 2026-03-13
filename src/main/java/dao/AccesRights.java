@@ -117,7 +117,7 @@ public class AccesRights {
         return parseAccessRules(outputString, true);
     }
 
-    private List<AccessRule> parseAccessRules(String xmlString, boolean includeDataSuppliers) {
+    List<AccessRule> parseAccessRules(String xmlString, boolean includeDataSuppliers) {
         List<AccessRule> accessRules = new ArrayList<>();
 
         // Validate input before parsing

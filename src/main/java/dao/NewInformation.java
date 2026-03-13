@@ -103,7 +103,7 @@ public class NewInformation {
      * Parse FundsXML_NewInformation XML string into list of NewInformationEntry
      * objects
      */
-    private List<NewInformationEntry> parseNewInformationXml(String xmlString) {
+    List<NewInformationEntry> parseNewInformationXml(String xmlString) {
         List<NewInformationEntry> entries = new ArrayList<>();
 
         if (xmlString == null || xmlString.isBlank()) {

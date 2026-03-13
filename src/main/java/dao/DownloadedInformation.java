@@ -106,7 +106,7 @@ public class DownloadedInformation {
      * Parse FundsXML_DownloadedInformation XML string into list of
      * DownloadedInformationEntry objects
      */
-    private List<DownloadedInformationEntry> parseDownloadedInformationXml(String xmlString) {
+    List<DownloadedInformationEntry> parseDownloadedInformationXml(String xmlString) {
         List<DownloadedInformationEntry> entries = new ArrayList<>();
 
         if (xmlString == null || xmlString.isBlank()) {

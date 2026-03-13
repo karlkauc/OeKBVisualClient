@@ -105,7 +105,7 @@ public class Journal {
     /**
      * Parse FundsXMLJournal XML string into list of JournalEntry objects
      */
-    private List<JournalEntry> parseJournalXml(String xmlString) {
+    List<JournalEntry> parseJournalXml(String xmlString) {
         List<JournalEntry> entries = new ArrayList<>();
 
         if (xmlString == null || xmlString.isBlank()) {
